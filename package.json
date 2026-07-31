@@ -17,7 +17,7 @@
     "check": "biome check",
     "check-types": "npm run generate && tsc --noEmit",
     "test": "node --test \"tests/**/*.test.mjs\"",
-    "test:e2e": "playwright test",
+    "test:e2e": "npm run generate:i18n && playwright test",
     "upgrade:init": "node scripts/storefront-upgrade.mjs init",
     "upgrade:prepare": "node scripts/storefront-upgrade.mjs prepare",
     "upgrade:verify": "node scripts/storefront-upgrade.mjs verify",
