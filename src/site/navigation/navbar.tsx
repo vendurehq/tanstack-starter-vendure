@@ -1,7 +1,6 @@
 import Image from '@/components/storefront-image';
 import {NavigationLink} from '@/site/navigation/navigation-link';
 import {NavbarCollections} from '@/site/navigation/navbar/navbar-collections';
-import {NavbarCart} from '@/site/navigation/navbar/navbar-cart';
 import {NavbarUser} from '@/site/navigation/navbar/navbar-user';
 import {ThemeSwitcher} from '@/site/navigation/navbar/theme-switcher';
 import {LanguagePicker} from '@/site/navigation/navbar/language-picker';

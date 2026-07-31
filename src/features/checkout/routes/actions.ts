@@ -1,4 +1,5 @@
 import {mutateOnServer} from '@/platform/vendure/api.server';
+import {setAuthToken} from '@/platform/vendure/auth-token.server';
 import {
     SetOrderShippingAddressMutation,
     SetOrderBillingAddressMutation,
@@ -30,10 +31,14 @@ async function transitionOrderToArrangingPayment() {
         {state: 'ArrangingPayment'},
         {useAuthToken: true},
     );
+    if (result.token) setAuthToken(result.token);
     if (result.data.transitionOrderToState?.__typename === 'OrderStateTransitionError') {
         const error = result.data.transitionOrderToState;
         throw new Error(`Failed to transition order state: ${error.errorCode} - ${error.message}`);
     }
+    // setAuthToken only writes the response cookie; follow-up mutations in the
+    // same request must receive the rotated token explicitly.
+    return result.token;
 }
 
 export const setShippingAddress = createServerFn({method: 'POST'})
@@ -44,11 +49,12 @@ export const setShippingAddress = createServerFn({method: 'POST'})
             {input: data.shippingAddress},
             {useAuthToken: true},
         );
+        if (result.token) setAuthToken(result.token);
         if (result.data.setOrderShippingAddress.__typename !== 'Order') {
             throw new Error('Failed to set shipping address');
         }
         if (data.useSameForBilling) {
-            await mutateOnServer(SetOrderBillingAddressMutation, {input: data.shippingAddress}, {useAuthToken: true});
+            await mutateOnServer(SetOrderBillingAddressMutation, {input: data.shippingAddress}, {useAuthToken: true, token: result.token});
         }
         return {success: true};
     });
@@ -61,6 +67,7 @@ export const setShippingMethod = createServerFn({method: 'POST'})
             {shippingMethodId: [data.shippingMethodId]},
             {useAuthToken: true},
         );
+        if (result.token) setAuthToken(result.token);
         if (result.data.setOrderShippingMethod.__typename !== 'Order') {
             throw new Error('Failed to set shipping method');
         }
@@ -71,6 +78,7 @@ export const createCustomerAddress = createServerFn({method: 'POST'})
     .validator(addressSchema)
     .handler(async ({data}) => {
         const result = await mutateOnServer(CreateCustomerAddressMutation, {input: data}, {useAuthToken: true});
+        if (result.token) setAuthToken(result.token);
         if (!result.data.createCustomerAddress) throw new Error('Failed to create customer address');
         return result.data.createCustomerAddress;
     });
@@ -84,15 +92,16 @@ export const transitionToArrangingPayment = createServerFn({method: 'POST'})
 export const placeOrder = createServerFn({method: 'POST'})
     .validator(z.object({paymentMethodCode: z.string().min(1)}))
     .handler(async ({data}) => {
-        await transitionOrderToArrangingPayment();
+        const rotatedToken = await transitionOrderToArrangingPayment();
         const metadata: Record<string, unknown> = data.paymentMethodCode === 'standard-payment'
             ? {shouldDecline: false, shouldError: false, shouldErrorOnSettle: false}
             : {};
         const result = await mutateOnServer(
             AddPaymentToOrderMutation,
             {input: {method: data.paymentMethodCode, metadata}},
-            {useAuthToken: true},
+            {useAuthToken: true, token: rotatedToken},
         );
+        if (result.token) setAuthToken(result.token);
         if (result.data.addPaymentToOrder.__typename !== 'Order') {
             const error = result.data.addPaymentToOrder;
             throw new Error(`Failed to place order: ${error.errorCode} - ${error.message}`);
@@ -113,6 +122,7 @@ export const setCustomerForOrder = createServerFn({method: 'POST'})
     }))
     .handler(async ({data}): Promise<SetCustomerForOrderResult> => {
         const result = await mutateOnServer(SetCustomerForOrderMutation, {input: data}, {useAuthToken: true});
+        if (result.token) setAuthToken(result.token);
         const response = result.data.setCustomerForOrder;
         switch (response.__typename) {
             case 'Order':

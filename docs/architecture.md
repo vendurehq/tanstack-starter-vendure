@@ -1,10 +1,10 @@
 # Storefront architecture
 
-The storefront is source-distributed: developers own every human-authored file. The module layout gives commerce capabilities clear ownership while keeping framework wiring thin.
+The storefront is source-distributed: developers own every human-authored file. The module layout gives commerce capabilities clear ownership while keeping framework concerns explicit.
 
 ```text
 src/
-  routes/        TanStack Router file-route adapters
+  routes/        TanStack Router route definitions and data orchestration
   config/        Store-wide configuration
   features/      Vertical commerce capabilities
   platform/      TanStack Start, localization, caching, and Vendure mechanics
@@ -12,7 +12,7 @@ src/
   components/ui  Generic design primitives
 ```
 
-Route files validate params/search, define loader and head behavior, and delegate rendering to feature modules. They do not contain Vendure operations or commerce rules. Feature modules colocate GraphQL documents, validated server functions, views, and source catalogs. Features may depend on shared platform/config modules but not on `site/` or another feature's internal `components/` and `routes/` folders.
+Route files validate params/search, compose server functions in loaders, define head behavior, and delegate rendering to feature modules. Server-only operations and commerce rules remain behind feature or platform APIs. Feature modules colocate GraphQL documents, validated server functions, views, and source catalogs. Features may depend on shared platform/config modules but not on `site/` or another feature's internal `components/` and `routes/` folders.
 
 ## Server and GraphQL boundaries
 

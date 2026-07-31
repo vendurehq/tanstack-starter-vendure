@@ -1,5 +1,5 @@
-import { ResultOf } from '@/platform/vendure/graphql';
-import {GetActiveOrderForCheckoutQuery} from '@/features/checkout/graphql';
+import type { ResultOf } from '@/platform/vendure/graphql';
+import type {GetActiveOrderForCheckoutQuery} from '@/features/checkout/graphql';
 
 export type CheckoutOrder = NonNullable<ResultOf<typeof GetActiveOrderForCheckoutQuery>['activeOrder']>;
 export type OrderLine = CheckoutOrder['lines'][number];

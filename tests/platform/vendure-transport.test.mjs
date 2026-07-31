@@ -1,9 +1,12 @@
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import test from 'node:test';
-import {executeVendureRequest} from '../../src/platform/vendure/api.server.ts';
+import {parse, print} from 'graphql';
+import {executeVendureRequest, registerShopOperations} from '../../src/platform/vendure/api.server.ts';
 
-const channelQuery = 'query GetActiveChannel { activeChannel { id } }';
+const channelDocument = parse('query GetActiveChannel { activeChannel { id } }');
+registerShopOperations([channelDocument]);
+const channelQuery = print(channelDocument);
 
 test('Vendure transport reads request-time configuration and sends channel/language/currency headers', async () => {
     process.env.VENDURE_SHOP_API_URL = 'https://shop.example.test/shop-api';
@@ -36,6 +39,10 @@ test('Vendure transport rejects missing configuration, GraphQL errors, and unkno
     process.env.VENDURE_SHOP_API_URL = 'https://shop.example.test/shop-api';
     await assert.rejects(
         () => executeVendureRequest({query: 'query ArbitraryOperation { activeChannel { id } }', variables: {}}),
+        /not allowed/,
+    );
+    await assert.rejects(
+        () => executeVendureRequest({query: 'query GetActiveChannel { activeChannel { id token } }', variables: {}}),
         /not allowed/,
     );
     const originalFetch = globalThis.fetch;

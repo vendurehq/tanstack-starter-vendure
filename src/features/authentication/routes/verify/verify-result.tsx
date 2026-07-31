@@ -1,6 +1,5 @@
 'use client';
 
-import {use} from 'react';
 import {Card, CardContent} from '@/components/ui/card';
 import {Button} from '@/components/ui/button';
 import { Link } from '@/platform/tanstack/navigation';
@@ -9,13 +8,10 @@ import {useTranslations} from '@/platform/i18n/paraglide';
 
 type VerifyResultType = {success: boolean; error?: undefined} | {error: string; success?: undefined};
 
-interface VerifyResultProps {
-    resultPromise: Promise<VerifyResultType>;
-}
+interface VerifyResultProps { result: VerifyResultType; }
 
-export function VerifyResult({resultPromise}: VerifyResultProps) {
+export function VerifyResult({result}: VerifyResultProps) {
     const t = useTranslations('Verify');
-    const result = use(resultPromise);
 
     const isSuccess = 'success' in result;
 

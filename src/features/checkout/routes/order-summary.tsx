@@ -6,7 +6,7 @@ import { ChevronDown, ShoppingBag } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Separator } from '@/components/ui/separator';
-import { OrderLine } from './types';
+import type { OrderLine } from './types';
 import { useCheckout } from './checkout-provider';
 import { Price } from '@/features/pricing/price';
 import {useTranslations} from '@/platform/i18n/paraglide';
@@ -63,16 +63,14 @@ function OrderSummaryContent({ order, t }: { order: ReturnType<typeof useCheckou
         </div>
 
         {order.discounts && order.discounts.length > 0 && (
-          <>
-            {order.discounts.map((discount, index: number) => (
+          order.discounts.map((discount, index: number) => (
               <div key={index} className="flex justify-between text-sm text-green-600">
                 <span>{discount.description}</span>
                 <span>
                   <Price value={discount.amountWithTax} currencyCode={order.currencyCode} />
                 </span>
               </div>
-            ))}
-          </>
+            ))
         )}
 
         <div className="flex justify-between text-sm">

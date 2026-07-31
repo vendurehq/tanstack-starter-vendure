@@ -1,30 +1,18 @@
-import type {Metadata} from '@/platform/tanstack/metadata';
 import {getActiveCurrencyCode} from '@/features/currency/currency-server';
 import {getRouteLocale} from '@/platform/i18n/server';
-import {getTranslations} from '@/platform/i18n/paraglide';
+import {useTranslations} from '@/platform/i18n/paraglide';
 import {query} from '@/platform/vendure/api';
 import {GetActiveOrderForCheckoutQuery, GetEligiblePaymentMethodsQuery, GetEligibleShippingMethodsQuery} from '@/features/checkout/graphql';
 import {GetCustomerAddressesQuery} from '@/features/account/graphql';
-import {redirect} from '@/platform/tanstack/navigation';
+import {redirect} from '@tanstack/react-router';
 import CheckoutFlow from './checkout-flow';
 import {CheckoutProvider} from './checkout-provider';
-import {noIndexRobots} from '@/config/metadata';
 import {getActiveCustomer} from '@/features/account/customer';
 import {getAvailableCountriesCached} from '@/features/checkout/countries';
 
-export async function generateMetadata(): Promise<Metadata> {
-    const locale = await getRouteLocale();
-    const t = await getTranslations({locale, namespace: 'Checkout'});
-    return {
-        title: t('pageTitle'),
-        robots: noIndexRobots(),
-    };
-}
-
-export default async function CheckoutPage() {
+export async function loadCheckoutData() {
     const locale = await getRouteLocale();
     const currencyCode = await getActiveCurrencyCode();
-    const t = await getTranslations({locale, namespace: 'Checkout'});
     const customer = await getActiveCustomer();
     const isGuest = !customer;
 
@@ -42,11 +30,11 @@ export default async function CheckoutPage() {
     const activeOrder = orderRes.data.activeOrder;
 
     if (!activeOrder || activeOrder.lines.length === 0) {
-        return redirect({href: '/cart', locale});
+        throw redirect({to: '/cart'});
     }
 
     if (activeOrder.state !== 'AddingItems' && activeOrder.state !== 'ArrangingPayment') {
-        return redirect({href: `/order-confirmation/${activeOrder.code}`, locale});
+        throw redirect({to: '/order-confirmation/$code', params: {code: activeOrder.code}});
     }
 
     const addresses = addressesRes.data.activeCustomer?.addresses || [];
@@ -54,6 +42,12 @@ export default async function CheckoutPage() {
     const paymentMethods =
         paymentMethodsRes.data.eligiblePaymentMethods?.filter((m) => m.isEligible) || [];
 
+    return {activeOrder, addresses, countries, shippingMethods, paymentMethods, isGuest};
+}
+
+export default function CheckoutPage({data}: {data: Awaited<ReturnType<typeof loadCheckoutData>>}) {
+    const t = useTranslations('Checkout');
+    const {activeOrder, addresses, countries, shippingMethods, paymentMethods, isGuest} = data;
     return (
         <div className="container mx-auto px-4 py-8">
             <h1 className="text-3xl font-bold mb-8">{t('pageTitle')}</h1>

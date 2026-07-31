@@ -1,39 +1,9 @@
 import {ProductCarousel} from "@/features/products/components/product-carousel";
-import {getRouteLocale} from "@/platform/i18n/server";
-import {cacheLife, cacheTag} from '@/platform/tanstack/cache';
-import {getActiveCurrencyCode} from '@/features/currency/currency-server';
-import {query} from "@/platform/vendure/api";
-import {GetCollectionProductsQuery} from '@/features/collections/graphql';
 import { Link } from '@/platform/tanstack/navigation';
 import {ArrowRight} from "lucide-react";
-import {getTranslations} from '@/platform/i18n/paraglide';
 import {useTranslations} from '@/platform/i18n/paraglide';
 import type {FragmentOf} from '@/platform/vendure/graphql';
-import {ProductCardFragment} from '@/features/products/graphql';
-
-async function getFeaturedCollectionProducts(currencyCode: string) {
-    'use cache'
-    cacheLife('days')
-
-    const locale = await getRouteLocale();
-    cacheTag(`featured-${locale}-${currencyCode}`);
-    cacheTag('products');
-
-    // Fetch featured products from a specific collection
-    // Replace 'featured' with your actual collection slug
-    const result = await query(GetCollectionProductsQuery, {
-        slug: "electronics",
-        input: {
-            collectionSlug: "electronics",
-            take: 12,
-            skip: 0,
-            groupByProduct: true
-        }
-    }, {languageCode: locale, currencyCode});
-
-    return result.data.search.items;
-}
-
+import type {ProductCardFragment} from '@/features/products/graphql';
 
 export function FeaturedProducts({products}: {products: Array<FragmentOf<typeof ProductCardFragment>>}) {
     const t = useTranslations('Product');

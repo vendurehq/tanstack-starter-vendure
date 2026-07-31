@@ -26,17 +26,12 @@ function resolveImport(source, specifier) {
     return null;
 }
 
-test('TanStack route files remain thin framework adapters', async () => {
+test('TanStack route files define file routes', async () => {
     const violations = [];
     for (const file of await findSourceFiles(routesRoot)) {
         const content = await readFile(file, 'utf8');
         if (!content.includes('createFileRoute') && !file.endsWith('__root.tsx')) {
             violations.push(`${path.relative(root, file)} does not define a TanStack file route`);
-        }
-        for (const match of content.matchAll(/from\s+['"]@\/([^'"]+)['"]/g)) {
-            if (/^(?:platform\/vendure|features\/[^/]+\/graphql)/.test(match[1])) {
-                violations.push(`${path.relative(root, file)} reaches through the route boundary to ${match[1]}`);
-            }
         }
     }
     assert.deepEqual(violations, []);

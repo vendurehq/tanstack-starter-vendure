@@ -1,22 +1,11 @@
-import type {Metadata} from '@/platform/tanstack/metadata';
-import {Suspense} from 'react';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Link } from '@/platform/tanstack/navigation';
 import { CheckCircle } from 'lucide-react';
-import {getRouteLocale} from '@/platform/i18n/server';
-import {getTranslations} from '@/platform/i18n/paraglide';
+import {useTranslations} from '@/platform/i18n/paraglide';
 
-export const metadata: Metadata = {
-    title: 'Verification Pending',
-    description: 'Check your email to verify your account.',
-};
-
-async function VerifyPendingContent({searchParams}: {searchParams: Promise<Record<string, string | string[] | undefined>>}) {
-    const locale = await getRouteLocale();
-    const t = await getTranslations({locale, namespace: 'Verify'});
-    const resolvedParams = await searchParams;
-    const redirectTo = resolvedParams?.redirectTo as string | undefined;
+function VerifyPendingContent({redirectTo}: {redirectTo?: string}) {
+    const t = useTranslations('Verify');
 
     const signInHref = redirectTo
         ? `/sign-in?redirectTo=${encodeURIComponent(redirectTo)}`
@@ -51,15 +40,11 @@ async function VerifyPendingContent({searchParams}: {searchParams: Promise<Recor
     );
 }
 
-export default async function VerifyPendingPage({searchParams}: PageProps<'/[locale]/verify-pending'>) {
-    const locale = await getRouteLocale();
-    const t = await getTranslations({locale, namespace: 'Verify'});
+export default function VerifyPendingPage({redirectTo}: {redirectTo?: string}) {
     return (
         <div className="flex min-h-screen items-center justify-center px-4">
             <div className="w-full max-w-md space-y-6">
-                <Suspense fallback={<div>{t('loading')}</div>}>
-                    <VerifyPendingContent searchParams={searchParams} />
-                </Suspense>
+                <VerifyPendingContent redirectTo={redirectTo} />
             </div>
         </div>
     );

@@ -1,4 +1,3 @@
-import {cacheLife, cacheTag} from '@/platform/tanstack/cache';
 import {query} from '@/platform/vendure/api';
 import {GetTopCollectionsQuery} from './graphql';
 import {cachedPublicData} from '@/platform/cache/public-cache';

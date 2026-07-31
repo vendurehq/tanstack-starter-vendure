@@ -1,6 +1,5 @@
 'use client';
 
-import {use} from 'react';
 import {ChevronLeft} from 'lucide-react';
 import {Button} from '@/components/ui/button';
 import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/card';
@@ -22,11 +21,11 @@ type OrderPayment = NonNullable<OrderByCode['payments']>[number];
 type OrderShippingLine = NonNullable<OrderByCode['shippingLines']>[number];
 
 interface OrderDetailProps {
-    orderPromise: Promise<{ data: ResultOf<typeof GetOrderDetailQuery>; token?: string }>;
+    orderData: { data: ResultOf<typeof GetOrderDetailQuery>; token?: string };
 }
 
-export function OrderDetail({orderPromise}: OrderDetailProps) {
-    const {data} = use(orderPromise);
+export function OrderDetail({orderData}: OrderDetailProps) {
+    const {data} = orderData;
     const locale = useLocale();
     const t = useTranslations('Account');
     const order = data.orderByCode;

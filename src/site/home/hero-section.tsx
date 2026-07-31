@@ -1,7 +1,6 @@
 import {Button} from "@/components/ui/button";
 import { Link } from '@/platform/tanstack/navigation';
 import {useTranslations} from '@/platform/i18n/paraglide';
-import {getRouteLocale} from '@/platform/i18n/server';
 
 export function HeroSection() {
     const t = useTranslations('Hero');

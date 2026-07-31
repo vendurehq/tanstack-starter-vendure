@@ -44,6 +44,28 @@ test('catalog search, empty cart, and missing products have stable behavior', as
     await expect(page.getByRole('heading', {name: /Page Not Found/i})).toBeVisible();
 });
 
+test('client navigation settles after loading route server functions', async ({page}) => {
+    await page.goto('/en');
+
+    const serverFunctionRequests: string[] = [];
+    page.on('request', request => {
+        if (new URL(request.url()).pathname.startsWith('/_serverFn/')) {
+            serverFunctionRequests.push(request.url());
+        }
+    });
+
+    await page.getByRole('link', {name: 'Shop All'}).click();
+    await expect(page).toHaveURL(/\/en\/search/);
+    await expect(page.getByRole('heading', {level: 1})).toBeVisible();
+
+    await page.waitForTimeout(500);
+    const settledRequestCount = serverFunctionRequests.length;
+    await page.waitForTimeout(500);
+
+    expect(serverFunctionRequests.length).toBe(settledRequestCount);
+    expect(serverFunctionRequests.length).toBeLessThanOrEqual(2);
+});
+
 test('account navigation is guarded and the API route is never localized', async ({page, request}) => {
     await page.goto('/en/account/orders');
     await expect(page).toHaveURL(/\/en\/sign-in\?redirectTo=/);

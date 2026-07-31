@@ -1,21 +1,23 @@
 import { getAuthToken } from './auth-token.server.ts'
 import type { TadaDocumentNode } from 'gql.tada'
-import { print } from 'graphql'
+import { type DocumentNode, print } from 'graphql'
 
-const storefrontOperations = new Set([
-  'CreateCustomerAddress', 'DeleteCustomerAddress', 'RequestUpdateCustomerEmailAddress',
-  'UpdateCustomer', 'UpdateCustomerAddress', 'UpdateCustomerEmailAddress',
-  'UpdateCustomerPassword', 'GetActiveCustomer', 'GetCustomerAddresses',
-  'GetCustomerOrders', 'GetOrderDetail', 'Login', 'Logout',
-  'RegisterCustomerAccount', 'RequestPasswordReset', 'ResetPassword',
-  'VerifyCustomerAccount', 'AddToCart', 'AdjustCartItem', 'ApplyPromotionCode',
-  'RemoveFromCart', 'RemovePromotionCode', 'GetActiveOrder', 'AddPaymentToOrder',
-  'SetCustomerForOrder', 'SetOrderBillingAddress', 'SetOrderShippingAddress',
-  'SetOrderShippingMethod', 'TransitionOrderToState', 'GetActiveOrderForCheckout',
-  'GetAvailableCountries', 'GetEligiblePaymentMethods', 'GetEligibleShippingMethods',
-  'GetCollectionProducts', 'GetTopCollections', 'GetProductDetail', 'SearchProducts',
-  'GetActiveChannel',
-])
+const OPERATION_NAME_PATTERN = /\b(?:query|mutation)\s+([A-Za-z_][A-Za-z0-9_]*)/
+
+// Registered by src/config/shop-operations.ts at server startup. Requests are
+// only forwarded to Vendure when their document text exactly matches a
+// registered operation, so the public server function cannot be used as an
+// open proxy with attacker-crafted selection sets.
+const canonicalOperations = new Map<string, string>()
+
+export function registerShopOperations(documents: ReadonlyArray<DocumentNode>) {
+  for (const document of documents) {
+    const printed = print(document)
+    const operationName = printed.match(OPERATION_NAME_PATTERN)?.[1]
+    if (!operationName) throw new Error('Shop operation document must be a named query or mutation')
+    canonicalOperations.set(operationName, printed)
+  }
+}
 
 const authenticatedOperations = new Set([
   'GetCustomerAddresses', 'GetCustomerOrders', 'GetOrderDetail',
@@ -42,8 +44,9 @@ interface VendureResponse<T> {
 }
 
 export async function executeVendureRequest<T>({ query, variables, options }: VendureServerRequest) {
-  const operationName = query.match(/\b(?:query|mutation)\s+([A-Za-z_][A-Za-z0-9_]*)/)?.[1]
-  if (!operationName || !storefrontOperations.has(operationName)) {
+  const operationName = query.match(OPERATION_NAME_PATTERN)?.[1]
+  const canonicalQuery = operationName ? canonicalOperations.get(operationName) : undefined
+  if (!operationName || !canonicalQuery || canonicalQuery !== query) {
     throw new Error('Vendure operation is not allowed')
   }
   const apiUrl = process.env.VENDURE_SHOP_API_URL

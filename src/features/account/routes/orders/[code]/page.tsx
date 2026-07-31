@@ -1,34 +1,7 @@
-import type {Metadata} from '@/platform/tanstack/metadata';
-import {Suspense} from 'react';
-import {query} from '@/platform/vendure/api';
-import {GetOrderDetailQuery} from '@/features/account/graphql';
-import {getTranslations} from '@/platform/i18n/paraglide';
-import {getRouteLocale} from '@/platform/i18n/server';
+import type {GetOrderDetailQuery} from '@/features/account/graphql';
+import type {ResultOf} from '@/platform/vendure/graphql';
 import {OrderDetail} from './order-detail';
 
-type OrderDetailPageProps = PageProps<'/[locale]/account/orders/[code]'>;
-
-export async function generateMetadata({params}: OrderDetailPageProps): Promise<Metadata> {
-    const {code} = await params;
-    const locale = await getRouteLocale();
-    const t = await getTranslations({locale, namespace: 'Account'});
-    return {
-        title: t('order', {code}),
-    };
-}
-
-export default async function OrderDetailPage(props: OrderDetailPageProps) {
-    const locale = await getRouteLocale();
-    const t = await getTranslations({locale, namespace: 'Common'});
-
-    // Start the fetch in the page (dynamic parent) and pass promise into Suspense.
-    const orderPromise = props.params.then(({code}) =>
-        query(GetOrderDetailQuery, {code}, {useAuthToken: true, fetch: {}})
-    );
-
-    return (
-        <Suspense fallback={<div className="p-8 text-center">{t('loading')}</div>}>
-            <OrderDetail orderPromise={orderPromise} />
-        </Suspense>
-    );
+export default function OrderDetailPage({orderData}: {orderData: {data: ResultOf<typeof GetOrderDetailQuery>}}) {
+    return <OrderDetail orderData={orderData} />;
 }

@@ -1,24 +1,19 @@
 'use client';
 
-import {use} from 'react';
 import {VerifyResult} from './verify-result';
-import {verifyAccountAction} from './actions';
 import {Card, CardContent} from '@/components/ui/card';
 import {Button} from '@/components/ui/button';
 import { Link } from '@/platform/tanstack/navigation';
 import {XCircle} from 'lucide-react';
 import {useTranslations} from '@/platform/i18n/paraglide';
-import {useServerFn} from '@tanstack/react-start';
 
 interface VerifyContentProps {
-    searchParams: Promise<{ token?: string }>;
+    token?: string;
+    result: {success: boolean; error?: undefined} | {error: string; success?: undefined} | null;
 }
 
-export function VerifyContent({searchParams}: VerifyContentProps) {
+export function VerifyContent({token, result}: VerifyContentProps) {
     const t = useTranslations('Verify');
-    const params = use(searchParams);
-    const token = params.token;
-    const verifyAccount = useServerFn(verifyAccountAction);
 
     if (!token) {
         return (
@@ -50,7 +45,5 @@ export function VerifyContent({searchParams}: VerifyContentProps) {
         );
     }
 
-    const verifyPromise = verifyAccount({data: {token}});
-
-    return <VerifyResult resultPromise={verifyPromise}/>;
+    return result ? <VerifyResult result={result}/> : null;
 }

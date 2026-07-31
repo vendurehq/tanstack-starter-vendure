@@ -1,26 +1,14 @@
-import type {Metadata} from '@/platform/tanstack/metadata';
-import {getRouteLocale} from '@/platform/i18n/server';
-import { query } from '@/platform/vendure/api';
-import {GetCustomerAddressesQuery} from '@/features/account/graphql';
-import {GetAvailableCountriesQuery} from '@/features/checkout/graphql';
+import type {GetCustomerAddressesQuery} from '@/features/account/graphql';
+import type {GetAvailableCountriesQuery} from '@/features/checkout/graphql';
+import type {ResultOf} from '@/platform/vendure/graphql';
 import { AddressesClient } from './addresses-client';
-import {getTranslations} from '@/platform/i18n/paraglide';
+import {useTranslations} from '@/platform/i18n/paraglide';
 
-export async function generateMetadata(): Promise<Metadata> {
-    const locale = await getRouteLocale();
-    const t = await getTranslations({locale, namespace: 'Account'});
-    return {
-        title: t('addressesPageTitle'),
-    };
-}
-
-export default async function AddressesPage() {
-    const locale = await getRouteLocale();
-    const t = await getTranslations({locale, namespace: 'Account'});
-    const [addressesResult, countriesResult] = await Promise.all([
-        query(GetCustomerAddressesQuery, {}, { useAuthToken: true }),
-        query(GetAvailableCountriesQuery, {}, { languageCode: locale }),
-    ]);
+export default function AddressesPage({addressesResult, countriesResult}: {
+    addressesResult: {data: ResultOf<typeof GetCustomerAddressesQuery>};
+    countriesResult: {data: ResultOf<typeof GetAvailableCountriesQuery>};
+}) {
+    const t = useTranslations('Account');
 
     const addresses = addressesResult.data.activeCustomer?.addresses || [];
     const countries = countriesResult.data.availableCountries || [];

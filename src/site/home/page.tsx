@@ -1,37 +1,10 @@
-import type {Metadata} from '@/platform/tanstack/metadata';
 import {Suspense} from "react";
-import {getRouteLocale} from "@/platform/i18n/server";
 import {HeroSection} from "@/site/home/hero-section";
 import {FeaturedProducts} from '@/features/products/featured-products';
-import {SITE_NAME, SITE_URL, buildCanonicalUrl} from "@/config/metadata";
 import {BadgeCheck, Tag, Zap} from "lucide-react";
-import {getTranslations, useTranslations} from '@/platform/i18n/paraglide';
+import {useTranslations} from '@/platform/i18n/paraglide';
 import type {FragmentOf} from '@/platform/vendure/graphql';
-import {ProductCardFragment} from '@/features/products/graphql';
-import {toOgLocale} from '@/platform/i18n/locale-utils';
-
-export async function generateMetadata(): Promise<Metadata> {
-    const locale = await getRouteLocale();
-    const t = await getTranslations({locale, namespace: 'Home'});
-    const ogLocale = toOgLocale(locale);
-
-    return {
-        title: {
-            absolute: `${SITE_NAME} - ${t('pageTitle')}`,
-        },
-        description: t('description'),
-        alternates: {
-            canonical: buildCanonicalUrl("/"),
-        },
-        openGraph: {
-            title: `${SITE_NAME} - ${t('pageTitle')}`,
-            description: t('ogDescription'),
-            type: "website",
-            locale: ogLocale,
-            url: SITE_URL,
-        },
-    };
-}
+import type {ProductCardFragment} from '@/features/products/graphql';
 
 const featureKeys = [
     {icon: BadgeCheck, key: 'highQuality'},

@@ -7,7 +7,7 @@
   },
   "scripts": {
     "dev": "vite dev --port 3000",
-    "generate:i18n": "paraglide-js compile --project ./project.inlang --outdir ./src/paraglide --strategy url cookie preferredLanguage baseLocale --emit-ts-declarations",
+    "generate:i18n": "node scripts/compile-i18n.mjs",
     "generate-routes": "tsr generate",
     "generate": "npm run generate:i18n && npm run generate-routes",
     "build": "npm run generate:i18n && vite build",

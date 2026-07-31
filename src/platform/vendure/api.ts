@@ -1,7 +1,8 @@
 import { createServerFn } from '@tanstack/react-start'
 import type { TadaDocumentNode } from 'gql.tada'
 import { print } from 'graphql'
-import { executeVendureRequest, type VendureServerRequest } from './api.server'
+import { z } from 'zod'
+import { executeVendureRequest } from './api.server'
 
 interface VendureRequestOptions {
   token?: string
@@ -14,7 +15,18 @@ interface VendureRequestOptions {
 }
 
 const vendureRequest = createServerFn({ method: 'POST' })
-  .validator((data: VendureServerRequest) => data)
+  .validator(z.object({
+    query: z.string().min(1),
+    variables: z.record(z.string(), z.unknown()),
+    options: z.object({
+      token: z.string().optional(),
+      useAuthToken: z.boolean().optional(),
+      channelToken: z.string().optional(),
+      languageCode: z.string().optional(),
+      currencyCode: z.string().optional(),
+      tags: z.array(z.string()).optional(),
+    }).optional(),
+  }))
   .handler(({ data }) => executeVendureRequest<unknown>(data))
 
 export async function query<TResult, TVariables>(

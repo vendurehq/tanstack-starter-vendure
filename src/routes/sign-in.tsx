@@ -5,4 +5,4 @@ import { storefrontHead } from '@/platform/tanstack/head'
 import { m } from '@/paraglide/messages.js'
 
 export const Route = createFileRoute('/sign-in')({ head: () => storefrontHead({title: m.Auth_pageTitle(), path: '/sign-in', noIndex: true}), validateSearch: redirectSearchSchema, component: SignInRoute })
-function SignInRoute() { return <Page params={Promise.resolve({})} searchParams={Promise.resolve(Route.useSearch())} /> }
+function SignInRoute() { return <Page redirectTo={Route.useSearch().redirectTo} /> }

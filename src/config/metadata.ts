@@ -23,8 +23,8 @@ export function truncateDescription(
   const lastSpaceIndex = truncated.lastIndexOf(' ');
 
   return lastSpaceIndex > 0
-    ? truncated.substring(0, lastSpaceIndex) + '...'
-    : truncated + '...';
+    ? `${truncated.substring(0, lastSpaceIndex)}...`
+    : `${truncated}...`;
 }
 
 /**

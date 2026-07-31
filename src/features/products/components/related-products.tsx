@@ -1,50 +1,35 @@
 import { ProductCarousel } from "@/features/products/components/product-carousel";
 import { getRouteLocale } from "@/platform/i18n/server";
-import { cacheLife, cacheTag } from '@/platform/tanstack/cache';
-import {getActiveCurrencyCode} from '@/features/currency/currency-server';
+import { cachedPublicData } from '@/platform/cache/public-cache';
 import { query } from "@/platform/vendure/api";
 import {GetCollectionProductsQuery} from '@/features/collections/graphql';
 import { readFragment } from "@/platform/vendure/graphql";
 import {ProductCardFragment} from '@/features/products/graphql';
-import {getTranslations} from '@/platform/i18n/paraglide';
+import {useTranslations} from '@/platform/i18n/paraglide';
 
-interface RelatedProductsProps {
-    collectionSlug: string;
-    currentProductId: string;
-}
-
-async function getRelatedProducts(collectionSlug: string, currentProductId: string, currencyCode: string) {
-    'use cache'
-    cacheLife('hours')
-
+export async function getRelatedProducts(collectionSlug: string, currentProductId: string, currencyCode: string) {
     const locale = await getRouteLocale();
-    cacheTag(`related-products-${collectionSlug}-${locale}-${currencyCode}`);
-    cacheTag('products');
-
-    const result = await query(GetCollectionProductsQuery, {
-        slug: collectionSlug,
-        input: {
-            collectionSlug: collectionSlug,
-            take: 13, // Fetch extra to account for filtering out current product
-            skip: 0,
-            groupByProduct: true
-        }
-    }, {languageCode: locale, currencyCode});
-
-    // Filter out the current product and limit to 12
-    return result.data.search.items
-        .filter(item => {
-            const product = readFragment(ProductCardFragment, item);
-            return product.productId !== currentProductId;
-        })
+    // The cache key is product-independent, so the current product is filtered
+    // out after the cache lookup rather than inside the cached load.
+    const items = await cachedPublicData({
+        key: `related-products:${collectionSlug}:${locale}:${currencyCode}`,
+        tags: [`related-products-${collectionSlug}-${locale}-${currencyCode}`, 'products'],
+        ttlMs: 60 * 60 * 1000,
+        load: async () => {
+            const result = await query(GetCollectionProductsQuery, {
+                slug: collectionSlug,
+                input: {collectionSlug, take: 13, skip: 0, groupByProduct: true},
+            }, {languageCode: locale, currencyCode});
+            return result.data.search.items;
+        },
+    });
+    return items
+        .filter(item => readFragment(ProductCardFragment, item).productId !== currentProductId)
         .slice(0, 12);
 }
 
-export async function RelatedProducts({ collectionSlug, currentProductId }: RelatedProductsProps) {
-    const locale = await getRouteLocale();
-    const currencyCode = await getActiveCurrencyCode();
-    const t = await getTranslations({locale, namespace: 'Product'});
-    const products = await getRelatedProducts(collectionSlug, currentProductId, currencyCode);
+export function RelatedProducts({products}: {products: Awaited<ReturnType<typeof getRelatedProducts>>}) {
+    const t = useTranslations('Product');
 
     if (products.length === 0) {
         return null;

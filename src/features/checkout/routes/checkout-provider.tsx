@@ -1,7 +1,7 @@
 'use client';
 
-import { createContext, useContext, ReactNode, useState } from 'react';
-import { CheckoutOrder } from './types';
+import { createContext, useContext, type ReactNode, useState } from 'react';
+import type { CheckoutOrder } from './types';
 
 interface CustomerAddress {
   id: string;

@@ -1,115 +1,52 @@
-import { Suspense } from 'react';
-import { mutate } from '@/platform/vendure/api';
-import {UpdateCustomerEmailAddressMutation} from '@/features/account/graphql';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {UpdateCustomerEmailAddressMutation} from '@/features/account/graphql';
+import {useTranslations} from '@/platform/i18n/paraglide';
 import { Link } from '@/platform/tanstack/navigation';
-import {getRouteLocale} from '@/platform/i18n/server';
-import {getTranslations} from '@/platform/i18n/paraglide';
+import { mutate } from '@/platform/vendure/api';
 
-async function VerifyEmailContent({searchParams}: {searchParams: Promise<Record<string, string | string[] | undefined>>}) {
-    const locale = await getRouteLocale();
-    const t = await getTranslations({locale, namespace: 'Account'});
-    const resolvedParams = await searchParams;
-    const tokenParam = resolvedParams.token;
-    const token = Array.isArray(tokenParam) ? tokenParam[0] : tokenParam;
+type VerificationResult =
+    | {kind: 'invalid'}
+    | {kind: 'success'}
+    | {kind: 'failed'; message?: string}
+    | {kind: 'error'};
 
-    if (!token) {
-        return (
-            <Card className="max-w-md mx-auto">
-                <CardHeader>
-                    <CardTitle>{t('verifyEmail.invalidLink')}</CardTitle>
-                    <CardDescription>
-                        {t('verifyEmail.invalidLinkDesc')}
-                    </CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <p className="text-sm text-muted-foreground mb-4">
-                        {t('verifyEmail.checkEmail')}
-                    </p>
-                    <Button render={<Link href="/account/profile" />} nativeButton={false}>{t('verifyEmail.goToProfile')}</Button>
-                </CardContent>
-            </Card>
-        );
-    }
-
+export async function loadEmailVerification(token?: string): Promise<VerificationResult> {
+    if (!token) return {kind: 'invalid'};
     try {
-        const result = await mutate(UpdateCustomerEmailAddressMutation, { token: token! }, { useAuthToken: true });
+        const result = await mutate(UpdateCustomerEmailAddressMutation, {token}, {useAuthToken: true});
         const updateResult = result.data.updateCustomerEmailAddress;
-
-        if (updateResult.__typename === 'Success') {
-            return (
-                <Card className="max-w-md mx-auto">
-                    <CardHeader>
-                        <CardTitle>{t('verifyEmail.success')}</CardTitle>
-                        <CardDescription>
-                            {t('verifyEmail.successDesc')}
-                        </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        <p className="text-sm text-muted-foreground mb-4">
-                            {t('verifyEmail.successMessage')}
-                        </p>
-                        <Button render={<Link href="/account/profile" />} nativeButton={false}>{t('verifyEmail.goToProfile')}</Button>
-                    </CardContent>
-                </Card>
-            );
-        }
-
-        return (
-            <Card className="max-w-md mx-auto">
-                <CardHeader>
-                    <CardTitle>{t('verifyEmail.failed')}</CardTitle>
-                    <CardDescription>
-                        {updateResult.message || t('verifyEmail.failedDefault')}
-                    </CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <p className="text-sm text-muted-foreground mb-4">
-                        {t('verifyEmail.failedMessage')}
-                    </p>
-                    <Button render={<Link href="/account/profile" />} nativeButton={false}>{t('verifyEmail.goToProfile')}</Button>
-                </CardContent>
-            </Card>
-        );
+        return updateResult.__typename === 'Success'
+            ? {kind: 'success'}
+            : {kind: 'failed', message: updateResult.message};
     } catch {
-        return (
-            <Card className="max-w-md mx-auto">
-                <CardHeader>
-                    <CardTitle>{t('verifyEmail.error')}</CardTitle>
-                    <CardDescription>
-                        {t('verifyEmail.errorDesc')}
-                    </CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <p className="text-sm text-muted-foreground mb-4">
-                        {t('verifyEmail.errorMessage')}
-                    </p>
-                    <Button render={<Link href="/account/profile" />} nativeButton={false}>{t('verifyEmail.goToProfile')}</Button>
-                </CardContent>
-            </Card>
-        );
+        return {kind: 'error'};
     }
 }
 
-export default async function VerifyEmailPage({searchParams}: PageProps<'/[locale]/account/verify-email'>) {
-    const locale = await getRouteLocale();
-    const t = await getTranslations({locale, namespace: 'Account'});
+export default function VerifyEmailPage({result}: {result: VerificationResult}) {
+    const t = useTranslations('Account');
+    const content = {
+        invalid: [t('verifyEmail.invalidLink'), t('verifyEmail.invalidLinkDesc'), t('verifyEmail.checkEmail')],
+        success: [t('verifyEmail.success'), t('verifyEmail.successDesc'), t('verifyEmail.successMessage')],
+        failed: [t('verifyEmail.failed'), result.kind === 'failed' && result.message ? result.message : t('verifyEmail.failedDefault'), t('verifyEmail.failedMessage')],
+        error: [t('verifyEmail.error'), t('verifyEmail.errorDesc'), t('verifyEmail.errorMessage')],
+    }[result.kind];
 
     return (
         <div className="container mx-auto px-4 py-8 mt-16">
-            <Suspense fallback={
-                <Card className="max-w-md mx-auto">
-                    <CardHeader>
-                        <CardTitle>{t('verifyEmail.verifying')}</CardTitle>
-                        <CardDescription>
-                            {t('verifyEmail.verifyingDesc')}
-                        </CardDescription>
-                    </CardHeader>
-                </Card>
-            }>
-                <VerifyEmailContent searchParams={searchParams} />
-            </Suspense>
+            <Card className="max-w-md mx-auto">
+                <CardHeader>
+                    <CardTitle>{content[0]}</CardTitle>
+                    <CardDescription>{content[1]}</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <p className="text-sm text-muted-foreground mb-4">{content[2]}</p>
+                    <Button render={<Link href="/account/profile" />} nativeButton={false}>
+                        {t('verifyEmail.goToProfile')}
+                    </Button>
+                </CardContent>
+            </Card>
         </div>
     );
 }

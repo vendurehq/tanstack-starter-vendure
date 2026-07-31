@@ -1,11 +1,5 @@
-import type {Metadata} from '@/platform/tanstack/metadata';
 import {Suspense} from 'react';
-import {noIndexRobots} from '@/config/metadata';
 import {AccountNavLinks} from '@/features/account/components/account-nav-links';
-
-export const metadata: Metadata = {
-    robots: noIndexRobots(),
-};
 
 const navItems = [
     {href: '/account/orders', labelKey: 'orders', icon: 'Package'},
@@ -13,7 +7,7 @@ const navItems = [
     {href: '/account/profile', labelKey: 'profile', icon: 'User'},
 ];
 
-export default async function AccountLayout({children}: LayoutProps<'/[locale]/account'>) {
+export default function AccountLayout({children}: {children: React.ReactNode}) {
     return (
         <div className="container mx-auto px-4 py-30">
             {/* Mobile: horizontal tab bar */}

@@ -1,4 +1,5 @@
 import handler from '@tanstack/react-start/server-entry'
+import './config/shop-operations.ts'
 import { paraglideMiddleware } from './paraglide/server.js'
 
 export default {

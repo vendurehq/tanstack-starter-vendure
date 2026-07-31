@@ -1,8 +1,9 @@
 import Page from '@/features/orders/routes/page'
+import { loadOrderConfirmation } from '@/features/orders/routes/order-confirmation'
 import { createFileRoute } from '@tanstack/react-router'
 
-export const Route = createFileRoute('/order-confirmation/$code')({ component: OrderRoute })
+export const Route = createFileRoute('/order-confirmation/$code')({ loader: ({params}) => loadOrderConfirmation(params.code), component: OrderRoute })
 
 function OrderRoute() {
-  return <Page params={Promise.resolve(Route.useParams())} searchParams={Promise.resolve({})} />
+  return <Page order={Route.useLoaderData()} />
 }

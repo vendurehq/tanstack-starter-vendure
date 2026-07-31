@@ -1,8 +1,8 @@
 'use client';
 
-import {createContext, ReactNode, useContext} from 'react';
-import {ResultOf} from '@/platform/vendure/graphql';
-import {ActiveCustomerFragment} from '@/features/account/graphql';
+import {createContext, type ReactNode, useContext} from 'react';
+import type {ResultOf} from '@/platform/vendure/graphql';
+import type {ActiveCustomerFragment} from '@/features/account/graphql';
 
 type ActiveCustomer = ResultOf<typeof ActiveCustomerFragment>;
 

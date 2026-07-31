@@ -1,42 +1,21 @@
-import type {Metadata} from '@/platform/tanstack/metadata';
-import {Suspense} from 'react';
-import {getTranslations} from '@/platform/i18n/paraglide';
-import {getRouteLocale} from '@/platform/i18n/server';
-import {SearchResults} from "@/features/search/routes/search-results";
-import {SearchTerm, SearchTermSkeleton} from "@/features/search/routes/search-term";
-import {SearchResultsSkeleton} from "@/features/search/components/search-results-skeleton";
-import {SITE_NAME, noIndexRobots} from '@/config/metadata';
+import { SearchResults } from "@/features/search/routes/search-results";
+import { SearchTerm } from "@/features/search/routes/search-term";
+import type { CatalogSearchParams } from "@/features/search/search-helpers";
+import type { SearchProductsData } from "@/features/search/search-products-data";
 
-export async function generateMetadata({
-    searchParams,
-}: PageProps<'/[locale]/search'>): Promise<Metadata> {
-    const resolvedParams = await searchParams;
-    const locale = await getRouteLocale();
-    const t = await getTranslations({locale, namespace: 'Search'});
-    const searchQuery = resolvedParams.q as string | undefined;
-
-    const title = searchQuery
-        ? t('resultsTitle', {query: searchQuery})
-        : t('pageTitle');
-
-    return {
-        title,
-        description: searchQuery
-            ? t('metaDescription', {query: searchQuery, siteName: SITE_NAME})
-            : t('metaCatalogDescription', {siteName: SITE_NAME}),
-        robots: noIndexRobots(),
-    };
+interface SearchPageProps {
+	searchParams: CatalogSearchParams;
+	productData: SearchProductsData;
 }
 
-export default async function SearchPage({searchParams}: PageProps<'/[locale]/search'>) {
-    return (
-        <div className="container mx-auto px-4 py-8 mt-16">
-            <Suspense fallback={<SearchTermSkeleton/>}>
-                <SearchTerm searchParams={searchParams}/>
-            </Suspense>
-            <Suspense fallback={<SearchResultsSkeleton />}>
-                <SearchResults searchParams={searchParams}/>
-            </Suspense>
-        </div>
-    );
+export default function SearchPage({
+	searchParams,
+	productData,
+}: SearchPageProps) {
+	return (
+		<div className="container mx-auto px-4 py-8 mt-16">
+			<SearchTerm searchParams={searchParams} />
+			<SearchResults searchParams={searchParams} productData={productData} />
+		</div>
+	);
 }

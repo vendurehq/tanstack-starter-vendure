@@ -1,4 +1,3 @@
-import {getRouteLocale} from '@/platform/i18n/server';
 import {User} from 'lucide-react';
 import {Button} from '@/components/ui/button';
 import {
@@ -10,7 +9,6 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Link } from '@/platform/tanstack/navigation';
 import {LoginButton} from "@/site/navigation/navbar/login-button";
-import {getActiveCustomer} from '@/features/account/customer';
 import {useTranslations} from '@/platform/i18n/paraglide';
 
 

@@ -1,6 +1,3 @@
-import type {Metadata} from '@/platform/tanstack/metadata';
-import {query} from '@/platform/vendure/api';
-import {GetCustomerOrdersQuery} from '@/features/account/graphql';
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow,} from '@/components/ui/table';
 import {
     Pagination,
@@ -16,50 +13,20 @@ import {Button} from "@/components/ui/button";
 import {Price} from '@/features/pricing/price';
 import {OrderStatusBadge} from '@/features/orders/order-status-badge';
 import {formatDate} from '@/platform/i18n/format';
-import { Link, redirect } from '@/platform/tanstack/navigation';
-import {getRouteLocale} from '@/platform/i18n/server';
-import {getTranslations} from '@/platform/i18n/paraglide';
-
-export async function generateMetadata(): Promise<Metadata> {
-    const locale = await getRouteLocale();
-    const t = await getTranslations({locale, namespace: 'Account'});
-    return {
-        title: t('ordersPageTitle'),
-    };
-}
+import { Link } from '@/platform/tanstack/navigation';
+import {useLocale, useTranslations} from '@/platform/i18n/paraglide';
+import type {ResultOf} from '@/platform/vendure/graphql';
+import type {GetCustomerOrdersQuery} from '@/features/account/graphql';
 
 const ITEMS_PER_PAGE = 10;
 
-export default async function OrdersPage(props: PageProps<'/[locale]/account/orders'>) {
-    const searchParams = await props.searchParams;
-    const locale = await getRouteLocale();
-    const pageParam = searchParams.page;
-    const currentPage = parseInt(Array.isArray(pageParam) ? pageParam[0] : pageParam || '1', 10);
-    const skip = (currentPage - 1) * ITEMS_PER_PAGE;
+type OrdersData = NonNullable<ResultOf<typeof GetCustomerOrdersQuery>['activeCustomer']>['orders'];
 
-    const {data} = await query(
-        GetCustomerOrdersQuery,
-        {
-            options: {
-                take: ITEMS_PER_PAGE,
-                skip,
-                filter: {
-                    state: {
-                        notEq: 'AddingItems',
-                    },
-                },
-            },
-        },
-        {useAuthToken: true}
-    );
-
-    if (!data.activeCustomer) {
-        return redirect({href: '/sign-in', locale});
-    }
-    const t = await getTranslations({locale, namespace: 'Account'});
-
-    const orders = data.activeCustomer.orders.items;
-    const totalItems = data.activeCustomer.orders.totalItems;
+export default function OrdersPage({ordersData, currentPage}: {ordersData: OrdersData; currentPage: number}) {
+    const locale = useLocale();
+    const t = useTranslations('Account');
+    const orders = ordersData.items;
+    const totalItems = ordersData.totalItems;
     const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
 
     return (

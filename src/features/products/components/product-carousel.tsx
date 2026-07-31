@@ -2,8 +2,8 @@
 
 import {ProductCard} from "@/features/products/components/product-card";
 import {Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious,} from "@/components/ui/carousel";
-import {FragmentOf} from "@/platform/vendure/graphql";
-import {ProductCardFragment} from '@/features/products/graphql';
+import type {FragmentOf} from "@/platform/vendure/graphql";
+import type {ProductCardFragment} from '@/features/products/graphql';
 import {useId} from "react";
 
 interface ProductCarouselClientProps {

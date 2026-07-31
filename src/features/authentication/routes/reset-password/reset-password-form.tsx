@@ -1,6 +1,6 @@
 'use client';
 
-import { use, useActionState } from 'react';
+import { useActionState } from 'react';
 import { resetPasswordAction } from './actions';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -11,13 +11,11 @@ import {useTranslations} from '@/platform/i18n/paraglide';
 import {useServerFn} from '@tanstack/react-start';
 
 interface ResetPasswordFormProps {
-    searchParams: Promise<{ token?: string }>;
+    token?: string;
 }
 
-export function ResetPasswordForm({ searchParams }: ResetPasswordFormProps) {
+export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
     const t = useTranslations('Auth');
-    const params = use(searchParams);
-    const token = params.token || null;
 
     const resetPassword = useServerFn(resetPasswordAction);
     const [state, formAction, isPending] = useActionState(

@@ -1,4 +1,3 @@
-import type { Metadata } from '@/platform/tanstack/metadata';
 import { Link } from '@/platform/tanstack/navigation';
 import { query } from '@/platform/vendure/api';
 import {GetProductDetailQuery} from '@/features/products/graphql';
@@ -21,104 +20,43 @@ import {
     BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
 import { notFound } from '@/platform/tanstack/navigation';
-import { cacheLife, cacheTag } from '@/platform/tanstack/cache';
+import { cachedPublicData } from '@/platform/cache/public-cache';
 import { Truck, RotateCcw, ShieldCheck, Clock } from 'lucide-react';
-import { routing } from '@/platform/i18n/routing';
-import {
-    SITE_NAME,
-    truncateDescription,
-    buildCanonicalUrl,
-    buildOgImages,
-} from '@/config/metadata';
-import {getTranslations} from '@/platform/i18n/paraglide';
-import {toOgLocale} from '@/platform/i18n/locale-utils';
+import {useTranslations} from '@/platform/i18n/paraglide';
 import {getActiveCurrencyCode} from '@/features/currency/currency-server';
 import {getRouteLocale} from '@/platform/i18n/server';
+import {getRelatedProducts} from '@/features/products/components/related-products';
 
 async function getProductData(slug: string, currencyCode: string) {
-    'use cache';
-    cacheLife('hours');
-
     const locale = await getRouteLocale();
-    cacheTag(`product-${slug}-${locale}-${currencyCode}`);
-    cacheTag('products');
-
-    return await query(GetProductDetailQuery, {slug}, {languageCode: locale, currencyCode});
+    return cachedPublicData({
+        key: `product:detail:${slug}:${locale}:${currencyCode}`,
+        tags: [`product-${slug}-${locale}-${currencyCode}`],
+        ttlMs: 60 * 60 * 1000,
+        load: () => query(GetProductDetailQuery, {slug}, {languageCode: locale, currencyCode}),
+    });
 }
 
-export async function generateMetadata({
-    params,
-}: PageProps<'/[locale]/product/[slug]'>): Promise<Metadata> {
-    const { slug } = await params;
-    const locale = await getRouteLocale();
+export async function loadProductPageData(slug: string) {
     const currencyCode = await getActiveCurrencyCode();
     const result = await getProductData(slug, currencyCode);
     const product = result.data.product;
+    if (!product) notFound();
 
-    const t = await getTranslations({locale, namespace: 'Product'});
-
-    if (!product) {
-        return {
-            title: t('notFound'),
-        };
-    }
-
-    const description = truncateDescription(product.description);
-    const fallbackDescription = t('shopProductAt', {name: product.name, siteName: SITE_NAME});
-    const ogImage = product.assets?.[0]?.preview;
-    const ogLocale = toOgLocale(locale);
-    const productPath = `/product/${product.slug}`;
-
-    return {
-        title: product.name,
-        description: description || fallbackDescription,
-        alternates: {
-            canonical: buildCanonicalUrl(`/${locale}${productPath}`),
-            languages: Object.fromEntries(
-                routing.locales.map((l) => [l, buildCanonicalUrl(`/${l}${productPath}`)])
-            ),
-        },
-        openGraph: {
-            title: product.name,
-            description: description || fallbackDescription,
-            type: 'website',
-            locale: ogLocale,
-            url: buildCanonicalUrl(`/${locale}${productPath}`),
-            images: buildOgImages(ogImage, product.name),
-        },
-        twitter: {
-            card: 'summary_large_image',
-            title: product.name,
-            description: description || fallbackDescription,
-            images: ogImage ? [ogImage] : undefined,
-        },
-    };
-}
-
-export default async function ProductDetailPage({
-    params,
-    searchParams,
-}: PageProps<'/[locale]/product/[slug]'>) {
-    const { slug } = await params;
-    const searchParamsResolved = await searchParams;
-    const locale = await getRouteLocale();
-    const currencyCode = await getActiveCurrencyCode();
-    const t = await getTranslations({locale, namespace: 'Product'});
-
-    const result = await getProductData(slug, currencyCode);
-
-    const product = result.data.product;
-
-    if (!product) {
-        notFound();
-    }
-
-    // Get the primary collection (prefer deepest nested / most specific)
     const primaryCollection = product.collections?.find(c => c.parent?.id) ?? product.collections?.[0];
-
-    // Hide options that belong to a shared option group but have no variant on
-    // this product (Vendure 3.6 shared/global option groups).
     const productForDisplay = {...product, optionGroups: getDisplayOptionGroups(product)};
+    const relatedProducts = primaryCollection
+        ? await getRelatedProducts(primaryCollection.slug, product.id, currencyCode)
+        : [];
+    return {product, primaryCollection, productForDisplay, relatedProducts, currencyCode};
+}
+
+export default function ProductDetailPage({data, searchParams}: {
+    data: Awaited<ReturnType<typeof loadProductPageData>>;
+    searchParams: Record<string, string | undefined>;
+}) {
+    const t = useTranslations('Product');
+    const {product, primaryCollection, productForDisplay, relatedProducts, currencyCode} = data;
 
     return (
         <>
@@ -154,7 +92,7 @@ export default async function ProductDetailPage({
 
                     {/* Right Column: Product Info */}
                     <div>
-                        <ProductInfo product={productForDisplay} searchParams={searchParamsResolved} currencyCode={currencyCode} />
+                        <ProductInfo product={productForDisplay} searchParams={searchParams} currencyCode={currencyCode} />
                     </div>
                 </div>
             </div>
@@ -216,12 +154,7 @@ export default async function ProductDetailPage({
                 </div>
             </section>
 
-            {primaryCollection && (
-                <RelatedProducts
-                    collectionSlug={primaryCollection.slug}
-                    currentProductId={product.id}
-                />
-            )}
+            <RelatedProducts products={relatedProducts} />
         </>
     );
 }

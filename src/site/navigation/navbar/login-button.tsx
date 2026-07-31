@@ -1,6 +1,6 @@
 'use client'
 
-import {ComponentProps, useTransition} from "react";
+import {type ComponentProps, useTransition} from "react";
 import {logoutAction} from '@/features/authentication/logout';
 import {useRouter} from '@/platform/tanstack/navigation';
 import {useTranslations} from '@/platform/i18n/paraglide';

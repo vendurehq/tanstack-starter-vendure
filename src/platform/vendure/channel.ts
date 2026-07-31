@@ -1,4 +1,3 @@
-import {cacheLife} from '@/platform/tanstack/cache';
 import {query} from './api';
 import {GetActiveChannelQuery} from './channel-graphql';
 import {cachedPublicData} from '@/platform/cache/public-cache';

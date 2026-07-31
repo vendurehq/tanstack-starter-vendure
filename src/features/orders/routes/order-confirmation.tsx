@@ -6,8 +6,7 @@ import Image from '@/components/storefront-image';
 import {Separator} from '@/components/ui/separator';
 import {Price} from '@/features/pricing/price';
 import {notFound} from '@/platform/tanstack/navigation';
-import {getRouteLocale} from '@/platform/i18n/server';
-import {getTranslations} from '@/platform/i18n/paraglide';
+import {useTranslations} from '@/platform/i18n/paraglide';
 import {query} from '@/platform/vendure/api';
 import {graphql} from '@/platform/vendure/graphql';
 
@@ -50,21 +49,15 @@ const GetOrderByCodeQuery = graphql(`
     }
 `);
 
-interface OrderConfirmationProps {
-    paramsPromise: Promise<{ locale: string; code: string }>;
-}
-
-export async function OrderConfirmation({paramsPromise}: OrderConfirmationProps) {
-    const {code} = await paramsPromise;
-    const locale = await getRouteLocale();
-    const t = await getTranslations({locale, namespace: 'OrderConfirmation'});
-
+export async function loadOrderConfirmation(code: string) {
     const {data} = await query(GetOrderByCodeQuery, {code}, {useAuthToken: true});
     const order = data.orderByCode;
+    if (!order) notFound();
+    return order;
+}
 
-    if (!order) {
-        notFound();
-    }
+export function OrderConfirmation({order}: {order: Awaited<ReturnType<typeof loadOrderConfirmation>>}) {
+    const t = useTranslations('OrderConfirmation');
 
     return (
         <div className="container mx-auto px-4 py-16">

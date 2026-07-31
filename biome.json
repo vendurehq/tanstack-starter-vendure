@@ -13,7 +13,8 @@
 			"**/index.html",
 			"**/vite.config.ts",
 			"!**/src/routeTree.gen.ts",
-			"!**/src/paraglide/**",
+			"!**/src/paraglide",
+			"!**/src/graphql-env.d.ts",
 			"!**/src/styles.css"
 		]
 	},
@@ -24,8 +25,14 @@
 	"assist": { "actions": { "source": { "organizeImports": "on" } } },
 	"linter": {
 		"enabled": true,
-		"rules": {"recommended": false}
+		"rules": {"recommended": true}
 	},
+	"overrides": [
+		{
+			"includes": ["**/src/components/ui/**"],
+			"linter": {"enabled": false}
+		}
+	],
 	"javascript": {
 		"formatter": {
 			"quoteStyle": "double"

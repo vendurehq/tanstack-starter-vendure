@@ -5,4 +5,4 @@ import { storefrontHead } from '@/platform/tanstack/head'
 import { m } from '@/paraglide/messages.js'
 
 export const Route = createFileRoute('/register')({ head: () => storefrontHead({title: m.Auth_createAccount(), path: '/register', noIndex: true}), validateSearch: redirectSearchSchema, component: RegisterRoute })
-function RegisterRoute() { return <Page params={Promise.resolve({})} searchParams={Promise.resolve(Route.useSearch())} /> }
+function RegisterRoute() { return <Page redirectTo={Route.useSearch().redirectTo} /> }

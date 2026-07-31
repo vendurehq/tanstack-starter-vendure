@@ -1,5 +1,5 @@
 import Image from '@/components/storefront-image';
-import {FragmentOf, readFragment} from '@/platform/vendure/graphql';
+import {type FragmentOf, readFragment} from '@/platform/vendure/graphql';
 import {ProductCardFragment} from '@/features/products/graphql';
 import {Price} from '@/features/pricing/price';
 import {Suspense} from "react";

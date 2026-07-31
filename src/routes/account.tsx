@@ -13,4 +13,4 @@ export const Route = createFileRoute('/account')({
   head: () => ({meta: [{name: 'robots', content: 'noindex, nofollow'}]}),
   component: AccountRoute,
 })
-function AccountRoute() { return <Layout params={Promise.resolve({})} searchParams={Promise.resolve({})}><Outlet /></Layout> }
+function AccountRoute() { return <Layout><Outlet /></Layout> }

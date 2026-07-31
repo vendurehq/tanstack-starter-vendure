@@ -1,22 +1,9 @@
-import type {Metadata} from '@/platform/tanstack/metadata';
-import {getRouteLocale} from '@/platform/i18n/server';
-import {getTranslations} from '@/platform/i18n/paraglide';
 import {Cart} from "@/features/cart/routes/cart";
 import {Suspense} from "react";
 import {CartSkeleton} from "@/features/cart/components/cart-skeleton";
-import {noIndexRobots} from '@/config/metadata';
 import {useTranslations} from '@/platform/i18n/paraglide';
 import type {ResultOf} from '@/platform/vendure/graphql';
-import {GetActiveOrderQuery} from '@/features/cart/graphql';
-
-export async function generateMetadata(): Promise<Metadata> {
-    const locale = await getRouteLocale();
-    const t = await getTranslations({locale, namespace: 'Cart'});
-    return {
-        title: t('title'),
-        robots: noIndexRobots(),
-    };
-}
+import type {GetActiveOrderQuery} from '@/features/cart/graphql';
 
 export default function CartPage({activeOrder}: {activeOrder: ResultOf<typeof GetActiveOrderQuery>['activeOrder']}) {
     const t = useTranslations('Cart');

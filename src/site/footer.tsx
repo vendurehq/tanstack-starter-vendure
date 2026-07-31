@@ -1,6 +1,3 @@
-import {getRouteLocale} from '@/platform/i18n/server';
-import {cacheLife, cacheTag} from '@/platform/tanstack/cache';
-import {getTopCollections} from '@/features/collections/data';
 import Image from '@/components/storefront-image';
 import {NavigationLink} from '@/site/navigation/navigation-link';
 import {useTranslations} from '@/platform/i18n/paraglide';
