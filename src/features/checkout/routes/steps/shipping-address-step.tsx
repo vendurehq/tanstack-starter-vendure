@@ -106,7 +106,7 @@ export default function ShippingAddressStep({ onComplete }: ShippingAddressStepP
         phoneNumber: selectedAddress.phoneNumber || '',
       }, useSameForBilling}});
 
-      router.refresh();
+      await router.refresh();
       onComplete();
     } catch (error) {
       console.error('Error setting address:', error);
@@ -121,7 +121,7 @@ export default function ShippingAddressStep({ onComplete }: ShippingAddressStepP
       const newAddress = await saveCustomerAddress({data});
       setDialogOpen(false);
       reset();
-      router.refresh();
+      await router.refresh();
       setSelectedAddressId(newAddress.id);
     } catch (error) {
       console.error('Error creating address:', error);
@@ -135,7 +135,7 @@ export default function ShippingAddressStep({ onComplete }: ShippingAddressStepP
     setLoading(true);
     try {
       await saveShippingAddress({data: {shippingAddress: data, useSameForBilling}});
-      router.refresh();
+      await router.refresh();
       onComplete();
     } catch (error) {
       console.error('Error setting address:', error);

@@ -1,62 +1,14 @@
 import {Button} from '@/components/ui/button';
 import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/card';
 import {Check, ShoppingBag, ClipboardList} from 'lucide-react';
-import { Link } from '@/platform/tanstack/navigation';
+import { Link } from '@tanstack/react-router';
 import Image from '@/components/storefront-image';
 import {Separator} from '@/components/ui/separator';
 import {Price} from '@/features/pricing/price';
-import {notFound} from '@/platform/tanstack/navigation';
 import {useTranslations} from '@/platform/i18n/paraglide';
-import {query} from '@/platform/vendure/api';
-import {graphql} from '@/platform/vendure/graphql';
+import type {getOrderConfirmation} from '@/features/orders/order.functions';
 
-const GetOrderByCodeQuery = graphql(`
-    query GetOrderByCode($code: String!) {
-        orderByCode(code: $code) {
-            id
-            code
-            state
-            totalWithTax
-            currencyCode
-            lines {
-                id
-                productVariant {
-                    id
-                    name
-                    product {
-                        id
-                        name
-                        slug
-                        featuredAsset {
-                            id
-                            preview
-                        }
-                    }
-                }
-                quantity
-                linePriceWithTax
-            }
-            shippingAddress {
-                fullName
-                streetLine1
-                streetLine2
-                city
-                province
-                postalCode
-                country
-            }
-        }
-    }
-`);
-
-export async function loadOrderConfirmation(code: string) {
-    const {data} = await query(GetOrderByCodeQuery, {code}, {useAuthToken: true});
-    const order = data.orderByCode;
-    if (!order) notFound();
-    return order;
-}
-
-export function OrderConfirmation({order}: {order: Awaited<ReturnType<typeof loadOrderConfirmation>>}) {
+export function OrderConfirmation({order}: {order: Awaited<ReturnType<typeof getOrderConfirmation>>}) {
     const t = useTranslations('OrderConfirmation');
 
     return (
@@ -145,11 +97,11 @@ export function OrderConfirmation({order}: {order: Awaited<ReturnType<typeof loa
                 )}
 
                 <div className="flex flex-col sm:flex-row gap-3">
-                    <Button nativeButton={false} render={<Link href="/" />} className="flex-1" size="lg">
+                    <Button nativeButton={false} render={<Link to="/" />} className="flex-1" size="lg">
                         <ShoppingBag className="mr-2 h-4 w-4" />
                         {t('continueShopping')}
                     </Button>
-                    <Button nativeButton={false} render={<Link href="/account/orders" />} variant="outline" className="flex-1" size="lg">
+                    <Button nativeButton={false} render={<Link to="/account/orders" search={{page: 1}} />} variant="outline" className="flex-1" size="lg">
                         <ClipboardList className="mr-2 h-4 w-4" />
                         {t('viewOrders')}
                     </Button>

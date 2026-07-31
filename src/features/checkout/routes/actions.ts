@@ -106,7 +106,10 @@ export const placeOrder = createServerFn({method: 'POST'})
             const error = result.data.addPaymentToOrder;
             throw new Error(`Failed to place order: ${error.errorCode} - ${error.message}`);
         }
-        throw redirect({href: `/order-confirmation/${result.data.addPaymentToOrder.code}`});
+        throw redirect({
+            to: '/order-confirmation/$code',
+            params: {code: result.data.addPaymentToOrder.code},
+        });
     });
 
 export type SetCustomerForOrderResult =

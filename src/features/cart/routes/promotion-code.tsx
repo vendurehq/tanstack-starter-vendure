@@ -2,11 +2,11 @@ import {Button} from '@/components/ui/button';
 import {Input} from '@/components/ui/input';
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from '@/components/ui/card';
 import {Tag} from 'lucide-react';
-import {applyPromotionCode, removePromotionCode} from './actions';
+import {applyPromotionCode, removePromotionCode, type CartActionResult} from './actions';
 import {useTranslations} from '@/platform/i18n/paraglide';
 import {useServerFn} from '@tanstack/react-start';
 import {useRouter} from '@/platform/tanstack/navigation';
-import {useTransition} from 'react';
+import {useState, useTransition} from 'react';
 
 type ActiveOrder = {
     id: string;
@@ -19,9 +19,11 @@ export function PromotionCode({activeOrder}: { activeOrder: ActiveOrder }) {
     const [isPending, startTransition] = useTransition();
     const applyCode = useServerFn(applyPromotionCode);
     const removeCode = useServerFn(removePromotionCode);
-    const submit = (mutation: () => Promise<unknown>) => startTransition(async () => {
-        await mutation();
+    const [error, setError] = useState<string | null>(null);
+    const submit = (mutation: () => Promise<CartActionResult>) => startTransition(async () => {
+        const result = await mutation();
         await router.refresh();
+        setError(result.success ? null : result.message);
     });
     return (
         <Card className="mt-4">
@@ -58,20 +60,23 @@ export function PromotionCode({activeOrder}: { activeOrder: ActiveOrder }) {
                         ))}
                     </div>
                 ) : (
-                    <form onSubmit={(event) => {
-                        event.preventDefault();
-                        const code = String(new FormData(event.currentTarget).get('code') ?? '');
-                        submit(() => applyCode({data: {code}}));
-                    }} className="flex gap-2">
-                        <Input
-                            type="text"
-                            name="code"
-                            placeholder={t('enterCode')}
-                            className="flex-1"
-                            required
-                        />
-                        <Button type="submit" disabled={isPending}>{t('apply')}</Button>
-                    </form>
+                    <div>
+                        <form onSubmit={(event) => {
+                            event.preventDefault();
+                            const code = String(new FormData(event.currentTarget).get('code') ?? '');
+                            submit(() => applyCode({data: {code}}));
+                        }} className="flex gap-2">
+                            <Input
+                                type="text"
+                                name="code"
+                                placeholder={t('enterCode')}
+                                className="flex-1"
+                                required
+                            />
+                            <Button type="submit" disabled={isPending}>{t('apply')}</Button>
+                        </form>
+                        {error && <p className="mt-2 text-sm text-destructive">{error}</p>}
+                    </div>
                 )}
             </CardContent>
         </Card>
