@@ -1,4 +1,4 @@
-import { HeadContent, ScriptOnce, Scripts, createRootRoute } from '@tanstack/react-router'
+import { HeadContent, ScriptOnce, Scripts, createRootRoute, useRouter } from '@tanstack/react-router'
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { TanStackDevtools } from '@tanstack/react-devtools'
 
@@ -51,12 +51,13 @@ function StorefrontNotFound() {
   )
 }
 
-function StorefrontError({error, reset}: {error: Error; reset: () => void}) {
+function StorefrontError({error}: {error: Error}) {
+  const router = useRouter()
   return (
     <main className="container mx-auto flex min-h-[60vh] max-w-xl flex-col items-center justify-center gap-4 px-4 text-center">
       <h1 className="text-3xl font-bold">Something went wrong</h1>
       <p className="text-muted-foreground">{error.message}</p>
-      <Button onClick={reset}>Try again</Button>
+      <Button onClick={() => router.invalidate()}>Try again</Button>
     </main>
   )
 }

@@ -45,6 +45,7 @@ import {
 } from '@/features/collections/graphql';
 import {GetProductDetailQuery} from '@/features/products/graphql';
 import {SearchProductsQuery} from '@/features/search/graphql';
+import {GetOrderByCodeQuery} from '@/features/orders/graphql';
 import {registerShopOperations} from '@/platform/vendure/api.server';
 import {GetActiveChannelQuery} from '@/platform/vendure/channel-graphql';
 
@@ -89,5 +90,6 @@ registerShopOperations([
 	GetTopCollectionsQuery,
 	GetProductDetailQuery,
 	SearchProductsQuery,
+	GetOrderByCodeQuery,
 	GetActiveChannelQuery,
 ]);

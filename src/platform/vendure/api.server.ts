@@ -21,6 +21,7 @@ export function registerShopOperations(documents: ReadonlyArray<DocumentNode>) {
 
 const authenticatedOperations = new Set([
   'GetCustomerAddresses', 'GetCustomerOrders', 'GetOrderDetail',
+  'GetOrderByCode',
   'CreateCustomerAddress', 'DeleteCustomerAddress', 'RequestUpdateCustomerEmailAddress',
   'UpdateCustomer', 'UpdateCustomerAddress', 'UpdateCustomerEmailAddress', 'UpdateCustomerPassword',
 ])
