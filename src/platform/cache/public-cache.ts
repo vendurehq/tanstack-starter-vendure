@@ -1,3 +1,7 @@
+// In-process cache: each server instance holds its own entries, and
+// /api/revalidate only clears the instance that receives the webhook. On
+// multi-instance or serverless deployments, rely on the TTLs for freshness or
+// replace this with a shared store (e.g. Redis / Nitro storage).
 interface CacheEntry<T> {
 	value: T;
 	expiresAt: number;

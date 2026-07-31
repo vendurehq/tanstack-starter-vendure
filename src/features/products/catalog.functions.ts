@@ -62,14 +62,16 @@ export const getProductPageData = createServerFn({ method: "GET" })
 			key: `product:detail:${data.slug}:${locale}:${currencyCode}`,
 			tags: [`product-${data.slug}-${locale}-${currencyCode}`],
 			ttlMs: 60 * 60 * 1000,
-			load: () =>
-				queryOnServer(
-					GetProductDetailQuery,
-					{ slug: data.slug },
-					{ languageCode: locale, currencyCode },
-				),
+			load: async () =>
+				(
+					await queryOnServer(
+						GetProductDetailQuery,
+						{ slug: data.slug },
+						{ languageCode: locale, currencyCode },
+					)
+				).data,
 		});
-		const product = result.data.product;
+		const product = result.product;
 		if (!product) return null;
 
 		const primaryCollection =

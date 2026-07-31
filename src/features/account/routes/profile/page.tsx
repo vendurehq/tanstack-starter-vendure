@@ -1,10 +1,10 @@
-import type {getActiveCustomer} from '@/features/account/customer';
+import type {getAccountSession} from '@/features/account/auth.functions';
 import { ChangePasswordForm } from './change-password-form';
 import { EditProfileForm } from './edit-profile-form';
 import { EditEmailForm } from './edit-email-form';
 import {useTranslations} from '@/platform/i18n/paraglide';
 
-export default function ProfilePage({customer}: {customer: Awaited<ReturnType<typeof getActiveCustomer>>}) {
+export default function ProfilePage({customer}: {customer: Awaited<ReturnType<typeof getAccountSession>>}) {
     const t = useTranslations('Account');
 
     return (

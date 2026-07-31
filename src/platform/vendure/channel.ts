@@ -1,4 +1,4 @@
-import {query} from './api';
+import {queryOnServer} from './api.server';
 import {GetActiveChannelQuery} from './channel-graphql';
 import {cachedPublicData} from '@/platform/cache/public-cache';
 
@@ -13,7 +13,7 @@ export async function getActiveChannel() {
         tags: ['channel'],
         ttlMs: 60 * 60 * 1000,
         load: async () => {
-            const result = await query(GetActiveChannelQuery);
+            const result = await queryOnServer(GetActiveChannelQuery, {});
             return result.data.activeChannel;
         },
     });

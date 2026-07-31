@@ -12,9 +12,11 @@ export const getSearchPageData = createServerFn({ method: "GET" })
 		const locale = getLocale();
 		const currencyCode = await getActiveCurrencyCodeOnServer();
 
-		return queryOnServer(
+		const result = await queryOnServer(
 			SearchProductsQuery,
 			{ input: buildSearchInput({ searchParams: data }) },
 			{ languageCode: locale, currencyCode },
 		);
+		// Only expose the query data; the raw result may carry a session token
+		return { data: result.data };
 	});
