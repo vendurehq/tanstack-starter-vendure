@@ -54,10 +54,11 @@ export async function handleRevalidation(request: Request) {
         const {getActiveChannel} = await import('../vendure/channel.ts')
         currencies ??= (await getActiveChannel()).availableCurrencyCodes as string[]
       }
+      const currencyCodes = currencies ?? []
       for (const locale of routing.locales) {
         const expanded = kind === 'locale-only'
           ? [`${rawTag}-${locale}`]
-          : currencies!.map((currency) => `${rawTag}-${locale}-${currency}`)
+          : currencyCodes.map((currency) => `${rawTag}-${locale}-${currency}`)
         for (const tag of expanded) {
           invalidatePublicTag(tag)
           results.push({ tag, success: true })

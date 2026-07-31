@@ -80,6 +80,7 @@ export function ProductImageCarousel({ images }: ProductImageCarouselProps) {
                 <div className="grid grid-cols-4 gap-3">
                     {images.map((image, index) => (
                         <button
+                            type="button"
                             key={image.id}
                             onClick={() => setCurrentIndex(index)}
                             className={`aspect-square relative rounded-lg overflow-hidden transition-all duration-200 ${

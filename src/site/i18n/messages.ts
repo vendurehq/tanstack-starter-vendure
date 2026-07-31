@@ -34,7 +34,9 @@ const registrations: MessageLoaders[] = [
 const loaders: Record<string, MessageLoader[]> = {};
 for (const registration of registrations) {
     for (const [locale, load] of Object.entries(registration)) {
-        (loaders[locale] ??= []).push(load);
+        const list = loaders[locale] ?? [];
+        list.push(load);
+        loaders[locale] = list;
     }
 }
 

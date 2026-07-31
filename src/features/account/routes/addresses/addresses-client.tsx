@@ -133,7 +133,7 @@ export function AddressesClient({ addresses, countries }: AddressesClientProps) 
         setIsSubmitting(true);
         try {
             if (editingAddress) {
-                await updateCustomerAddress({data});
+                await updateCustomerAddress({data: {...data, id: editingAddress.id}});
             } else {
                 await createCustomerAddress({data});
             }
