@@ -5,13 +5,28 @@ import {getActiveCurrencyCodeOnServer} from '@/features/currency/active-currency
 import {createServerFn} from '@tanstack/react-start';
 import {z} from 'zod';
 
+export type CartActionResult =
+    | {success: true}
+    | {success: false; errorCode: string; message: string};
+
+function toCartActionResult(
+    result: {__typename: string; errorCode?: string; message?: string},
+): CartActionResult {
+    if (result.__typename === 'Order') return {success: true};
+    return {
+        success: false,
+        errorCode: result.errorCode ?? 'UNKNOWN',
+        message: result.message ?? 'Unknown error',
+    };
+}
+
 export const removeFromCart = createServerFn({method: 'POST'})
     .validator(z.object({lineId: z.string().min(1)}))
     .handler(async ({data}) => {
         const currencyCode = await getActiveCurrencyCodeOnServer();
         const result = await mutateOnServer(RemoveFromCartMutation, data, {useAuthToken: true, currencyCode});
         if (result.token) setAuthToken(result.token);
-        return {success: true};
+        return toCartActionResult(result.data.removeOrderLine);
     });
 
 export const adjustQuantity = createServerFn({method: 'POST'})
@@ -20,7 +35,7 @@ export const adjustQuantity = createServerFn({method: 'POST'})
         const currencyCode = await getActiveCurrencyCodeOnServer();
         const result = await mutateOnServer(AdjustCartItemMutation, data, {useAuthToken: true, currencyCode});
         if (result.token) setAuthToken(result.token);
-        return {success: true};
+        return toCartActionResult(result.data.adjustOrderLine);
     });
 
 export const applyPromotionCode = createServerFn({method: 'POST'})
@@ -29,7 +44,7 @@ export const applyPromotionCode = createServerFn({method: 'POST'})
         const currencyCode = await getActiveCurrencyCodeOnServer();
         const result = await mutateOnServer(ApplyPromotionCodeMutation, {couponCode: data.code}, {useAuthToken: true, currencyCode});
         if (result.token) setAuthToken(result.token);
-        return {success: true};
+        return toCartActionResult(result.data.applyCouponCode);
     });
 
 export const removePromotionCode = createServerFn({method: 'POST'})
@@ -38,5 +53,5 @@ export const removePromotionCode = createServerFn({method: 'POST'})
         const currencyCode = await getActiveCurrencyCodeOnServer();
         const result = await mutateOnServer(RemovePromotionCodeMutation, {couponCode: data.code}, {useAuthToken: true, currencyCode});
         if (result.token) setAuthToken(result.token);
-        return {success: true};
+        return {success: true} as const;
     });

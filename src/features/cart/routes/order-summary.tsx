@@ -1,4 +1,4 @@
-import { Link } from '@/platform/tanstack/navigation';
+import { Link } from '@tanstack/react-router';
 import {Button} from '@/components/ui/button';
 import {Lock} from 'lucide-react';
 import {Price} from '@/features/pricing/price';
@@ -58,14 +58,14 @@ export function OrderSummary({activeOrder}: { activeOrder: ActiveOrder }) {
                 </div>
             </div>
 
-            <Button render={<Link href="/checkout" />} nativeButton={false} className="w-full" size="lg">{t('proceedToCheckout')}</Button>
+            <Button render={<Link to="/checkout" />} nativeButton={false} className="w-full" size="lg">{t('proceedToCheckout')}</Button>
 
             <div className="flex items-center justify-center gap-1.5 mt-3 text-xs text-muted-foreground">
                 <Lock className="h-3 w-3" />
                 <span>{t('secureCheckout')}</span>
             </div>
 
-            <Button render={<Link href="/" />} nativeButton={false} variant="outline" className="w-full mt-3">{t('continueShopping')}</Button>
+            <Button render={<Link to="/" />} nativeButton={false} variant="outline" className="w-full mt-3">{t('continueShopping')}</Button>
         </div>
     );
 }

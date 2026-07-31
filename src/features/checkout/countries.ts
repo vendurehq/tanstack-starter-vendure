@@ -1,5 +1,5 @@
 import {cachedPublicData} from '@/platform/cache/public-cache';
-import {query} from '@/platform/vendure/api';
+import {queryOnServer} from '@/platform/vendure/api.server';
 import {GetAvailableCountriesQuery} from './graphql';
 
 export async function getAvailableCountriesCached(locale: string) {
@@ -8,7 +8,7 @@ export async function getAvailableCountriesCached(locale: string) {
         tags: [`countries-${locale}`],
         ttlMs: 24 * 60 * 60 * 1000,
         load: async () => {
-            const result = await query(GetAvailableCountriesQuery, undefined, {languageCode: locale});
+            const result = await queryOnServer(GetAvailableCountriesQuery, {}, {languageCode: locale});
             return result.data.availableCountries || [];
         },
     });

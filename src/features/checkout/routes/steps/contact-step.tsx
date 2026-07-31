@@ -7,7 +7,8 @@ import { Field, FieldLabel, FieldError, FieldGroup } from '@/components/ui/field
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useForm } from 'react-hook-form';
 import { Loader2, AlertCircle } from 'lucide-react';
-import { Link, useRouter } from '@/platform/tanstack/navigation';
+import {useRouter} from '@/platform/tanstack/navigation';
+import {Link} from '@tanstack/react-router';
 import { setCustomerForOrder, type SetCustomerForOrderResult } from '../actions';
 import {useTranslations} from '@/platform/i18n/paraglide';
 import {useServerFn} from '@tanstack/react-start';
@@ -43,7 +44,7 @@ export default function ContactStep({ onComplete }: ContactStepProps) {
         return (
           <>
             {t('emailConflict')}{' '}
-            <Link href="/sign-in?redirectTo=/checkout" className="underline hover:no-underline">
+            <Link to="/sign-in" search={{redirectTo: '/checkout'}} className="underline hover:no-underline">
               {t('emailConflictSignIn')}
             </Link>{' '}
             {t('emailConflictSuffix')}
@@ -55,7 +56,7 @@ export default function ContactStep({ onComplete }: ContactStepProps) {
         return (
           <>
             {t('cartEmpty')}{' '}
-            <Link href="/" className="underline hover:no-underline">
+            <Link to="/" className="underline hover:no-underline">
               {t('cartEmptyShop')}
             </Link>
           </>
@@ -73,7 +74,7 @@ export default function ContactStep({ onComplete }: ContactStepProps) {
       const result = await setCustomer({data});
 
       if (result.success) {
-        router.refresh();
+        await router.refresh();
         onComplete();
       } else {
         setError(result);
@@ -90,7 +91,7 @@ export default function ContactStep({ onComplete }: ContactStepProps) {
     <div className="space-y-6">
       <p className="text-sm text-muted-foreground">
         {t('alreadyHaveAccount')}{' '}
-        <Link href="/sign-in?redirectTo=/checkout" className="text-primary underline hover:no-underline">
+        <Link to="/sign-in" search={{redirectTo: '/checkout'}} className="text-primary underline hover:no-underline">
           {t('signInLink')}
         </Link>
       </p>

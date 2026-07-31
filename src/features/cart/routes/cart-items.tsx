@@ -1,11 +1,12 @@
 'use client';
 
 import Image from '@/components/storefront-image';
-import { Link } from '@/platform/tanstack/navigation';
+import { Link } from '@tanstack/react-router';
 import {Button} from '@/components/ui/button';
 import {Minus, Plus, X} from 'lucide-react';
 import {Price} from '@/features/pricing/price';
-import {removeFromCart, adjustQuantity} from './actions';
+import {removeFromCart, adjustQuantity, type CartActionResult} from './actions';
+import {toast} from 'sonner';
 import {useTranslations} from '@/platform/i18n/paraglide';
 import {useServerFn} from '@tanstack/react-start';
 import {useRouter} from '@/platform/tanstack/navigation';
@@ -40,9 +41,10 @@ export function CartItems({activeOrder}: { activeOrder: ActiveOrder | null }) {
     const [isPending, startTransition] = useTransition();
     const adjust = useServerFn(adjustQuantity);
     const remove = useServerFn(removeFromCart);
-    const run = (mutation: () => Promise<unknown>) => startTransition(async () => {
-        await mutation();
+    const run = (mutation: () => Promise<CartActionResult>) => startTransition(async () => {
+        const result = await mutation();
         await router.refresh();
+        if (!result.success) toast.error(result.message);
     });
     if (!activeOrder || activeOrder.lines.length === 0) {
         return (
@@ -52,7 +54,7 @@ export function CartItems({activeOrder}: { activeOrder: ActiveOrder | null }) {
                     <p className="text-muted-foreground mb-8">
                         {t('emptyMessage')}
                     </p>
-                    <Button render={<Link href="/" />} nativeButton={false}>{t('continueShopping')}</Button>
+                    <Button render={<Link to="/" />} nativeButton={false}>{t('continueShopping')}</Button>
                 </div>
             </div>
         );
@@ -67,7 +69,8 @@ export function CartItems({activeOrder}: { activeOrder: ActiveOrder | null }) {
                 >
                     {line.productVariant.product.featuredAsset && (
                         <Link
-                            href={`/product/${line.productVariant.product.slug}`}
+                            to="/product/$slug"
+                            params={{slug: line.productVariant.product.slug}}
                             className="flex-shrink-0"
                         >
                             <Image
@@ -82,7 +85,8 @@ export function CartItems({activeOrder}: { activeOrder: ActiveOrder | null }) {
 
                     <div className="flex-grow min-w-0">
                         <Link
-                            href={`/product/${line.productVariant.product.slug}`}
+                            to="/product/$slug"
+                            params={{slug: line.productVariant.product.slug}}
                             className="font-semibold hover:underline block"
                         >
                             {line.productVariant.product.name}
