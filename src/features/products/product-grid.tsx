@@ -1,8 +1,10 @@
 import type { SearchProductsData } from "@/features/search/search-products-data";
 import { SortDropdown } from "@/features/search/sort-dropdown";
 import { useTranslations } from "@/platform/i18n/paraglide";
+import { readFragment } from "@/platform/vendure/graphql";
 import { Pagination } from "./components/pagination";
 import { ProductCard } from "./components/product-card";
+import { ProductCardFragment } from "./graphql";
 
 interface ProductGridProps {
 	productData: SearchProductsData;
@@ -37,8 +39,11 @@ export function ProductGrid({
 			</div>
 
 			<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-				{searchResult.items.map((product, i) => (
-					<ProductCard key={`product-grid-item${i}`} product={product} />
+				{searchResult.items.map((product) => (
+					<ProductCard
+						key={readFragment(ProductCardFragment, product).productId}
+						product={product}
+					/>
 				))}
 			</div>
 

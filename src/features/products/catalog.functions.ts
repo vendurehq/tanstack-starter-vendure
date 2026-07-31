@@ -1,60 +1,95 @@
-import {GetProductDetailQuery} from '@/features/products/graphql';
-import {GetCollectionProductsQuery} from '@/features/collections/graphql';
-import {getActiveCurrencyCodeOnServer} from '@/features/currency/active-currency.server';
-import {cachedPublicData} from '@/platform/cache/public-cache';
-import {getLocale} from '@/paraglide/runtime';
-import {queryOnServer} from '@/platform/vendure/api.server';
-import {truncateDescription} from '@/config/metadata';
-import {createServerFn} from '@tanstack/react-start';
-import {z} from 'zod';
+import { createServerFn } from "@tanstack/react-start";
+import { z } from "zod";
+import { truncateDescription } from "@/config/metadata";
+import { GetCollectionProductsQuery } from "@/features/collections/graphql";
+import { getActiveCurrencyCodeOnServer } from "@/features/currency/active-currency.server";
+import { getLocale } from "@/paraglide/runtime";
+import { cachedPublicData } from "@/platform/cache/public-cache";
+import { queryOnServer } from "@/platform/vendure/api.server";
+import { readFragment } from "@/platform/vendure/graphql";
+import { GetProductDetailQuery, ProductCardFragment } from "./graphql";
+import { getDisplayOptionGroups } from "./product-options";
 
-export const getProductRouteData = createServerFn({method: 'GET'})
-    .validator(z.object({slug: z.string().min(1)}))
-    .handler(async ({data}) => {
-        const locale = getLocale();
-        const currency = await getActiveCurrencyCodeOnServer();
-        return cachedPublicData({
-            key: `product:route:${data.slug}:${locale}:${currency}`,
-            tags: [`product-${data.slug}-${locale}-${currency}`],
-            ttlMs: 30_000,
-            load: async () => {
-                const result = await queryOnServer(GetProductDetailQuery, {slug: data.slug}, {
-                    languageCode: locale,
-                    currencyCode: currency,
-                });
-                const product = result.data.product;
-                if (!product) return null;
-                return {
-                    title: product.name,
-                    description: truncateDescription(product.description),
-                    path: `/product/${product.slug}`,
-                    image: product.assets?.[0]?.preview ?? null,
-                };
-            },
-        });
-    });
+export const getRelatedProducts = createServerFn({ method: "GET" })
+	.validator(
+		z.object({
+			collectionSlug: z.string().min(1),
+			currentProductId: z.string().min(1),
+		}),
+	)
+	.handler(async ({ data }) => {
+		const locale = getLocale();
+		const currencyCode = await getActiveCurrencyCodeOnServer();
+		const items = await cachedPublicData({
+			key: `related-products:${data.collectionSlug}:${locale}:${currencyCode}`,
+			tags: [
+				`related-products-${data.collectionSlug}-${locale}-${currencyCode}`,
+			],
+			ttlMs: 60 * 60 * 1000,
+			load: async () => {
+				const result = await queryOnServer(
+					GetCollectionProductsQuery,
+					{
+						slug: data.collectionSlug,
+						input: {
+							collectionSlug: data.collectionSlug,
+							take: 13,
+							skip: 0,
+							groupByProduct: true,
+						},
+					},
+					{ languageCode: locale, currencyCode },
+				);
+				return result.data.search.items;
+			},
+		});
 
-export const getCollectionRouteData = createServerFn({method: 'GET'})
-    .validator(z.object({slug: z.string().min(1)}))
-    .handler(async ({data}) => {
-        const locale = getLocale();
-        return cachedPublicData({
-            key: `collection:route:${data.slug}:${locale}`,
-            tags: [`collection-meta-${data.slug}-${locale}`],
-            ttlMs: 30_000,
-            load: async () => {
-                const result = await queryOnServer(GetCollectionProductsQuery, {
-                    slug: data.slug,
-                    input: {take: 0, collectionSlug: data.slug, groupByProduct: true},
-                }, {languageCode: locale});
-                const collection = result.data.collection;
-                if (!collection) return null;
-                return {
-                    title: collection.name,
-                    description: truncateDescription(collection.description),
-                    path: `/collection/${collection.slug}`,
-                    image: collection.featuredAsset?.preview ?? null,
-                };
-            },
-        });
-    });
+		return items
+			.filter(
+				(item) =>
+					readFragment(ProductCardFragment, item).productId !==
+					data.currentProductId,
+			)
+			.slice(0, 12);
+	});
+
+export const getProductPageData = createServerFn({ method: "GET" })
+	.validator(z.object({ slug: z.string().min(1) }))
+	.handler(async ({ data }) => {
+		const locale = getLocale();
+		const currencyCode = await getActiveCurrencyCodeOnServer();
+		const result = await cachedPublicData({
+			key: `product:detail:${data.slug}:${locale}:${currencyCode}`,
+			tags: [`product-${data.slug}-${locale}-${currencyCode}`],
+			ttlMs: 60 * 60 * 1000,
+			load: () =>
+				queryOnServer(
+					GetProductDetailQuery,
+					{ slug: data.slug },
+					{ languageCode: locale, currencyCode },
+				),
+		});
+		const product = result.data.product;
+		if (!product) return null;
+
+		const primaryCollection =
+			product.collections?.find((collection) => collection.parent?.id) ??
+			product.collections?.[0];
+		return {
+			metadata: {
+				title: product.name,
+				description: truncateDescription(product.description),
+				path: `/product/${product.slug}`,
+				image: product.assets?.[0]?.preview ?? null,
+			},
+			data: {
+				product,
+				primaryCollection,
+				productForDisplay: {
+					...product,
+					optionGroups: getDisplayOptionGroups(product),
+				},
+				currencyCode,
+			},
+		};
+	});

@@ -1,3 +1,5 @@
+import type { CatalogSearch, CatalogSort } from "@/platform/tanstack/search";
+
 export interface SearchInputParams {
 	term?: string;
 	collectionSlug?: string;
@@ -8,12 +10,7 @@ export interface SearchInputParams {
 	facetValueFilters?: Array<{ and: string }>;
 }
 
-export interface CatalogSearchParams {
-	q?: string;
-	page?: string | number;
-	sort?: string;
-	facets?: string | string[];
-}
+export type CatalogSearchParams = CatalogSearch;
 
 interface BuildSearchInputOptions {
 	searchParams: CatalogSearchParams;
@@ -24,43 +21,33 @@ export function buildSearchInput({
 	searchParams,
 	collectionSlug,
 }: BuildSearchInputOptions): SearchInputParams {
-	const page = Number(searchParams.page) || 1;
 	const take = 12;
-	const skip = (page - 1) * take;
-	const sort = (searchParams.sort as string) || "name-asc";
-	const searchTerm = searchParams.q as string;
-
-	// Extract facet value IDs from search params
-	const facetValueIds = searchParams.facets
-		? Array.isArray(searchParams.facets)
-			? searchParams.facets
-			: [searchParams.facets]
-		: [];
+	const skip = (searchParams.page - 1) * take;
 
 	// Map sort parameter to Vendure SearchResultSortParameter
-	const sortMapping: Record<
-		string,
-		{ name?: "ASC" | "DESC"; price?: "ASC" | "DESC" }
-	> = {
+	const sortMapping = {
 		"name-asc": { name: "ASC" },
 		"name-desc": { name: "DESC" },
 		"price-asc": { price: "ASC" },
 		"price-desc": { price: "DESC" },
-	};
+	} satisfies Record<
+		CatalogSort,
+		{ name?: "ASC" | "DESC"; price?: "ASC" | "DESC" }
+	>;
 
 	return {
-		...(searchTerm && { term: searchTerm }),
+		...(searchParams.q && { term: searchParams.q }),
 		...(collectionSlug && { collectionSlug }),
 		take,
 		skip,
 		groupByProduct: true,
-		sort: sortMapping[sort] || sortMapping["name-asc"],
-		...(facetValueIds.length > 0 && {
-			facetValueFilters: facetValueIds.map((id) => ({ and: id })),
+		sort: sortMapping[searchParams.sort],
+		...(searchParams.facets.length > 0 && {
+			facetValueFilters: searchParams.facets.map((id) => ({ and: id })),
 		}),
 	};
 }
 
 export function getCurrentPage(searchParams: CatalogSearchParams): number {
-	return Number(searchParams.page) || 1;
+	return searchParams.page;
 }

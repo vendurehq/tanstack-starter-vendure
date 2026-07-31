@@ -16,13 +16,33 @@ export const tokenSearchSchema = z.object({
 	token: optionalString,
 	redirectTo: optionalRedirect,
 });
+
+export const catalogSortSchema = z.enum([
+	"name-asc",
+	"name-desc",
+	"price-asc",
+	"price-desc",
+]);
+
 export const catalogSearchSchema = z.object({
-	q: optionalString,
+	q: optionalString.transform((value) => value?.trim() || undefined),
 	page: z.coerce.number().int().positive().catch(1),
-	sort: optionalString,
-	facets: z.preprocess(
-		(value) => (value === undefined ? [] : Array.isArray(value) ? value : [value]),
-		z.array(z.string()),
-	),
+	sort: catalogSortSchema.catch("name-asc"),
+	facets: z.preprocess((value) => {
+		const values =
+			value === undefined ? [] : Array.isArray(value) ? value : [value];
+		return [
+			...new Set(
+				values
+					.filter((item): item is string => typeof item === "string")
+					.map((item) => item.trim())
+					.filter(Boolean),
+			),
+		];
+	}, z.array(z.string())),
 });
+
+export type CatalogSearch = z.infer<typeof catalogSearchSchema>;
+export type CatalogSort = z.infer<typeof catalogSortSchema>;
+
 export const productSearchSchema = z.record(z.string(), z.string().optional());

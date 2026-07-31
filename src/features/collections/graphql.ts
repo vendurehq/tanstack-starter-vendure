@@ -1,5 +1,5 @@
-import {graphql} from '@/platform/vendure/graphql';
-import {ProductCardFragment} from '@/features/products/graphql';
+import { ProductCardFragment } from "@/features/products/graphql";
+import { graphql } from "@/platform/vendure/graphql";
 
 export const GetTopCollectionsQuery = graphql(`
     query GetTopCollections {
@@ -13,7 +13,8 @@ export const GetTopCollectionsQuery = graphql(`
     }
 `);
 
-export const GetCollectionProductsQuery = graphql(`
+export const GetCollectionProductsQuery = graphql(
+	`
     query GetCollectionProducts($slug: String!, $input: SearchInput!) {
         collection(slug: $slug) {
             id
@@ -32,4 +33,41 @@ export const GetCollectionProductsQuery = graphql(`
             }
         }
     }
-`, [ProductCardFragment]);
+`,
+	[ProductCardFragment],
+);
+
+export const GetCollectionPageQuery = graphql(
+	`
+    query GetCollectionPage($slug: String!, $input: SearchInput!) {
+        collection(slug: $slug) {
+            id
+            name
+            slug
+            description
+            featuredAsset {
+                id
+                preview
+            }
+        }
+        search(input: $input) {
+            totalItems
+            items {
+                ...ProductCard
+            }
+            facetValues {
+                count
+                facetValue {
+                    id
+                    name
+                    facet {
+                        id
+                        name
+                    }
+                }
+            }
+        }
+    }
+`,
+	[ProductCardFragment],
+);
