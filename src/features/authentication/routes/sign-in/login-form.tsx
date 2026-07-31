@@ -17,7 +17,7 @@ import {
     FormLabel,
     FormMessage,
 } from '@/components/ui/form';
-import { Link } from '@/platform/tanstack/navigation';
+import {Link} from '@tanstack/react-router';
 import {useTranslations} from '@/platform/i18n/paraglide';
 import {useServerFn} from '@tanstack/react-start';
 
@@ -57,10 +57,6 @@ export function LoginForm({redirectTo}: LoginFormProps) {
         });
     };
 
-    const registerHref = redirectTo
-        ? `/register?redirectTo=${encodeURIComponent(redirectTo)}`
-        : '/register';
-
     return (
         <Card>
             <Form {...form}>
@@ -93,7 +89,7 @@ export function LoginForm({redirectTo}: LoginFormProps) {
                                     <div className="flex items-center justify-between">
                                         <FormLabel>{t('password')}</FormLabel>
                                         <Link
-                                            href="/forgot-password"
+                                            to="/forgot-password"
                                             className="text-muted-foreground hover:text-primary text-sm"
                                         >
                                             {t('forgotPassword')}
@@ -124,7 +120,7 @@ export function LoginForm({redirectTo}: LoginFormProps) {
                     <CardFooter className="flex flex-col space-y-4 mt-2">
                         <div className="text-muted-foreground text-sm text-center">
                             {t('noAccount')}{' '}
-                            <Link href={registerHref} className="hover:text-primary underline">
+                            <Link to="/register" search={{redirectTo}} className="hover:text-primary underline">
                                 {t('register')}
                             </Link>
                         </div>

@@ -17,7 +17,7 @@ import {
     FormLabel,
     FormMessage,
 } from '@/components/ui/form';
-import { Link } from '@/platform/tanstack/navigation';
+import { Link } from '@tanstack/react-router';
 import {useTranslations} from '@/platform/i18n/paraglide';
 import {useServerFn} from '@tanstack/react-start';
 
@@ -77,10 +77,6 @@ export function RegistrationForm({ redirectTo }: RegistrationFormProps) {
             }
         });
     };
-
-    const signInHref = redirectTo
-        ? `/sign-in?redirectTo=${encodeURIComponent(redirectTo)}`
-        : '/sign-in';
 
     return (
         <Card>
@@ -215,7 +211,7 @@ export function RegistrationForm({ redirectTo }: RegistrationFormProps) {
 
                         <div className="text-sm text-center text-muted-foreground">
                             {t('alreadyHaveAccount')}{' '}
-                            <Link href={signInHref} className="hover:text-primary underline">
+                            <Link to="/sign-in" search={{redirectTo}} className="hover:text-primary underline">
                                 {t('signInLink')}
                             </Link>
                         </div>

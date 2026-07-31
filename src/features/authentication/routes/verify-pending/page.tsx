@@ -1,15 +1,11 @@
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Link } from '@/platform/tanstack/navigation';
+import {Link} from '@tanstack/react-router';
 import { CheckCircle } from 'lucide-react';
 import {useTranslations} from '@/platform/i18n/paraglide';
 
 function VerifyPendingContent({redirectTo}: {redirectTo?: string}) {
     const t = useTranslations('Verify');
-
-    const signInHref = redirectTo
-        ? `/sign-in?redirectTo=${encodeURIComponent(redirectTo)}`
-        : '/sign-in';
 
     return (
         <Card>
@@ -30,11 +26,9 @@ function VerifyPendingContent({redirectTo}: {redirectTo?: string}) {
                 </div>
             </CardContent>
             <CardFooter className="flex flex-col space-y-2">
-                <Link href={signInHref} className="w-full">
-                    <Button className="w-full">
-                        {t('pending.goToSignIn')}
-                    </Button>
-                </Link>
+                <Button render={<Link to="/sign-in" search={{redirectTo}} />} nativeButton={false} className="w-full">
+                    {t('pending.goToSignIn')}
+                </Button>
             </CardFooter>
         </Card>
     );
