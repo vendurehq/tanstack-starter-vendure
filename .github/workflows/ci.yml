@@ -17,6 +17,7 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
+      - run: npm run generate
       - if: github.event_name == 'pull_request'
         run: npm run upgrade:validate -- --base origin/${{ github.base_ref }}
       - if: github.event_name != 'pull_request'
