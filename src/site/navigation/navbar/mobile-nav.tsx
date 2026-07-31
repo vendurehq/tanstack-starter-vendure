@@ -1,5 +1,3 @@
-'use client';
-
 import {useState} from 'react';
 import { Link, useRouter } from '@/platform/tanstack/navigation';
 import {Menu, Search, ShoppingBag, User, Package, MapPin} from 'lucide-react';

@@ -1,5 +1,3 @@
-'use client';
-
 import {ShoppingCart} from "lucide-react";
 import {Button} from "@/components/ui/button";
 import { Link } from '@/platform/tanstack/navigation';

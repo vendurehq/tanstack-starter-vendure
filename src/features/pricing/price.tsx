@@ -1,5 +1,3 @@
-'use client';
-
 import {useLocale} from '@/platform/i18n/paraglide';
 import {toIntlLocale} from '@/platform/i18n/locale-utils';
 

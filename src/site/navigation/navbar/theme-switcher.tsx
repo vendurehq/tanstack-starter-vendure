@@ -1,5 +1,3 @@
-"use client";
-
 import {useTheme} from "@/site/providers/theme-provider";
 import {useEffect, useState} from "react";
 import {Moon, Sun, Monitor} from "lucide-react";

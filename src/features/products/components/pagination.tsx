@@ -1,5 +1,3 @@
-'use client';
-
 import {useSearchParams} from '@/platform/tanstack/navigation';
 import {usePathname, Link} from '@/platform/tanstack/navigation';
 import {ChevronLeft, ChevronRight} from 'lucide-react';

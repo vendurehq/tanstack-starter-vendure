@@ -1,5 +1,3 @@
-'use client';
-
 import { createContext, useContext, type ReactNode, useState } from 'react';
 import type { CheckoutOrder } from './types';
 

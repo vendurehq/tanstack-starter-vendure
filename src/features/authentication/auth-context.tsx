@@ -1,5 +1,3 @@
-'use client';
-
 import {createContext, type ReactNode, useContext} from 'react';
 import type {ResultOf} from '@/platform/vendure/graphql';
 import type {ActiveCustomerFragment} from '@/features/account/graphql';

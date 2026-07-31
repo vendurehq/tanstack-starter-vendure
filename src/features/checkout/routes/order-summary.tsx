@@ -1,5 +1,3 @@
-'use client';
-
 import { useState } from 'react';
 import Image from '@/components/storefront-image';
 import { ChevronDown, ShoppingBag } from 'lucide-react';

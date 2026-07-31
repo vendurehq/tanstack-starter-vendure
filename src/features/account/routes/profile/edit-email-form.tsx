@@ -1,5 +1,3 @@
-'use client';
-
 import { useActionState, useEffect } from 'react';
 import { requestEmailUpdateAction } from './actions';
 import { Button } from '@/components/ui/button';

@@ -1,5 +1,3 @@
-'use client';
-
 import {useTranslations} from '@/platform/i18n/paraglide';
 import {Coins} from 'lucide-react';
 import {Button} from '@/components/ui/button';

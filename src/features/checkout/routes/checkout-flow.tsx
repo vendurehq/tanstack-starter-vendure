@@ -1,5 +1,3 @@
-'use client';
-
 import { useState } from 'react';
 import { Check } from 'lucide-react';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
