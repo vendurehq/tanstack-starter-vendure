@@ -1,28 +1,13 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import {UpdateCustomerEmailAddressMutation} from '@/features/account/graphql';
 import {useTranslations} from '@/platform/i18n/paraglide';
 import { Link } from '@/platform/tanstack/navigation';
-import { mutate } from '@/platform/vendure/api';
 
-type VerificationResult =
+export type VerificationResult =
     | {kind: 'invalid'}
     | {kind: 'success'}
     | {kind: 'failed'; message?: string}
     | {kind: 'error'};
-
-export async function loadEmailVerification(token?: string): Promise<VerificationResult> {
-    if (!token) return {kind: 'invalid'};
-    try {
-        const result = await mutate(UpdateCustomerEmailAddressMutation, {token}, {useAuthToken: true});
-        const updateResult = result.data.updateCustomerEmailAddress;
-        return updateResult.__typename === 'Success'
-            ? {kind: 'success'}
-            : {kind: 'failed', message: updateResult.message};
-    } catch {
-        return {kind: 'error'};
-    }
-}
 
 export default function VerifyEmailPage({result}: {result: VerificationResult}) {
     const t = useTranslations('Account');
