@@ -1,10 +1,21 @@
-import { HeadContent, Scripts, createRootRoute } from '@tanstack/react-router'
+import { HeadContent, ScriptOnce, Scripts, createRootRoute } from '@tanstack/react-router'
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { TanStackDevtools } from '@tanstack/react-devtools'
 
-import appCss from '../styles.css?url'
+import '@fontsource-variable/geist'
+import '@fontsource-variable/geist-mono'
+import { SITE_NAME } from '@/config/metadata'
+import { getLocale } from '@/paraglide/runtime'
+import { LocaleLayout } from '@/site/locale-layout'
+import { themeScript } from '@/site/providers/theme-provider'
+import { Button } from '@/components/ui/button'
+import { Link } from '@/platform/tanstack/navigation'
+import { m } from '@/paraglide/messages.js'
+import appCss from '../storefront.css?url'
+import { getShellData } from '@/site/shell.functions'
 
 export const Route = createRootRoute({
+  loader: () => getShellData(),
   head: () => ({
     meta: [
       {
@@ -15,7 +26,7 @@ export const Route = createRootRoute({
         content: 'width=device-width, initial-scale=1',
       },
       {
-        title: 'TanStack Start Starter',
+        title: SITE_NAME,
       },
     ],
     links: [
@@ -25,17 +36,40 @@ export const Route = createRootRoute({
       },
     ],
   }),
+  notFoundComponent: StorefrontNotFound,
+  errorComponent: StorefrontError,
   shellComponent: RootDocument,
 })
 
+function StorefrontNotFound() {
+  return (
+    <main className="container mx-auto flex min-h-[60vh] max-w-xl flex-col items-center justify-center gap-4 px-4 text-center">
+      <h1 className="text-4xl font-bold">{m.NotFound_title()}</h1>
+      <p className="text-muted-foreground">{m.NotFound_message()}</p>
+      <Button render={<Link href="/" />} nativeButton={false}>{m.NotFound_goHome()}</Button>
+    </main>
+  )
+}
+
+function StorefrontError({error, reset}: {error: Error; reset: () => void}) {
+  return (
+    <main className="container mx-auto flex min-h-[60vh] max-w-xl flex-col items-center justify-center gap-4 px-4 text-center">
+      <h1 className="text-3xl font-bold">Something went wrong</h1>
+      <p className="text-muted-foreground">{error.message}</p>
+      <Button onClick={reset}>Try again</Button>
+    </main>
+  )
+}
+
 function RootDocument({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang={getLocale()} data-scroll-behavior="smooth" suppressHydrationWarning>
       <head>
         <HeadContent />
       </head>
-      <body>
-        {children}
+      <body className="flex min-h-screen flex-col antialiased">
+        <ScriptOnce>{themeScript}</ScriptOnce>
+        <LocaleLayout>{children}</LocaleLayout>
         <TanStackDevtools
           config={{
             position: 'bottom-right',

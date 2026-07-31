@@ -1,0 +1,20 @@
+{
+  "Cart_title": "Warenkorb",
+  "Cart_empty": "Ihr Warenkorb ist leer",
+  "Cart_emptyMessage": "Fügen Sie Artikel zu Ihrem Warenkorb hinzu, um loszulegen",
+  "Cart_continueShopping": "Weiter einkaufen",
+  "Cart_each": "pro Stück",
+  "Cart_orderSummary": "Bestellübersicht",
+  "Cart_subtotal": "Zwischensumme",
+  "Cart_shipping": "Versand",
+  "Cart_calculatedAtCheckout": "Wird an der Kasse berechnet",
+  "Cart_total": "Gesamt",
+  "Cart_proceedToCheckout": "Zur Kasse",
+  "Cart_secureCheckout": "Sicherer Checkout",
+  "Cart_promotionCode": "Gutscheincode",
+  "Cart_enterDiscountCode": "Geben Sie Ihren Rabattcode unten ein",
+  "Cart_remove": "Entfernen",
+  "Cart_enterCode": "Code eingeben",
+  "Cart_apply": "Einlösen",
+  "Cart_sku": "Art.-Nr.: {sku}"
+}

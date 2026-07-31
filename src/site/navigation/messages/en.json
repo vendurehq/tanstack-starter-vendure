@@ -1,0 +1,17 @@
+{
+  "Navigation_openMenu": "Open menu",
+  "Navigation_menu": "Menu",
+  "Navigation_searchProducts": "Search products...",
+  "Navigation_shopAll": "Shop All",
+  "Navigation_collections": "Collections",
+  "Navigation_account": "Account",
+  "Navigation_profile": "Profile",
+  "Navigation_orders": "Orders",
+  "Navigation_addresses": "Addresses",
+  "Navigation_signIn": "Sign in",
+  "Navigation_signOut": "Sign out",
+  "Navigation_greeting": "Hi, {name}",
+  "Navigation_shoppingCart": "Shopping Cart",
+  "Navigation_switchLanguage": "Switch language",
+  "Navigation_switchCurrency": "Switch currency"
+}

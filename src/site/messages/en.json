@@ -1,0 +1,19 @@
+{
+  "NotFound_title": "Page Not Found",
+  "NotFound_message": "The page you are looking for does not exist, has been moved, or is temporarily unavailable.",
+  "NotFound_goHome": "Go to Home",
+  "NotFound_browseProducts": "Browse Products",
+  "NotFound_popularCollections": "Popular Collections",
+  "Footer_description": "A modern, headless e-commerce storefront built with Vendure and TanStack Start. Fast, flexible, and ready for production.",
+  "Footer_categories": "Categories",
+  "Footer_customer": "Customer",
+  "Footer_shopAll": "Shop All",
+  "Footer_orders": "Orders",
+  "Footer_account": "Account",
+  "Footer_vendure": "Vendure",
+  "Footer_github": "GitHub",
+  "Footer_documentation": "Documentation",
+  "Footer_sourceCode": "Source Code",
+  "Footer_copyright": "Vendure Store. All rights reserved.",
+  "Footer_poweredBy": "Powered by"
+}

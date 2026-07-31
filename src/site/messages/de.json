@@ -1,0 +1,19 @@
+{
+  "NotFound_title": "Seite nicht gefunden",
+  "NotFound_message": "Die gesuchte Seite existiert nicht, wurde verschoben oder ist vorübergehend nicht verfügbar.",
+  "NotFound_goHome": "Zur Startseite",
+  "NotFound_browseProducts": "Produkte durchsuchen",
+  "NotFound_popularCollections": "Beliebte Kategorien",
+  "Footer_description": "Ein moderner, Headless-E-Commerce-Shop, erstellt mit Vendure und TanStack Start. Schnell, flexibel und produktionsbereit.",
+  "Footer_categories": "Kategorien",
+  "Footer_customer": "Kunde",
+  "Footer_shopAll": "Alle Produkte",
+  "Footer_orders": "Bestellungen",
+  "Footer_account": "Konto",
+  "Footer_vendure": "Vendure",
+  "Footer_github": "GitHub",
+  "Footer_documentation": "Dokumentation",
+  "Footer_sourceCode": "Quellcode",
+  "Footer_copyright": "Vendure Store. Alle Rechte vorbehalten.",
+  "Footer_poweredBy": "Powered by"
+}
