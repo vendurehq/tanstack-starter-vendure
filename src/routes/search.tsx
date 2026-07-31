@@ -1,14 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { getActiveCurrencyCode } from "@/features/currency/currency-server";
-import { SearchProductsQuery } from "@/features/search/graphql";
 import Loading from "@/features/search/routes/loading";
 import Page from "@/features/search/routes/page";
-import { buildSearchInput } from "@/features/search/search-helpers";
+import { getSearchPageData } from "@/features/search/search.functions";
 import { m } from "@/paraglide/messages.js";
-import { getRouteLocale } from "@/platform/i18n/server";
 import { storefrontHead } from "@/platform/tanstack/head";
 import { catalogSearchSchema } from "@/platform/tanstack/search";
-import { query } from "@/platform/vendure/api";
 
 export const Route = createFileRoute("/search")({
 	validateSearch: catalogSearchSchema,
@@ -18,15 +14,8 @@ export const Route = createFileRoute("/search")({
 		sort,
 		facets,
 	}),
-	loader: async ({ deps }) => {
-		const locale = await getRouteLocale();
-		const currencyCode = await getActiveCurrencyCode();
-		return query(
-			SearchProductsQuery,
-			{ input: buildSearchInput({ searchParams: deps }) },
-			{ languageCode: locale, currencyCode },
-		);
-	},
+	loader: ({ deps }) => getSearchPageData({ data: deps }),
+	staleTime: 30_000,
 	head: () =>
 		storefrontHead({
 			title: m.Search_pageTitle(),

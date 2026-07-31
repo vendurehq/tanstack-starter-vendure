@@ -40,6 +40,7 @@ import {
 	TransitionOrderToStateMutation,
 } from '@/features/checkout/graphql';
 import {
+	GetCollectionPageQuery,
 	GetCollectionProductsQuery,
 	GetTopCollectionsQuery,
 } from '@/features/collections/graphql';
@@ -85,6 +86,7 @@ registerShopOperations([
 	SetOrderShippingAddressMutation,
 	SetOrderShippingMethodMutation,
 	TransitionOrderToStateMutation,
+	GetCollectionPageQuery,
 	GetCollectionProductsQuery,
 	GetTopCollectionsQuery,
 	GetProductDetailQuery,
