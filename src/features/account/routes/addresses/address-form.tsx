@@ -14,7 +14,7 @@ interface Country {
   name: string;
 }
 
-interface AddressFormData {
+export interface AddressFormData {
   fullName: string;
   streetLine1: string;
   streetLine2?: string;

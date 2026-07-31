@@ -158,6 +158,7 @@ export function ProductInfo({product, searchParams, currencyCode}: ProductInfoPr
 
             {/* Product Description */}
             <div className="prose prose-sm max-w-none text-muted-foreground">
+                {/* biome-ignore lint/security/noDangerouslySetInnerHtml: renders trusted HTML from the Vendure API */}
                 <div dangerouslySetInnerHTML={{__html: product.description}}/>
             </div>
 

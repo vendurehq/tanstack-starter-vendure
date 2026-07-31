@@ -145,7 +145,9 @@ export function FacetFilters({ productData }: FacetFiltersProps) {
 			params.delete("facets");
 			current
 				.filter((id) => id !== facetId)
-				.forEach((id) => params.append("facets", id));
+				.forEach((id) => {
+					params.append("facets", id);
+				});
 		} else {
 			params.append("facets", facetId);
 		}

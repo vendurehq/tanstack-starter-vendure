@@ -2,8 +2,8 @@
 
 import {ProductCard} from "@/features/products/components/product-card";
 import {Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious,} from "@/components/ui/carousel";
-import type {FragmentOf} from "@/platform/vendure/graphql";
-import type {ProductCardFragment} from '@/features/products/graphql';
+import {type FragmentOf, readFragment} from "@/platform/vendure/graphql";
+import {ProductCardFragment} from '@/features/products/graphql';
 import {useId} from "react";
 
 interface ProductCarouselClientProps {
@@ -26,8 +26,8 @@ export function ProductCarousel({title, products}: ProductCarouselClientProps) {
                     className="w-full"
                 >
                     <CarouselContent className="-ml-2 md:-ml-4">
-                        {products.map((product, i) => (
-                            <CarouselItem key={id + i}
+                        {products.map((product) => (
+                            <CarouselItem key={id + readFragment(ProductCardFragment, product).productId}
                                           className="pl-2 md:pl-4 basis-full sm:basis-1/2 lg:basis-1/3 xl:basis-1/4">
                                 <ProductCard product={product}/>
                             </CarouselItem>

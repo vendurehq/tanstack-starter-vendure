@@ -23,7 +23,7 @@ import {
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Plus, MoreVertical, Home, CreditCard, Edit2, Trash2 } from 'lucide-react';
-import { AddressForm } from './address-form';
+import { AddressForm, type AddressFormData } from './address-form';
 import { createAddress, updateAddress, deleteAddress, setDefaultShippingAddress, setDefaultBillingAddress } from './actions';
 import { useRouter } from '@/platform/tanstack/navigation';
 import {useTranslations} from '@/platform/i18n/paraglide';
@@ -129,8 +129,7 @@ export function AddressesClient({ addresses, countries }: AddressesClientProps) 
         }
     };
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const handleSubmit = async (data: any) => {
+    const handleSubmit = async (data: AddressFormData & { id?: string }) => {
         setIsSubmitting(true);
         try {
             if (editingAddress) {

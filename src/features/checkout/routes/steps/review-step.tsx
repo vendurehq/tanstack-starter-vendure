@@ -140,6 +140,7 @@ export default function ReviewStep({ onEditStep }: ReviewStepProps) {
               <div>
                 <p className="font-medium">{selectedPaymentMethod.name}</p>
                 {selectedPaymentMethod.description && (
+                  // biome-ignore lint/security/noDangerouslySetInnerHtml: renders trusted HTML from the Vendure API
                   <p className="text-muted-foreground mt-1" dangerouslySetInnerHTML={{ __html: selectedPaymentMethod.description }} />
                 )}
               </div>

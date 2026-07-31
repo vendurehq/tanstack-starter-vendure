@@ -43,6 +43,7 @@ export default function PaymentStep({ onComplete }: PaymentStepProps) {
                 <div className="flex-1">
                   <p className="font-medium">{method.name}</p>
                   {method.description && (
+                    // biome-ignore lint/security/noDangerouslySetInnerHtml: renders trusted HTML from the Vendure API
                     <p className="text-sm text-muted-foreground mt-1" dangerouslySetInnerHTML={{ __html: method.description }} />
                   )}
                 </div>
