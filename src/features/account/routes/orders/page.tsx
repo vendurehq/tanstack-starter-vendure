@@ -13,7 +13,7 @@ import {Button} from "@/components/ui/button";
 import {Price} from '@/features/pricing/price';
 import {OrderStatusBadge} from '@/features/orders/order-status-badge';
 import {formatDate} from '@/platform/i18n/format';
-import { Link } from '@/platform/tanstack/navigation';
+import { Link } from '@tanstack/react-router';
 import {useLocale, useTranslations} from '@/platform/i18n/paraglide';
 import type {ResultOf} from '@/platform/vendure/graphql';
 import type {GetCustomerOrdersQuery} from '@/features/account/graphql';
@@ -44,7 +44,9 @@ export default function OrdersPage({ordersData, currentPage}: {ordersData: Order
                         {orders.map((order) => (
                             <Link
                                 key={order.id}
-                                href={`/account/orders/${order.code}`}
+                                to="/account/orders/$code"
+                                params={{code: order.code}}
+                                search={{page: currentPage}}
                                 className="block border rounded-xl p-4 bg-card hover:bg-muted/30 transition-colors duration-200"
                             >
                                 <div className="flex items-center justify-between mb-3">
@@ -83,7 +85,7 @@ export default function OrdersPage({ordersData, currentPage}: {ordersData: Order
                                 {orders.map((order) => (
                                     <TableRow key={order.id} className="hover:bg-muted/50">
                                         <TableCell className="font-medium">
-                                            <Button nativeButton={false} render={<Link href={`/account/orders/${order.code}`} />} variant="outline">
+                                            <Button nativeButton={false} render={<Link to="/account/orders/$code" params={{code: order.code}} search={{page: currentPage}} />} variant="outline">
                                                     {order.code} <ArrowRightIcon/>
                                             </Button>
                                         </TableCell>

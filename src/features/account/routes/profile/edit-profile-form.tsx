@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import {useTranslations} from '@/platform/i18n/paraglide';
+import {useRouter} from '@tanstack/react-router';
 import {useServerFn} from '@tanstack/react-start';
 
 interface EditProfileFormProps {
@@ -18,6 +19,7 @@ interface EditProfileFormProps {
 
 export function EditProfileForm({ customer }: EditProfileFormProps) {
     const t = useTranslations('Account');
+    const router = useRouter();
     const updateCustomer = useServerFn(updateCustomerAction);
     const [state, formAction, isPending] = useActionState(
         (_previous: {error?: string; success?: boolean} | undefined, formData: FormData) => updateCustomer({data: {
@@ -31,8 +33,9 @@ export function EditProfileForm({ customer }: EditProfileFormProps) {
         if (state?.success) {
             const form = document.getElementById('edit-profile-form') as HTMLFormElement;
             form?.reset();
+            router.invalidate();
         }
-    }, [state?.success]);
+    }, [state?.success, router]);
 
     return (
         <Card>
