@@ -1,0 +1,59 @@
+'use client';
+
+import {useTranslations} from '@/platform/i18n/paraglide';
+import {Coins} from 'lucide-react';
+import {Button} from '@/components/ui/button';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import {useRouter} from '@/platform/tanstack/navigation';
+import {switchCurrency} from '@/features/currency/switch-currency';
+import {useTransition} from 'react';
+import {useServerFn} from '@tanstack/react-start';
+
+interface CurrencyPickerProps {
+    availableCurrencyCodes: string[];
+    activeCurrencyCode: string;
+}
+
+export function CurrencyPicker({availableCurrencyCodes, activeCurrencyCode}: CurrencyPickerProps) {
+    const t = useTranslations('Navigation');
+    const router = useRouter();
+    const [isPending, startTransition] = useTransition();
+    const changeCurrency = useServerFn(switchCurrency);
+
+    const handleCurrencyChange = (currencyCode: string) => {
+        startTransition(async () => {
+            await changeCurrency({data: {currencyCode}});
+            router.refresh();
+        });
+    };
+
+    if (availableCurrencyCodes.length <= 1) {
+        return null;
+    }
+
+    return (
+        <DropdownMenu>
+            <DropdownMenuTrigger render={<Button variant="ghost" size="sm" className="gap-1.5" aria-label={t('switchCurrency')} />}>
+                <Coins className="size-4" />
+                <span>{activeCurrencyCode}</span>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+                {availableCurrencyCodes.map((code) => (
+                    <DropdownMenuItem
+                        key={code}
+                        onClick={() => handleCurrencyChange(code)}
+                        disabled={isPending}
+                    >
+                        <span>{code}</span>
+                        {activeCurrencyCode === code && <span className="ml-auto text-xs">✓</span>}
+                    </DropdownMenuItem>
+                ))}
+            </DropdownMenuContent>
+        </DropdownMenu>
+    );
+}

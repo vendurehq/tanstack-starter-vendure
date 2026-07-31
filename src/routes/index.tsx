@@ -1,14 +1,13 @@
+import Home from '@/site/home/page'
 import { createFileRoute } from '@tanstack/react-router'
+import { storefrontHead } from '@/platform/tanstack/head'
+import { m } from '@/paraglide/messages.js'
+import { getHomeData } from '@/site/home/home.functions'
 
-export const Route = createFileRoute('/')({ component: Home })
+export const Route = createFileRoute('/')({
+  loader: () => getHomeData(),
+  head: () => storefrontHead({title: m.Home_pageTitle(), description: m.Home_description()}),
+  component: HomeRoute,
+})
 
-function Home() {
-  return (
-    <div className="p-8">
-      <h1 className="text-4xl font-bold">Welcome to TanStack Start</h1>
-      <p className="mt-4 text-lg">
-        Edit <code>src/routes/index.tsx</code> to get started.
-      </p>
-    </div>
-  )
-}
+function HomeRoute() { return <Home products={Route.useLoaderData().products} /> }

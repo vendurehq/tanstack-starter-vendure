@@ -1,0 +1,50 @@
+import type { SearchProductsData } from "@/features/search/search-products-data";
+import { SortDropdown } from "@/features/search/sort-dropdown";
+import { useTranslations } from "@/platform/i18n/paraglide";
+import { Pagination } from "./components/pagination";
+import { ProductCard } from "./components/product-card";
+
+interface ProductGridProps {
+	productData: SearchProductsData;
+	currentPage: number;
+	take: number;
+}
+
+export function ProductGrid({
+	productData,
+	currentPage,
+	take,
+}: ProductGridProps) {
+	const t = useTranslations("Product");
+	const searchResult = productData.data.search;
+	const totalPages = Math.ceil(searchResult.totalItems / take);
+
+	if (!searchResult.items.length) {
+		return (
+			<div className="text-center py-12">
+				<p className="text-muted-foreground">{t("noProductsFound")}</p>
+			</div>
+		);
+	}
+
+	return (
+		<div className="space-y-8">
+			<div className="flex items-center justify-between">
+				<p className="text-sm text-muted-foreground">
+					{t("productCount", { count: searchResult.totalItems })}
+				</p>
+				<SortDropdown />
+			</div>
+
+			<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+				{searchResult.items.map((product, i) => (
+					<ProductCard key={`product-grid-item${i}`} product={product} />
+				))}
+			</div>
+
+			{totalPages > 1 && (
+				<Pagination currentPage={currentPage} totalPages={totalPages} />
+			)}
+		</div>
+	);
+}

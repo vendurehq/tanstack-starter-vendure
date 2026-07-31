@@ -1,0 +1,21 @@
+{
+  "Common_loading": "Wird geladen...",
+  "Common_sending": "Wird gesendet...",
+  "Common_sku": "Art.-Nr.",
+  "Common_siteDescription": "Entdecken Sie die besten Produkte bei {siteName}. Qualitätsprodukte, wettbewerbsfähige Preise und schnelle Lieferung.",
+  "Errors_fieldsRequired": "Alle Felder sind erforderlich",
+  "Errors_passwordsMismatch": "Passwörter stimmen nicht überein",
+  "Errors_unexpectedError": "Ein unerwarteter Fehler ist aufgetreten. Bitte versuchen Sie es erneut.",
+  "Errors_emailPasswordRequired": "E-Mail-Adresse und Passwort sind erforderlich",
+  "Errors_verifyEmailFirst": "Bitte bestätigen Sie Ihre E-Mail-Adresse, bevor Sie sich anmelden.",
+  "Errors_invalidCredentials": "Ungültige E-Mail-Adresse oder Passwort.",
+  "Errors_emailRequired": "E-Mail-Adresse ist erforderlich",
+  "Errors_firstLastNameRequired": "Vor- und Nachname sind erforderlich",
+  "Errors_passwordEmailRequired": "Passwort und neue E-Mail-Adresse sind erforderlich",
+  "Errors_invalidEmail": "Bitte geben Sie eine gültige E-Mail-Adresse ein",
+  "Errors_failedUpdateCustomer": "Kundeninformationen konnten nicht aktualisiert werden",
+  "Errors_newPasswordMustDiffer": "Das neue Passwort muss sich vom aktuellen Passwort unterscheiden",
+  "Errors_failedPasswordReset": "Passwort-Zurücksetzung konnte nicht angefordert werden",
+  "Errors_verificationTokenRequired": "Bestätigungs-Token ist erforderlich",
+  "Errors_failedAddToCart": "Artikel konnte nicht zum Warenkorb hinzugefügt werden"
+}

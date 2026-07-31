@@ -1,0 +1,20 @@
+{
+  "Cart_title": "Shopping Cart",
+  "Cart_empty": "Your Cart is Empty",
+  "Cart_emptyMessage": "Add some items to your cart to get started",
+  "Cart_continueShopping": "Continue Shopping",
+  "Cart_each": "each",
+  "Cart_orderSummary": "Order Summary",
+  "Cart_subtotal": "Subtotal",
+  "Cart_shipping": "Shipping",
+  "Cart_calculatedAtCheckout": "Calculated at checkout",
+  "Cart_total": "Total",
+  "Cart_proceedToCheckout": "Proceed to Checkout",
+  "Cart_secureCheckout": "Secure Checkout",
+  "Cart_promotionCode": "Promotion Code",
+  "Cart_enterDiscountCode": "Enter your discount code below",
+  "Cart_remove": "Remove",
+  "Cart_enterCode": "Enter code",
+  "Cart_apply": "Apply",
+  "Cart_sku": "SKU: {sku}"
+}

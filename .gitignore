@@ -8,6 +8,10 @@ dist-ssr
 .tanstack
 .wrangler
 .output
+.playwright/
+playwright-report/
+test-results/
+src/paraglide/
 .vinxi
 __unconfig*
 todos.json

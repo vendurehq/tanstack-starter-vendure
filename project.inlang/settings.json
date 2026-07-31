@@ -1,0 +1,25 @@
+{
+  "$schema": "https://inlang.com/schema/project-settings",
+  "baseLocale": "en",
+  "locales": ["en", "de"],
+  "modules": [
+    "https://cdn.jsdelivr.net/npm/@inlang/plugin-icu1@1.1.0/dist/index.js",
+    "https://cdn.jsdelivr.net/npm/@inlang/plugin-m-function-matcher@2/dist/index.js"
+  ],
+  "plugin.inlang.icu-messageformat-1": {
+    "pathPattern": [
+      "./src/features/account/messages/{locale}.json",
+      "./src/features/authentication/messages/{locale}.json",
+      "./src/features/cart/messages/{locale}.json",
+      "./src/features/checkout/messages/{locale}.json",
+      "./src/features/collections/messages/{locale}.json",
+      "./src/features/orders/messages/{locale}.json",
+      "./src/features/products/messages/{locale}.json",
+      "./src/features/search/messages/{locale}.json",
+      "./src/platform/i18n/messages/{locale}.json",
+      "./src/site/home/messages/{locale}.json",
+      "./src/site/navigation/messages/{locale}.json",
+      "./src/site/messages/{locale}.json"
+    ]
+  }
+}

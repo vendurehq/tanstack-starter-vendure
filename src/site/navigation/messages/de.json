@@ -1,0 +1,17 @@
+{
+  "Navigation_openMenu": "Menü öffnen",
+  "Navigation_menu": "Menü",
+  "Navigation_searchProducts": "Produkte suchen...",
+  "Navigation_shopAll": "Alle Produkte",
+  "Navigation_collections": "Kategorien",
+  "Navigation_account": "Konto",
+  "Navigation_profile": "Profil",
+  "Navigation_orders": "Bestellungen",
+  "Navigation_addresses": "Adressen",
+  "Navigation_signIn": "Anmelden",
+  "Navigation_signOut": "Abmelden",
+  "Navigation_greeting": "Hallo, {name}",
+  "Navigation_shoppingCart": "Warenkorb",
+  "Navigation_switchLanguage": "Sprache wechseln",
+  "Navigation_switchCurrency": "Währung wechseln"
+}

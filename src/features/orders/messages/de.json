@@ -1,0 +1,21 @@
+{
+  "OrderStatus_AddingItems": "Artikel hinzufügen",
+  "OrderStatus_ArrangingPayment": "Zahlung wird vorbereitet",
+  "OrderStatus_PaymentAuthorized": "Zahlung autorisiert",
+  "OrderStatus_PaymentSettled": "Zahlung abgeschlossen",
+  "OrderStatus_PartiallyShipped": "Teilweise versendet",
+  "OrderStatus_Shipped": "Versendet",
+  "OrderStatus_PartiallyDelivered": "Teilweise zugestellt",
+  "OrderStatus_Delivered": "Zugestellt",
+  "OrderStatus_Cancelled": "Storniert",
+  "OrderConfirmation_pageTitle": "Bestellbestätigung",
+  "OrderConfirmation_orderConfirmed": "Bestellung bestätigt!",
+  "OrderConfirmation_thankYou": "Vielen Dank für Ihre Bestellung. Ihre Bestellnummer lautet",
+  "OrderConfirmation_emailConfirmation": "Wir senden Ihnen eine E-Mail mit Ihren Bestelldetails und Tracking-Informationen.",
+  "OrderConfirmation_orderSummary": "Bestellübersicht",
+  "OrderConfirmation_qty": "Menge: {quantity}",
+  "OrderConfirmation_total": "Gesamt",
+  "OrderConfirmation_shippingAddress": "Lieferadresse",
+  "OrderConfirmation_continueShopping": "Weiter einkaufen",
+  "OrderConfirmation_viewOrders": "Bestellungen ansehen"
+}

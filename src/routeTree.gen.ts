@@ -10,33 +10,279 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AccountRouteImport } from './routes/account'
+import { Route as CartRouteImport } from './routes/cart'
+import { Route as CheckoutRouteImport } from './routes/checkout'
+import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
+import { Route as RegisterRouteImport } from './routes/register'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
+import { Route as SearchRouteImport } from './routes/search'
+import { Route as SignInRouteImport } from './routes/sign-in'
+import { Route as VerifyRouteImport } from './routes/verify'
+import { Route as VerifyPendingRouteImport } from './routes/verify-pending'
+import { Route as AccountAddressesRouteImport } from './routes/account.addresses'
+import { Route as AccountOrdersRouteImport } from './routes/account.orders'
+import { Route as AccountProfileRouteImport } from './routes/account.profile'
+import { Route as AccountVerifyEmailRouteImport } from './routes/account.verify-email'
+import { Route as ApiRevalidateRouteImport } from './routes/api.revalidate'
+import { Route as CollectionSlugRouteImport } from './routes/collection.$slug'
+import { Route as OrderConfirmationCodeRouteImport } from './routes/order-confirmation.$code'
+import { Route as ProductSlugRouteImport } from './routes/product.$slug'
+import { Route as AccountOrdersCodeRouteImport } from './routes/account.orders.$code'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AccountRoute = AccountRouteImport.update({
+  id: '/account',
+  path: '/account',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CartRoute = CartRouteImport.update({
+  id: '/cart',
+  path: '/cart',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CheckoutRoute = CheckoutRouteImport.update({
+  id: '/checkout',
+  path: '/checkout',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
+  id: '/forgot-password',
+  path: '/forgot-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RegisterRoute = RegisterRouteImport.update({
+  id: '/register',
+  path: '/register',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SearchRoute = SearchRouteImport.update({
+  id: '/search',
+  path: '/search',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SignInRoute = SignInRouteImport.update({
+  id: '/sign-in',
+  path: '/sign-in',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VerifyRoute = VerifyRouteImport.update({
+  id: '/verify',
+  path: '/verify',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VerifyPendingRoute = VerifyPendingRouteImport.update({
+  id: '/verify-pending',
+  path: '/verify-pending',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AccountAddressesRoute = AccountAddressesRouteImport.update({
+  id: '/addresses',
+  path: '/addresses',
+  getParentRoute: () => AccountRoute,
+} as any)
+const AccountOrdersRoute = AccountOrdersRouteImport.update({
+  id: '/orders',
+  path: '/orders',
+  getParentRoute: () => AccountRoute,
+} as any)
+const AccountProfileRoute = AccountProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => AccountRoute,
+} as any)
+const AccountVerifyEmailRoute = AccountVerifyEmailRouteImport.update({
+  id: '/verify-email',
+  path: '/verify-email',
+  getParentRoute: () => AccountRoute,
+} as any)
+const ApiRevalidateRoute = ApiRevalidateRouteImport.update({
+  id: '/api/revalidate',
+  path: '/api/revalidate',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CollectionSlugRoute = CollectionSlugRouteImport.update({
+  id: '/collection/$slug',
+  path: '/collection/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OrderConfirmationCodeRoute = OrderConfirmationCodeRouteImport.update({
+  id: '/order-confirmation/$code',
+  path: '/order-confirmation/$code',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProductSlugRoute = ProductSlugRouteImport.update({
+  id: '/product/$slug',
+  path: '/product/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AccountOrdersCodeRoute = AccountOrdersCodeRouteImport.update({
+  id: '/$code',
+  path: '/$code',
+  getParentRoute: () => AccountOrdersRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/account': typeof AccountRouteWithChildren
+  '/cart': typeof CartRoute
+  '/checkout': typeof CheckoutRoute
+  '/forgot-password': typeof ForgotPasswordRoute
+  '/register': typeof RegisterRoute
+  '/reset-password': typeof ResetPasswordRoute
+  '/search': typeof SearchRoute
+  '/sign-in': typeof SignInRoute
+  '/verify': typeof VerifyRoute
+  '/verify-pending': typeof VerifyPendingRoute
+  '/account/addresses': typeof AccountAddressesRoute
+  '/account/orders': typeof AccountOrdersRouteWithChildren
+  '/account/profile': typeof AccountProfileRoute
+  '/account/verify-email': typeof AccountVerifyEmailRoute
+  '/api/revalidate': typeof ApiRevalidateRoute
+  '/collection/$slug': typeof CollectionSlugRoute
+  '/order-confirmation/$code': typeof OrderConfirmationCodeRoute
+  '/product/$slug': typeof ProductSlugRoute
+  '/account/orders/$code': typeof AccountOrdersCodeRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/account': typeof AccountRouteWithChildren
+  '/cart': typeof CartRoute
+  '/checkout': typeof CheckoutRoute
+  '/forgot-password': typeof ForgotPasswordRoute
+  '/register': typeof RegisterRoute
+  '/reset-password': typeof ResetPasswordRoute
+  '/search': typeof SearchRoute
+  '/sign-in': typeof SignInRoute
+  '/verify': typeof VerifyRoute
+  '/verify-pending': typeof VerifyPendingRoute
+  '/account/addresses': typeof AccountAddressesRoute
+  '/account/orders': typeof AccountOrdersRouteWithChildren
+  '/account/profile': typeof AccountProfileRoute
+  '/account/verify-email': typeof AccountVerifyEmailRoute
+  '/api/revalidate': typeof ApiRevalidateRoute
+  '/collection/$slug': typeof CollectionSlugRoute
+  '/order-confirmation/$code': typeof OrderConfirmationCodeRoute
+  '/product/$slug': typeof ProductSlugRoute
+  '/account/orders/$code': typeof AccountOrdersCodeRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/account': typeof AccountRouteWithChildren
+  '/cart': typeof CartRoute
+  '/checkout': typeof CheckoutRoute
+  '/forgot-password': typeof ForgotPasswordRoute
+  '/register': typeof RegisterRoute
+  '/reset-password': typeof ResetPasswordRoute
+  '/search': typeof SearchRoute
+  '/sign-in': typeof SignInRoute
+  '/verify': typeof VerifyRoute
+  '/verify-pending': typeof VerifyPendingRoute
+  '/account/addresses': typeof AccountAddressesRoute
+  '/account/orders': typeof AccountOrdersRouteWithChildren
+  '/account/profile': typeof AccountProfileRoute
+  '/account/verify-email': typeof AccountVerifyEmailRoute
+  '/api/revalidate': typeof ApiRevalidateRoute
+  '/collection/$slug': typeof CollectionSlugRoute
+  '/order-confirmation/$code': typeof OrderConfirmationCodeRoute
+  '/product/$slug': typeof ProductSlugRoute
+  '/account/orders/$code': typeof AccountOrdersCodeRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/account'
+    | '/cart'
+    | '/checkout'
+    | '/forgot-password'
+    | '/register'
+    | '/reset-password'
+    | '/search'
+    | '/sign-in'
+    | '/verify'
+    | '/verify-pending'
+    | '/account/addresses'
+    | '/account/orders'
+    | '/account/profile'
+    | '/account/verify-email'
+    | '/api/revalidate'
+    | '/collection/$slug'
+    | '/order-confirmation/$code'
+    | '/product/$slug'
+    | '/account/orders/$code'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/account'
+    | '/cart'
+    | '/checkout'
+    | '/forgot-password'
+    | '/register'
+    | '/reset-password'
+    | '/search'
+    | '/sign-in'
+    | '/verify'
+    | '/verify-pending'
+    | '/account/addresses'
+    | '/account/orders'
+    | '/account/profile'
+    | '/account/verify-email'
+    | '/api/revalidate'
+    | '/collection/$slug'
+    | '/order-confirmation/$code'
+    | '/product/$slug'
+    | '/account/orders/$code'
+  id:
+    | '__root__'
+    | '/'
+    | '/account'
+    | '/cart'
+    | '/checkout'
+    | '/forgot-password'
+    | '/register'
+    | '/reset-password'
+    | '/search'
+    | '/sign-in'
+    | '/verify'
+    | '/verify-pending'
+    | '/account/addresses'
+    | '/account/orders'
+    | '/account/profile'
+    | '/account/verify-email'
+    | '/api/revalidate'
+    | '/collection/$slug'
+    | '/order-confirmation/$code'
+    | '/product/$slug'
+    | '/account/orders/$code'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AccountRoute: typeof AccountRouteWithChildren
+  CartRoute: typeof CartRoute
+  CheckoutRoute: typeof CheckoutRoute
+  ForgotPasswordRoute: typeof ForgotPasswordRoute
+  RegisterRoute: typeof RegisterRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
+  SearchRoute: typeof SearchRoute
+  SignInRoute: typeof SignInRoute
+  VerifyRoute: typeof VerifyRoute
+  VerifyPendingRoute: typeof VerifyPendingRoute
+  ApiRevalidateRoute: typeof ApiRevalidateRoute
+  CollectionSlugRoute: typeof CollectionSlugRoute
+  OrderConfirmationCodeRoute: typeof OrderConfirmationCodeRoute
+  ProductSlugRoute: typeof ProductSlugRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +294,187 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/account': {
+      id: '/account'
+      path: '/account'
+      fullPath: '/account'
+      preLoaderRoute: typeof AccountRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cart': {
+      id: '/cart'
+      path: '/cart'
+      fullPath: '/cart'
+      preLoaderRoute: typeof CartRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/checkout': {
+      id: '/checkout'
+      path: '/checkout'
+      fullPath: '/checkout'
+      preLoaderRoute: typeof CheckoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/forgot-password': {
+      id: '/forgot-password'
+      path: '/forgot-password'
+      fullPath: '/forgot-password'
+      preLoaderRoute: typeof ForgotPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/register': {
+      id: '/register'
+      path: '/register'
+      fullPath: '/register'
+      preLoaderRoute: typeof RegisterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/search': {
+      id: '/search'
+      path: '/search'
+      fullPath: '/search'
+      preLoaderRoute: typeof SearchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sign-in': {
+      id: '/sign-in'
+      path: '/sign-in'
+      fullPath: '/sign-in'
+      preLoaderRoute: typeof SignInRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/verify': {
+      id: '/verify'
+      path: '/verify'
+      fullPath: '/verify'
+      preLoaderRoute: typeof VerifyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/verify-pending': {
+      id: '/verify-pending'
+      path: '/verify-pending'
+      fullPath: '/verify-pending'
+      preLoaderRoute: typeof VerifyPendingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/account/addresses': {
+      id: '/account/addresses'
+      path: '/addresses'
+      fullPath: '/account/addresses'
+      preLoaderRoute: typeof AccountAddressesRouteImport
+      parentRoute: typeof AccountRoute
+    }
+    '/account/orders': {
+      id: '/account/orders'
+      path: '/orders'
+      fullPath: '/account/orders'
+      preLoaderRoute: typeof AccountOrdersRouteImport
+      parentRoute: typeof AccountRoute
+    }
+    '/account/profile': {
+      id: '/account/profile'
+      path: '/profile'
+      fullPath: '/account/profile'
+      preLoaderRoute: typeof AccountProfileRouteImport
+      parentRoute: typeof AccountRoute
+    }
+    '/account/verify-email': {
+      id: '/account/verify-email'
+      path: '/verify-email'
+      fullPath: '/account/verify-email'
+      preLoaderRoute: typeof AccountVerifyEmailRouteImport
+      parentRoute: typeof AccountRoute
+    }
+    '/api/revalidate': {
+      id: '/api/revalidate'
+      path: '/api/revalidate'
+      fullPath: '/api/revalidate'
+      preLoaderRoute: typeof ApiRevalidateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/collection/$slug': {
+      id: '/collection/$slug'
+      path: '/collection/$slug'
+      fullPath: '/collection/$slug'
+      preLoaderRoute: typeof CollectionSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/order-confirmation/$code': {
+      id: '/order-confirmation/$code'
+      path: '/order-confirmation/$code'
+      fullPath: '/order-confirmation/$code'
+      preLoaderRoute: typeof OrderConfirmationCodeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/product/$slug': {
+      id: '/product/$slug'
+      path: '/product/$slug'
+      fullPath: '/product/$slug'
+      preLoaderRoute: typeof ProductSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/account/orders/$code': {
+      id: '/account/orders/$code'
+      path: '/$code'
+      fullPath: '/account/orders/$code'
+      preLoaderRoute: typeof AccountOrdersCodeRouteImport
+      parentRoute: typeof AccountOrdersRoute
+    }
   }
 }
 
+interface AccountOrdersRouteChildren {
+  AccountOrdersCodeRoute: typeof AccountOrdersCodeRoute
+}
+
+const AccountOrdersRouteChildren: AccountOrdersRouteChildren = {
+  AccountOrdersCodeRoute: AccountOrdersCodeRoute,
+}
+
+const AccountOrdersRouteWithChildren = AccountOrdersRoute._addFileChildren(
+  AccountOrdersRouteChildren,
+)
+
+interface AccountRouteChildren {
+  AccountAddressesRoute: typeof AccountAddressesRoute
+  AccountOrdersRoute: typeof AccountOrdersRouteWithChildren
+  AccountProfileRoute: typeof AccountProfileRoute
+  AccountVerifyEmailRoute: typeof AccountVerifyEmailRoute
+}
+
+const AccountRouteChildren: AccountRouteChildren = {
+  AccountAddressesRoute: AccountAddressesRoute,
+  AccountOrdersRoute: AccountOrdersRouteWithChildren,
+  AccountProfileRoute: AccountProfileRoute,
+  AccountVerifyEmailRoute: AccountVerifyEmailRoute,
+}
+
+const AccountRouteWithChildren =
+  AccountRoute._addFileChildren(AccountRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AccountRoute: AccountRouteWithChildren,
+  CartRoute: CartRoute,
+  CheckoutRoute: CheckoutRoute,
+  ForgotPasswordRoute: ForgotPasswordRoute,
+  RegisterRoute: RegisterRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
+  SearchRoute: SearchRoute,
+  SignInRoute: SignInRoute,
+  VerifyRoute: VerifyRoute,
+  VerifyPendingRoute: VerifyPendingRoute,
+  ApiRevalidateRoute: ApiRevalidateRoute,
+  CollectionSlugRoute: CollectionSlugRoute,
+  OrderConfirmationCodeRoute: OrderConfirmationCodeRoute,
+  ProductSlugRoute: ProductSlugRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
