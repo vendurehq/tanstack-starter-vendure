@@ -20,15 +20,15 @@ import { Route as SearchRouteImport } from './routes/search'
 import { Route as SignInRouteImport } from './routes/sign-in'
 import { Route as VerifyRouteImport } from './routes/verify'
 import { Route as VerifyPendingRouteImport } from './routes/verify-pending'
-import { Route as AccountAddressesRouteImport } from './routes/account.addresses'
-import { Route as AccountOrdersRouteImport } from './routes/account.orders'
-import { Route as AccountProfileRouteImport } from './routes/account.profile'
-import { Route as AccountVerifyEmailRouteImport } from './routes/account.verify-email'
+import { Route as AccountAddressesRouteImport } from './routes/account/addresses'
+import { Route as AccountOrdersRouteImport } from './routes/account/orders'
+import { Route as AccountProfileRouteImport } from './routes/account/profile'
+import { Route as AccountVerifyEmailRouteImport } from './routes/account/verify-email'
 import { Route as ApiRevalidateRouteImport } from './routes/api.revalidate'
 import { Route as CollectionSlugRouteImport } from './routes/collection.$slug'
 import { Route as OrderConfirmationCodeRouteImport } from './routes/order-confirmation.$code'
 import { Route as ProductSlugRouteImport } from './routes/product.$slug'
-import { Route as AccountOrdersCodeRouteImport } from './routes/account.orders.$code'
+import { Route as AccountOrdersCodeRouteImport } from './routes/account/orders/$code'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -479,3 +479,12 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+  }
+}

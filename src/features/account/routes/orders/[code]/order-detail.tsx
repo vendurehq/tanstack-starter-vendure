@@ -6,7 +6,7 @@ import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/card';
 import {Separator} from '@/components/ui/separator';
 import {Badge} from '@/components/ui/badge';
 import Image from '@/components/storefront-image';
-import {Link} from '@/platform/tanstack/navigation';
+import {getRouteApi, Link} from '@tanstack/react-router';
 import {Price} from '@/features/pricing/price';
 import {OrderStatusBadge} from '@/features/orders/order-status-badge';
 import {formatDate} from '@/platform/i18n/format';
@@ -20,12 +20,15 @@ type OrderDiscount = OrderByCode['discounts'][number];
 type OrderPayment = NonNullable<OrderByCode['payments']>[number];
 type OrderShippingLine = NonNullable<OrderByCode['shippingLines']>[number];
 
+const orderRoute = getRouteApi('/account/orders/$code');
+
 interface OrderDetailProps {
     orderData: { data: ResultOf<typeof GetOrderDetailQuery>; token?: string };
 }
 
 export function OrderDetail({orderData}: OrderDetailProps) {
     const {data} = orderData;
+    const {page} = orderRoute.useSearch();
     const locale = useLocale();
     const t = useTranslations('Account');
     const order = data.orderByCode;
@@ -37,7 +40,7 @@ export function OrderDetail({orderData}: OrderDetailProps) {
     return (
         <div>
             <div className="mb-6">
-                <Button render={<Link href="/account/orders" />} nativeButton={false} variant="ghost" size="sm" className="mb-4">
+                <Button render={<Link to="/account/orders" search={{page}} />} nativeButton={false} variant="ghost" size="sm" className="mb-4">
                         <ChevronLeft className="h-4 w-4 mr-2"/>
                         {t('backToOrders')}
                 </Button>
@@ -74,7 +77,8 @@ export function OrderDetail({orderData}: OrderDetailProps) {
                                         </div>
                                         <div className="flex-1">
                                             <Link
-                                                href={`/product/${line.productVariant.product.slug}`}
+                                                to="/product/$slug"
+                                                params={{slug: line.productVariant.product.slug}}
                                                 className="font-medium hover:underline"
                                             >
                                                 {line.productVariant.product.name}
