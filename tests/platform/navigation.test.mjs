@@ -16,5 +16,7 @@ test('route search schemas coerce pagination and preserve repeatable facets', ()
     });
     assert.equal(catalogSearchSchema.parse({page: '-4'}).page, 1);
     assert.equal(redirectSearchSchema.parse({redirectTo: '/account'}).redirectTo, '/account');
+    assert.equal(redirectSearchSchema.parse({redirectTo: '//evil.example'}).redirectTo, undefined);
     assert.equal(tokenSearchSchema.parse({token: 'abc'}).token, 'abc');
+    assert.equal(tokenSearchSchema.parse({redirectTo: '//evil.example'}).redirectTo, undefined);
 });

@@ -3,7 +3,7 @@
 import {VerifyResult} from './verify-result';
 import {Card, CardContent} from '@/components/ui/card';
 import {Button} from '@/components/ui/button';
-import { Link } from '@/platform/tanstack/navigation';
+import {Link} from '@tanstack/react-router';
 import {XCircle} from 'lucide-react';
 import {useTranslations} from '@/platform/i18n/paraglide';
 
@@ -29,16 +29,12 @@ export function VerifyContent({token, result}: VerifyContentProps) {
                         </p>
                     </div>
                     <div className="flex flex-col gap-2">
-                        <Link href="/register" className="block">
-                            <Button variant="outline" className="w-full">
-                                {t('createNewAccount')}
-                            </Button>
-                        </Link>
-                        <Link href="/sign-in" className="block">
-                            <Button variant="ghost" className="w-full">
-                                {t('backToSignIn')}
-                            </Button>
-                        </Link>
+                        <Button render={<Link to="/register" />} nativeButton={false} variant="outline" className="w-full">
+                            {t('createNewAccount')}
+                        </Button>
+                        <Button render={<Link to="/sign-in" />} nativeButton={false} variant="ghost" className="w-full">
+                            {t('backToSignIn')}
+                        </Button>
                     </div>
                 </CardContent>
             </Card>

@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { PasswordInput } from '@/components/ui/password-input';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Link } from '@/platform/tanstack/navigation';
+import {Link} from '@tanstack/react-router';
 import {useTranslations} from '@/platform/i18n/paraglide';
 import {useServerFn} from '@tanstack/react-start';
 
@@ -37,11 +37,9 @@ export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
                     </CardDescription>
                 </CardHeader>
                 <CardFooter>
-                    <Link href="/forgot-password">
-                        <Button variant="outline" className="w-full">
-                            {t('requestNewResetLink')}
-                        </Button>
-                    </Link>
+                    <Button render={<Link to="/forgot-password" />} nativeButton={false} variant="outline" className="w-full">
+                        {t('requestNewResetLink')}
+                    </Button>
                 </CardFooter>
             </Card>
         );
@@ -65,6 +63,8 @@ export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
                             name="password"
                             placeholder="••••••••"
                             required
+                            minLength={8}
+                            autoComplete="new-password"
                             disabled={isPending}
                         />
                     </div>
@@ -75,6 +75,8 @@ export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
                             name="confirmPassword"
                             placeholder="••••••••"
                             required
+                            minLength={8}
+                            autoComplete="new-password"
                             disabled={isPending}
                         />
                     </div>
@@ -89,7 +91,7 @@ export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
                         {isPending ? t('resettingPassword') : t('resetPassword')}
                     </Button>
                     <Link
-                        href="/sign-in"
+                        to="/sign-in"
                         className="text-sm text-center text-muted-foreground hover:text-primary"
                     >
                         {t('backToSignIn')}

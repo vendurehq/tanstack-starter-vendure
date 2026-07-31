@@ -1,14 +1,20 @@
 import { z } from "zod";
+import {safeInternalRedirect} from './redirect.ts';
 
 const optionalString = z.preprocess(
 	(value) => (Array.isArray(value) ? value[0] : value),
 	z.string().optional(),
 );
 
-export const redirectSearchSchema = z.object({ redirectTo: optionalString });
+const optionalRedirect = optionalString.transform((value) => {
+	if (!value) return undefined;
+	return safeInternalRedirect(value, '') || undefined;
+});
+
+export const redirectSearchSchema = z.object({ redirectTo: optionalRedirect });
 export const tokenSearchSchema = z.object({
 	token: optionalString,
-	redirectTo: optionalString,
+	redirectTo: optionalRedirect,
 });
 export const catalogSearchSchema = z.object({
 	q: optionalString,

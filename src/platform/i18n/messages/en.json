@@ -6,7 +6,6 @@
   "Errors_fieldsRequired": "All fields are required",
   "Errors_passwordsMismatch": "Passwords do not match",
   "Errors_unexpectedError": "An unexpected error occurred. Please try again.",
-  "Errors_emailPasswordRequired": "Email address and password are required",
   "Errors_verifyEmailFirst": "Please verify your email address before signing in.",
   "Errors_invalidCredentials": "Invalid email or password.",
   "Errors_emailRequired": "Email address is required",
@@ -15,7 +14,6 @@
   "Errors_invalidEmail": "Please enter a valid email address",
   "Errors_failedUpdateCustomer": "Failed to update customer information",
   "Errors_newPasswordMustDiffer": "New password must be different from current password",
-  "Errors_failedPasswordReset": "Failed to request password reset",
   "Errors_verificationTokenRequired": "Verification token is required",
   "Errors_failedAddToCart": "Failed to add item to cart"
 }

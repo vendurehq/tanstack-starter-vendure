@@ -1,7 +1,11 @@
-import { deleteCookie, getCookie, setCookie } from '@tanstack/react-start/server'
+import { deleteCookie, getCookie, setCookie, setResponseHeader } from '@tanstack/react-start/server'
 
 function authTokenCookie() {
   return process.env.VENDURE_AUTH_TOKEN_COOKIE || 'vendure-auth-token'
+}
+
+export function disableAuthResponseCaching() {
+  setResponseHeader('Cache-Control', 'no-store')
 }
 
 export function setAuthToken(token: string) {

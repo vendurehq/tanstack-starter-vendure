@@ -16,7 +16,7 @@ import {
     FormLabel,
     FormMessage,
 } from '@/components/ui/form';
-import { Link } from '@/platform/tanstack/navigation';
+import {Link} from '@tanstack/react-router';
 import {useTranslations} from '@/platform/i18n/paraglide';
 import {useServerFn} from '@tanstack/react-start';
 
@@ -31,7 +31,6 @@ type ForgotPasswordFormData = z.infer<ReturnType<typeof createForgotPasswordSche
 export function ForgotPasswordForm() {
     const t = useTranslations('Auth');
     const [isPending, startTransition] = useTransition();
-    const [serverError, setServerError] = useState<string | null>(null);
     const [success, setSuccess] = useState(false);
     const requestPasswordReset = useServerFn(requestPasswordResetAction);
 
@@ -44,15 +43,9 @@ export function ForgotPasswordForm() {
     });
 
     const onSubmit = (data: ForgotPasswordFormData) => {
-        setServerError(null);
-
         startTransition(async () => {
-            const result = await requestPasswordReset({data});
-            if (result?.error) {
-                setServerError(result.error);
-            } else if (result?.success) {
-                setSuccess(true);
-            }
+            await requestPasswordReset({data});
+            setSuccess(true);
         });
     };
 
@@ -66,11 +59,9 @@ export function ForgotPasswordForm() {
                     </CardDescription>
                 </CardHeader>
                 <CardFooter>
-                    <Link href="/sign-in">
-                        <Button variant="outline" className="w-full">
-                            {t('backToSignIn')}
-                        </Button>
-                    </Link>
+                    <Button render={<Link to="/sign-in" />} nativeButton={false} variant="outline" className="w-full">
+                        {t('backToSignIn')}
+                    </Button>
                 </CardFooter>
             </Card>
         );
@@ -106,18 +97,13 @@ export function ForgotPasswordForm() {
                             )}
                         />
 
-                        {serverError && (
-                            <div className="text-sm text-destructive mt-4">
-                                {serverError}
-                            </div>
-                        )}
                     </CardContent>
                     <CardFooter className="flex flex-col space-y-4 mt-4">
                         <Button type="submit" className="w-full" disabled={isPending}>
                             {isPending ? t('sending') : t('sendResetLink')}
                         </Button>
                         <Link
-                            href="/sign-in"
+                            to="/sign-in"
                             className="text-sm text-center text-muted-foreground hover:text-primary"
                         >
                             {t('backToSignIn')}
