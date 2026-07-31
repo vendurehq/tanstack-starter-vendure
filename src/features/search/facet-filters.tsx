@@ -1,5 +1,3 @@
-"use client";
-
 import { ChevronDown, SlidersHorizontal } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -17,16 +15,14 @@ import {
 	SheetTitle,
 	SheetTrigger,
 } from "@/components/ui/sheet";
+import type { CatalogSearchParams } from "@/features/search/search-helpers";
 import type { SearchProductsData } from "@/features/search/search-products-data";
+import { useCatalogSearchNavigate } from "@/features/search/use-catalog-search";
 import { useTranslations } from "@/platform/i18n/paraglide";
-import {
-	usePathname,
-	useRouter,
-	useSearchParams,
-} from "@/platform/tanstack/navigation";
 
 interface FacetFiltersProps {
 	productData: SearchProductsData;
+	searchParams: CatalogSearchParams;
 }
 
 function FilterContent({
@@ -100,12 +96,10 @@ function FilterContent({
 	);
 }
 
-export function FacetFilters({ productData }: FacetFiltersProps) {
+export function FacetFilters({ productData, searchParams }: FacetFiltersProps) {
 	const t = useTranslations("Filters");
 	const searchResult = productData.data.search;
-	const pathname = usePathname();
-	const searchParams = useSearchParams();
-	const router = useRouter();
+	const navigateCatalogSearch = useCatalogSearchNavigate();
 	const [sheetOpen, setSheetOpen] = useState(false);
 
 	// Group facet values by facet
@@ -135,36 +129,24 @@ export function FacetFilters({ productData }: FacetFiltersProps) {
 		{},
 	);
 
-	const selectedFacets = searchParams.getAll("facets");
+	const selectedFacets = searchParams.facets;
 
-	const toggleFacet = (facetId: string) => {
-		const params = new URLSearchParams(searchParams);
-		const current = params.getAll("facets");
-
-		if (current.includes(facetId)) {
-			params.delete("facets");
-			current
-				.filter((id) => id !== facetId)
-				.forEach((id) => {
-					params.append("facets", id);
-				});
-		} else {
-			params.append("facets", facetId);
-		}
-
-		// Reset to page 1 when filters change
-		params.delete("page");
-
-		router.push(`${pathname}?${params.toString()}`);
+	// Reset to page 1 whenever the facet selection changes
+	const applyFacets = (facets: string[]) => {
+		navigateCatalogSearch({ facets, page: 1 });
 		setSheetOpen(false);
 	};
 
+	const toggleFacet = (facetId: string) => {
+		applyFacets(
+			selectedFacets.includes(facetId)
+				? selectedFacets.filter((id) => id !== facetId)
+				: [...selectedFacets, facetId],
+		);
+	};
+
 	const clearFilters = () => {
-		const params = new URLSearchParams(searchParams);
-		params.delete("facets");
-		params.delete("page");
-		router.push(`${pathname}?${params.toString()}`);
-		setSheetOpen(false);
+		applyFacets([]);
 	};
 
 	const hasActiveFilters = selectedFacets.length > 0;
