@@ -13,6 +13,7 @@ import {
 import { getActiveCurrencyCodeOnServer } from "@/features/currency/active-currency.server";
 import { getRouteLocale } from "@/platform/i18n/server";
 import { queryOnServer } from "@/platform/vendure/api.server";
+import { disableAuthResponseCaching } from "@/platform/vendure/auth-token.server";
 
 /**
  * Loads the personalized checkout snapshot in one server-function request.
@@ -21,6 +22,7 @@ import { queryOnServer } from "@/platform/vendure/api.server";
  */
 export const getCheckoutRouteData = createServerFn({ method: "GET" }).handler(
 	async () => {
+		disableAuthResponseCaching();
 		const [locale, currencyCode, customerResult] = await Promise.all([
 			getRouteLocale(),
 			getActiveCurrencyCodeOnServer(),

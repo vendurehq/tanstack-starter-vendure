@@ -1,5 +1,3 @@
-'use client';
-
 import {useSelectedLayoutSegment} from '@/platform/tanstack/navigation';
 import type {ComponentProps} from 'react';
 import { Link } from '@/platform/tanstack/navigation';

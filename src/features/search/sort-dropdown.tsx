@@ -1,6 +1,3 @@
-'use client';
-
-
 import {
     Select,
     SelectContent,
@@ -8,15 +5,13 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
-import {useSearchParams} from '@/platform/tanstack/navigation';
-import {usePathname, useRouter} from '@/platform/tanstack/navigation';
+import {useCatalogSearchNavigate} from '@/features/search/use-catalog-search';
 import {useTranslations} from '@/platform/i18n/paraglide';
+import {type CatalogSort, catalogSortSchema} from '@/platform/tanstack/search';
 
-export function SortDropdown() {
+export function SortDropdown({currentSort}: {currentSort: CatalogSort}) {
     const t = useTranslations('Sort');
-    const pathname = usePathname();
-    const searchParams = useSearchParams();
-    const router = useRouter();
+    const navigateCatalogSearch = useCatalogSearchNavigate();
 
     const sortOptions = [
         {value: 'name-asc', label: t('nameAsc')},
@@ -25,14 +20,11 @@ export function SortDropdown() {
         {value: 'price-desc', label: t('priceDesc')},
     ];
 
-    const currentSort = searchParams.get('sort') || 'name-asc';
-
     const handleSortChange = (value: string | null) => {
-        if (!value) return;
-        const params = new URLSearchParams(searchParams);
-        params.set('sort', value);
-        params.delete('page'); // Reset to page 1 when sort changes
-        router.push(`${pathname}?${params.toString()}`);
+        const sort = catalogSortSchema.safeParse(value);
+        if (!sort.success) return;
+        // Reset to page 1 when sort changes
+        navigateCatalogSearch({sort: sort.data, page: 1});
     };
 
     return (

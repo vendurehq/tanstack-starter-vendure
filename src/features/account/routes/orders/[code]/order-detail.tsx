@@ -1,5 +1,3 @@
-'use client';
-
 import {ChevronLeft} from 'lucide-react';
 import {Button} from '@/components/ui/button';
 import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/card';
@@ -23,7 +21,7 @@ type OrderShippingLine = NonNullable<OrderByCode['shippingLines']>[number];
 const orderRoute = getRouteApi('/account/orders/$code');
 
 interface OrderDetailProps {
-    orderData: { data: ResultOf<typeof GetOrderDetailQuery>; token?: string };
+    orderData: { data: ResultOf<typeof GetOrderDetailQuery> };
 }
 
 export function OrderDetail({orderData}: OrderDetailProps) {

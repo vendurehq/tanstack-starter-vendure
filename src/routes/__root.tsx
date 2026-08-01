@@ -22,6 +22,10 @@ import appCss from "../storefront.css?url";
 
 export const Route = createRootRoute({
 	loader: () => getShellData(),
+	// Shell data (5 Vendure calls) would otherwise reload on every navigation.
+	// Mutations that change it (cart, auth, currency) call router.invalidate(),
+	// which bypasses staleTime.
+	staleTime: 30_000,
 	head: () => ({
 		meta: [
 			{

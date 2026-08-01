@@ -7,9 +7,12 @@ import {getLocale} from '@/paraglide/runtime';
 import {queryOnServer} from '@/platform/vendure/api.server';
 import {GetActiveChannelQuery} from '@/platform/vendure/channel-graphql';
 import {readFragment} from '@/platform/vendure/graphql';
+import {disableAuthResponseCaching} from '@/platform/vendure/auth-token.server';
 import {createServerFn} from '@tanstack/react-start';
 
 export const getShellData = createServerFn({method: 'GET'}).handler(async () => {
+    // Contains customer name and cart count, so shared caches must not store it
+    disableAuthResponseCaching();
     const locale = getLocale();
     const [channelResult, collections, customerResult, orderResult, activeCurrencyCode] = await Promise.all([
         queryOnServer(GetActiveChannelQuery, {}),

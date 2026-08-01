@@ -82,4 +82,3 @@ export function PromotionCode({activeOrder}: { activeOrder: ActiveOrder }) {
         </Card>
     );
 }
-'use client';

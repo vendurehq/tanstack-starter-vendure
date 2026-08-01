@@ -1,5 +1,3 @@
-'use client';
-
 import {useState, useTransition} from 'react';
 import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
@@ -17,7 +15,7 @@ import {
     FormLabel,
     FormMessage,
 } from '@/components/ui/form';
-import {Link} from '@tanstack/react-router';
+import {Link, useRouter} from '@tanstack/react-router';
 import {useTranslations} from '@/platform/i18n/paraglide';
 import {useServerFn} from '@tanstack/react-start';
 
@@ -34,6 +32,7 @@ interface LoginFormProps {
 
 export function LoginForm({redirectTo}: LoginFormProps) {
     const t = useTranslations('Auth');
+    const router = useRouter();
     const [isPending, startTransition] = useTransition();
     const [serverError, setServerError] = useState<string | null>(null);
     const login = useServerFn(loginAction);
@@ -53,6 +52,9 @@ export function LoginForm({redirectTo}: LoginFormProps) {
             const result = await login({data: {...data, redirectTo}});
             if (result?.error) {
                 setServerError(result.error);
+            } else {
+                // Successful login redirected; reload cached loaders (navbar user, cart)
+                await router.invalidate();
             }
         });
     };

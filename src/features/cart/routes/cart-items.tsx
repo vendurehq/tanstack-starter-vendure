@@ -1,5 +1,3 @@
-'use client';
-
 import Image from '@/components/storefront-image';
 import { Link } from '@tanstack/react-router';
 import {Button} from '@/components/ui/button';

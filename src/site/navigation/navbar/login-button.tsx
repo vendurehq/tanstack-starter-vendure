@@ -1,5 +1,3 @@
-'use client'
-
 import {type ComponentProps, useTransition} from "react";
 import {logoutAction} from '@/features/authentication/logout';
 import {useRouter} from '@/platform/tanstack/navigation';
@@ -22,6 +20,8 @@ export function LoginButton({isLoggedIn, ...props}: LoginButtonProps) {
                     if (isLoggedIn) {
                         startTransition(async () => {
                             await logout()
+                            // Logout redirected; reload cached loaders (navbar user, cart)
+                            await router.refresh()
                         })
                     } else {
                         router.push('/sign-in')

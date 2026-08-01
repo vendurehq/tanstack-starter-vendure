@@ -1,12 +1,10 @@
-'use client';
-
 import { useActionState } from 'react';
 import { resetPasswordAction } from './actions';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { PasswordInput } from '@/components/ui/password-input';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import {Link} from '@tanstack/react-router';
+import {Link, useRouter} from '@tanstack/react-router';
 import {useTranslations} from '@/platform/i18n/paraglide';
 import {useServerFn} from '@tanstack/react-start';
 
@@ -18,12 +16,18 @@ export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
     const t = useTranslations('Auth');
 
     const resetPassword = useServerFn(resetPasswordAction);
+    const router = useRouter();
     const [state, formAction, isPending] = useActionState(
-        (_previousState: {error?: string} | undefined, formData: FormData) => resetPassword({data: {
-            token: String(formData.get('token') ?? ''),
-            password: String(formData.get('password') ?? ''),
-            confirmPassword: String(formData.get('confirmPassword') ?? ''),
-        }}),
+        async (_previousState: {error?: string} | undefined, formData: FormData) => {
+            const result = await resetPassword({data: {
+                token: String(formData.get('token') ?? ''),
+                password: String(formData.get('password') ?? ''),
+                confirmPassword: String(formData.get('confirmPassword') ?? ''),
+            }});
+            // Successful reset logs the customer in and redirects; reload cached loaders
+            if (!result?.error) await router.invalidate();
+            return result;
+        },
         undefined,
     );
 

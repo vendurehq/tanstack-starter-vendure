@@ -1,5 +1,3 @@
-'use client';
-
 import {useLocale} from '@/platform/i18n/paraglide';
 import {useRouter, usePathname} from '@/platform/tanstack/navigation';
 import {routing, localeNames} from '@/platform/i18n/routing';

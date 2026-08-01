@@ -8,7 +8,6 @@ export function getRouter() {
 		routeTree,
 		scrollRestoration: true,
 		defaultPreload: "intent",
-		defaultPreloadStaleTime: 0,
 		defaultStructuralSharing: true,
 		rewrite: {
 			input: ({ url }) => deLocalizeUrl(url),

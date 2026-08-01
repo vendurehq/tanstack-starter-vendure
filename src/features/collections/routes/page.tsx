@@ -55,12 +55,17 @@ export default function CollectionPage({
 			<div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
 				{/* Filters Sidebar */}
 				<aside className="lg:col-span-1">
-					<FacetFilters productData={productData} />
+					<FacetFilters productData={productData} searchParams={searchParams} />
 				</aside>
 
 				{/* Product Grid */}
 				<div className="lg:col-span-3">
-					<ProductGrid productData={productData} currentPage={page} take={12} />
+					<ProductGrid
+						productData={productData}
+						currentPage={page}
+						currentSort={searchParams.sort}
+						take={12}
+					/>
 				</div>
 			</div>
 		</div>

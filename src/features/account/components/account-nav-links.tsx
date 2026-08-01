@@ -1,5 +1,3 @@
-"use client";
-
 import { Link } from "@tanstack/react-router";
 import { MapPin, Package, User } from "lucide-react";
 import { useTranslations } from "@/platform/i18n/paraglide";

@@ -34,8 +34,13 @@ export const catalogSearchSchema = z.object({
 		return [
 			...new Set(
 				values
-					.filter((item): item is string => typeof item === "string")
-					.map((item) => item.trim())
+					// The router's search parser converts numeric-looking values to
+					// numbers, and Vendure facet value IDs are numeric strings.
+					.filter(
+						(item): item is string | number =>
+							typeof item === "string" || typeof item === "number",
+					)
+					.map((item) => String(item).trim())
 					.filter(Boolean),
 			),
 		];

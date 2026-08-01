@@ -1,5 +1,3 @@
-'use client';
-
 import {useState, useMemo, useTransition} from 'react';
 import {useSearchParams} from '@/platform/tanstack/navigation';
 import {usePathname, useRouter} from '@/platform/tanstack/navigation';
@@ -124,6 +122,8 @@ export function ProductInfo({product, searchParams, currencyCode}: ProductInfoPr
             const result = await addProductToCart({data: {variantId: selectedVariant.id, quantity: 1}});
 
             if (result.success) {
+                // Re-run route loaders so the navbar cart count picks up the new order state
+                await router.refresh();
                 setIsAdded(true);
                 toast.success(t('addedToCartMessage'), {
                     description: t('addedToCartDescription', {name: product.name}),

@@ -1,12 +1,29 @@
-import {mutateOnServer} from '@/platform/vendure/api.server';
-import {requireAuthToken} from '@/platform/vendure/auth-token.server';
+import {mutateOnServer, queryOnServer} from '@/platform/vendure/api.server';
+import {disableAuthResponseCaching, requireAuthToken} from '@/platform/vendure/auth-token.server';
 import {
     CreateCustomerAddressMutation,
+    GetCustomerAddressesQuery,
     UpdateCustomerAddressMutation,
     DeleteCustomerAddressMutation,
 } from '@/features/account/graphql';
+import {GetAvailableCountriesQuery} from '@/features/checkout/graphql';
+import {getRouteLocale} from '@/platform/i18n/server';
 import {createServerFn} from '@tanstack/react-start';
 import {z} from 'zod';
+
+export const getAddressesPageData = createServerFn({method: 'GET'}).handler(async () => {
+    disableAuthResponseCaching();
+    requireAuthToken();
+    const locale = await getRouteLocale();
+    const [addressesResult, countriesResult] = await Promise.all([
+        queryOnServer(GetCustomerAddressesQuery, {}, {useAuthToken: true}),
+        queryOnServer(GetAvailableCountriesQuery, {}, {languageCode: locale}),
+    ]);
+    return {
+        addresses: addressesResult.data.activeCustomer?.addresses ?? [],
+        countries: countriesResult.data.availableCountries ?? [],
+    };
+});
 
 const addressSchema = z.object({
     id: z.string().optional(),

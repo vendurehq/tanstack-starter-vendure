@@ -1,5 +1,3 @@
-'use client';
-
 import {useState, useEffect, useTransition} from 'react';
 import {useSearchParams} from '@/platform/tanstack/navigation';
 import {useRouter} from '@/platform/tanstack/navigation';

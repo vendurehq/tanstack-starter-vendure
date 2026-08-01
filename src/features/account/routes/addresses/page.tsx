@@ -1,17 +1,9 @@
-import type {GetCustomerAddressesQuery} from '@/features/account/graphql';
-import type {GetAvailableCountriesQuery} from '@/features/checkout/graphql';
-import type {ResultOf} from '@/platform/vendure/graphql';
 import { AddressesClient } from './addresses-client';
+import type {getAddressesPageData} from './actions';
 import {useTranslations} from '@/platform/i18n/paraglide';
 
-export default function AddressesPage({addressesResult, countriesResult}: {
-    addressesResult: {data: ResultOf<typeof GetCustomerAddressesQuery>};
-    countriesResult: {data: ResultOf<typeof GetAvailableCountriesQuery>};
-}) {
+export default function AddressesPage({addresses, countries}: Awaited<ReturnType<typeof getAddressesPageData>>) {
     const t = useTranslations('Account');
-
-    const addresses = addressesResult.data.activeCustomer?.addresses || [];
-    const countries = countriesResult.data.availableCountries || [];
 
     return (
         <div className="space-y-6">

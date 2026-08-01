@@ -38,6 +38,7 @@ export const getCollectionPageData = createServerFn({ method: "GET" })
 				path: `/collection/${collection.slug}`,
 				image: collection.featuredAsset?.preview ?? null,
 			},
-			productData,
+			// Only expose the query data; the raw result may carry a session token
+			productData: { data: productData.data },
 		};
 	});
