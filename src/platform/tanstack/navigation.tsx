@@ -1,10 +1,10 @@
 import {
 	Link as RouterLink,
 	useNavigate,
-	useRouter as useTanStackRouter,
 	useRouterState,
+	useRouter as useTanStackRouter,
 } from "@tanstack/react-router";
-import type { ComponentProps } from "react";
+import { type ComponentProps, useMemo } from "react";
 
 type LocalizedLinkProps = Omit<ComponentProps<"a">, "href"> & {
 	href: string;
@@ -20,8 +20,10 @@ export function usePathname() {
 }
 
 export function useSearchParams() {
-	const search = useRouterState({ select: (state) => state.location.searchStr });
-	return new URLSearchParams(search);
+	const search = useRouterState({
+		select: (state) => state.location.searchStr,
+	});
+	return useMemo(() => new URLSearchParams(search), [search]);
 }
 
 export function useRouter() {
@@ -29,7 +31,10 @@ export function useRouter() {
 	const router = useTanStackRouter();
 	return {
 		push: (href: string, _options?: { scroll?: boolean }) => navigate({ href }),
-		replace: (href: string, options?: { locale?: string; scroll?: boolean }) => {
+		replace: (
+			href: string,
+			options?: { locale?: string; scroll?: boolean },
+		) => {
 			if (options?.locale) {
 				return import("@/paraglide/runtime.js").then(({ setLocale }) =>
 					setLocale(options.locale as "en" | "de"),

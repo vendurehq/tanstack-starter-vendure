@@ -1,5 +1,20 @@
 import {expect, test} from '@playwright/test';
 
+test('navbar search input accepts keyboard input', async ({page}) => {
+    await page.goto('/en/search?q=shoe');
+
+    const searchInput = page.getByRole('searchbox', {name: 'Search products...'});
+    await page.waitForFunction(() =>
+        Object.keys(document.querySelector('input[type="search"]') ?? {}).some(key => key.startsWith('__react')),
+    );
+    await searchInput.click();
+    await searchInput.press('ControlOrMeta+A');
+    await searchInput.pressSequentially('boot', {delay: 150});
+    await page.waitForTimeout(500);
+
+    await expect(searchInput).toHaveValue('boot');
+});
+
 const browserErrors = new WeakMap<object, string[]>();
 
 test.beforeEach(async ({page}) => {
