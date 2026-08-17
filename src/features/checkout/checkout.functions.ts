@@ -10,24 +10,24 @@ import {
 	GetEligiblePaymentMethodsQuery,
 	GetEligibleShippingMethodsQuery,
 } from "@/features/checkout/graphql";
-import { getActiveCurrencyCodeOnServer } from "@/features/currency/active-currency.server";
-import { getRouteLocale } from "@/platform/i18n/server";
+import { storefrontContextMiddleware } from "@/features/currency/storefront-context.middleware";
+import { noStoreMiddleware } from "@/platform/middleware";
 import { queryOnServer } from "@/platform/vendure/api.server";
-import { disableAuthResponseCaching } from "@/platform/vendure/auth-token.server";
 
 /**
  * Loads the personalized checkout snapshot in one server-function request.
  * Keeping this orchestration server-side avoids a client-side request waterfall
  * when the route loader runs during navigation.
  */
-export const getCheckoutRouteData = createServerFn({ method: "GET" }).handler(
-	async () => {
-		disableAuthResponseCaching();
-		const [locale, currencyCode, customerResult] = await Promise.all([
-			getRouteLocale(),
-			getActiveCurrencyCodeOnServer(),
-			queryOnServer(GetActiveCustomerQuery, {}, { useAuthToken: true }),
-		]);
+export const getCheckoutRouteData = createServerFn({ method: "GET" })
+	.middleware([noStoreMiddleware, storefrontContextMiddleware])
+	.handler(async ({ context }) => {
+		const { locale, currencyCode } = context;
+		const customerResult = await queryOnServer(
+			GetActiveCustomerQuery,
+			{},
+			{ useAuthToken: true },
+		);
 		const isGuest = !customerResult.data.activeCustomer;
 
 		const [
@@ -83,5 +83,4 @@ export const getCheckoutRouteData = createServerFn({ method: "GET" }).handler(
 				) ?? [],
 			isGuest,
 		};
-	},
-);
+	});

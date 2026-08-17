@@ -8,7 +8,7 @@ import {
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import {useRouter} from '@/platform/tanstack/navigation';
-import {switchCurrency} from '@/features/currency/switch-currency';
+import {switchCurrency} from '@/features/currency/switch-currency.functions';
 import {useTransition} from 'react';
 import {useServerFn} from '@tanstack/react-start';
 

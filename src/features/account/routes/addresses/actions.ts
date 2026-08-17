@@ -1,5 +1,5 @@
 import {mutateOnServer, queryOnServer} from '@/platform/vendure/api.server';
-import {disableAuthResponseCaching, requireAuthToken} from '@/platform/vendure/auth-token.server';
+import {requireAuthToken} from '@/platform/vendure/auth-token.server';
 import {
     CreateCustomerAddressMutation,
     GetCustomerAddressesQuery,
@@ -7,23 +7,23 @@ import {
     DeleteCustomerAddressMutation,
 } from '@/features/account/graphql';
 import {GetAvailableCountriesQuery} from '@/features/checkout/graphql';
-import {getRouteLocale} from '@/platform/i18n/server';
+import {storefrontContextMiddleware} from '@/features/currency/storefront-context.middleware';
+import {authRequiredMiddleware, noStoreMiddleware} from '@/platform/middleware';
 import {createServerFn} from '@tanstack/react-start';
 import {z} from 'zod';
 
-export const getAddressesPageData = createServerFn({method: 'GET'}).handler(async () => {
-    disableAuthResponseCaching();
-    requireAuthToken();
-    const locale = await getRouteLocale();
-    const [addressesResult, countriesResult] = await Promise.all([
-        queryOnServer(GetCustomerAddressesQuery, {}, {useAuthToken: true}),
-        queryOnServer(GetAvailableCountriesQuery, {}, {languageCode: locale}),
-    ]);
-    return {
-        addresses: addressesResult.data.activeCustomer?.addresses ?? [],
-        countries: countriesResult.data.availableCountries ?? [],
-    };
-});
+export const getAddressesPageData = createServerFn({method: 'GET'})
+    .middleware([noStoreMiddleware, authRequiredMiddleware, storefrontContextMiddleware])
+    .handler(async ({context}) => {
+        const [addressesResult, countriesResult] = await Promise.all([
+            queryOnServer(GetCustomerAddressesQuery, {}, {useAuthToken: true}),
+            queryOnServer(GetAvailableCountriesQuery, {}, {languageCode: context.locale}),
+        ]);
+        return {
+            addresses: addressesResult.data.activeCustomer?.addresses ?? [],
+            countries: countriesResult.data.availableCountries ?? [],
+        };
+    });
 
 const addressSchema = z.object({
     id: z.string().optional(),

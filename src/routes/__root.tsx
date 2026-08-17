@@ -17,12 +17,20 @@ import { getLocale } from "@/paraglide/runtime";
 import { Link } from "@/platform/tanstack/navigation";
 import { LocaleLayout } from "@/site/locale-layout";
 import { themeScript } from "@/site/providers/theme-provider";
-import { getShellData } from "@/site/shell.functions";
+import {
+	getPersonalizedShellData,
+	getPublicShellData,
+} from "@/site/shell.functions";
 import appCss from "../storefront.css?url";
 
 export const Route = createRootRoute({
-	loader: () => getShellData(),
-	// Shell data (5 Vendure calls) would otherwise reload on every navigation.
+	loader: async () => {
+		// Defer personalized cart/user so public shell can stream without waiting.
+		const personalized = getPersonalizedShellData();
+		const pub = await getPublicShellData();
+		return { ...pub, personalized };
+	},
+	// Shell data would otherwise reload on every navigation.
 	// Mutations that change it (cart, auth, currency) call router.invalidate(),
 	// which bypasses staleTime.
 	staleTime: 30_000,
@@ -65,11 +73,14 @@ function StorefrontNotFound() {
 
 function StorefrontError({ error }: { error: Error }) {
 	const router = useRouter();
+	console.error(error);
 
 	return (
 		<main className="container mx-auto flex min-h-[60vh] max-w-xl flex-col items-center justify-center gap-4 px-4 text-center">
 			<h1 className="text-3xl font-bold">Something went wrong</h1>
-			<p className="text-muted-foreground">{error.message}</p>
+			<p className="text-muted-foreground">
+				An unexpected error occurred. Please try again.
+			</p>
 			<Button onClick={() => router.invalidate()}>Try again</Button>
 		</main>
 	);

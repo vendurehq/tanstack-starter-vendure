@@ -1,7 +1,8 @@
 import { useState, useTransition } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
+import type { z } from 'zod';
+import { createPasswordResetRequestFormSchema } from '@/features/authentication/schemas';
 import { requestPasswordResetAction } from './actions';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -18,21 +19,15 @@ import {Link} from '@tanstack/react-router';
 import {useTranslations} from '@/platform/i18n/paraglide';
 import {useServerFn} from '@tanstack/react-start';
 
-function createForgotPasswordSchema(t: ReturnType<typeof useTranslations<'Auth'>>) {
-    return z.object({
-        emailAddress: z.email(t('emailValidation')),
-    });
-}
-
-type ForgotPasswordFormData = z.infer<ReturnType<typeof createForgotPasswordSchema>>;
-
 export function ForgotPasswordForm() {
     const t = useTranslations('Auth');
     const [isPending, startTransition] = useTransition();
     const [success, setSuccess] = useState(false);
     const requestPasswordReset = useServerFn(requestPasswordResetAction);
 
-    const forgotPasswordSchema = createForgotPasswordSchema(t);
+    const forgotPasswordSchema = createPasswordResetRequestFormSchema(t('emailValidation'));
+    type ForgotPasswordFormData = z.infer<typeof forgotPasswordSchema>;
+
     const form = useForm<ForgotPasswordFormData>({
         resolver: zodResolver(forgotPasswordSchema),
         defaultValues: {

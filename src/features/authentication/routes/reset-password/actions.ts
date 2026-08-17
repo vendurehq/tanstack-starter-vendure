@@ -1,15 +1,16 @@
 import { ResetPasswordMutation } from '@/features/authentication/graphql'
 import { passwordResetInputSchema } from '@/features/authentication/schemas'
 import { m } from '@/paraglide/messages.js'
-import { disableAuthResponseCaching, setAuthToken } from '@/platform/vendure/auth-token.server'
+import { authRateLimitMiddleware, noStoreMiddleware } from '@/platform/middleware'
+import { setAuthToken } from '@/platform/vendure/auth-token.server'
 import { mutateOnServer } from '@/platform/vendure/api.server'
 import { isRedirect, redirect } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
 
 export const resetPasswordAction = createServerFn({ method: 'POST' })
+  .middleware([noStoreMiddleware, authRateLimitMiddleware])
   .validator(passwordResetInputSchema)
   .handler(async ({ data }) => {
-    disableAuthResponseCaching()
     if (data.password !== data.confirmPassword) return { error: m.Errors_passwordsMismatch() }
     try {
       const result = await mutateOnServer(ResetPasswordMutation, { token: data.token, password: data.password })

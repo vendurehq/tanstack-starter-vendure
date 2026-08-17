@@ -11,6 +11,7 @@ function request(body, token = 'test-secret') {
 }
 
 test('revalidation authenticates and expands locale-only tags', async () => {
+    process.env.VENDURE_SHOP_API_URL ??= 'https://shop.example.test/shop-api';
     process.env.REVALIDATION_SECRET = 'test-secret';
     assert.equal((await handleRevalidation(request({tags: ['collections']}, 'wrong'))).status, 401);
     const response = await handleRevalidation(request({tags: ['collections']}));
@@ -20,6 +21,7 @@ test('revalidation authenticates and expands locale-only tags', async () => {
 });
 
 test('revalidation reports invalid input and partial success', async () => {
+    process.env.VENDURE_SHOP_API_URL ??= 'https://shop.example.test/shop-api';
     process.env.REVALIDATION_SECRET = 'test-secret';
     assert.equal((await handleRevalidation(request({tags: []}))).status, 400);
     assert.equal((await handleRevalidation(request({tags: Array(101).fill('collections')}))).status, 400);
