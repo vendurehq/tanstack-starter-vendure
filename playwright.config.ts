@@ -12,7 +12,7 @@ export default defineConfig({
             reuseExistingServer: !process.env.CI,
         },
         {
-            command: 'npm run dev -- --host 127.0.0.1',
+            command: 'npm run build && npm run preview -- --host 127.0.0.1',
             url: 'http://127.0.0.1:3000/en',
             reuseExistingServer: !process.env.CI,
             env: {
