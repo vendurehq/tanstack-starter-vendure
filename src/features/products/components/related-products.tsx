@@ -5,8 +5,10 @@ import type { FragmentOf } from "@/platform/vendure/graphql";
 
 export function RelatedProducts({
 	products,
+	currencyCode,
 }: {
 	products: Array<FragmentOf<typeof ProductCardFragment>>;
+	currencyCode: string;
 }) {
 	const t = useTranslations("Product");
 
@@ -14,5 +16,11 @@ export function RelatedProducts({
 		return null;
 	}
 
-	return <ProductCarousel title={t("relatedProducts")} products={products} />;
+	return (
+		<ProductCarousel
+			title={t("relatedProducts")}
+			products={products}
+			currencyCode={currencyCode}
+		/>
+	);
 }

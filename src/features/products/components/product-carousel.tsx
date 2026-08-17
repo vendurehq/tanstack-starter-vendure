@@ -12,11 +12,13 @@ import { type FragmentOf, readFragment } from "@/platform/vendure/graphql";
 interface ProductCarouselClientProps {
 	title: string;
 	products: Array<FragmentOf<typeof ProductCardFragment>>;
+	currencyCode: string;
 }
 
 export function ProductCarousel({
 	title,
 	products,
+	currencyCode,
 }: ProductCarouselClientProps) {
 	return (
 		<section className="py-12 md:py-16">
@@ -35,7 +37,7 @@ export function ProductCarousel({
 								key={readFragment(ProductCardFragment, product).productId}
 								className="pl-2 md:pl-4 basis-full sm:basis-1/2 lg:basis-1/3 xl:basis-1/4"
 							>
-								<ProductCard product={product} />
+								<ProductCard product={product} currencyCode={currencyCode} />
 							</CarouselItem>
 						))}
 					</CarouselContent>

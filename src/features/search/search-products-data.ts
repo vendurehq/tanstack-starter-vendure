@@ -3,4 +3,5 @@ import type { ResultOf } from "@/platform/vendure/graphql";
 
 export interface SearchProductsData {
 	data: ResultOf<typeof SearchProductsQuery>;
+	currencyCode: string;
 }

@@ -44,13 +44,14 @@ export const getRelatedProducts = createServerFn({ method: "GET" })
 			},
 		});
 
-		return items
+		const products = items
 			.filter(
 				(item) =>
 					readFragment(ProductCardFragment, item).productId !==
 					data.currentProductId,
 			)
 			.slice(0, 12);
+		return { products, currencyCode };
 	});
 
 export const getProductPageData = createServerFn({ method: "GET" })

@@ -252,12 +252,26 @@ export type introspection_types = {
  * If you need to reuse this data or update your `scalars`, update `tadaOutputLocation` to
  * instead save to a .ts instead of a .d.ts file.
  */
+// Vendure 3.6 added this Shop API mutation after the checked-in schema snapshot was generated.
+type storefront_mutation = Omit<introspection_types['Mutation'], 'fields'> & {
+  fields: introspection_types['Mutation']['fields'] & {
+    'setCurrencyCodeForOrder': {
+      name: 'setCurrencyCodeForOrder';
+      type: { kind: 'NON_NULL'; name: never; ofType: { kind: 'UNION'; name: 'UpdateOrderItemsResult'; ofType: null } };
+    };
+  };
+};
+
+type storefront_introspection_types = Omit<introspection_types, 'Mutation'> & {
+  'Mutation': storefront_mutation;
+};
+
 export type introspection = {
   name: never;
   query: 'Query';
   mutation: 'Mutation';
   subscription: never;
-  types: introspection_types;
+  types: storefront_introspection_types;
 };
 
 import * as gqlTada from 'gql.tada';

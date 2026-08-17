@@ -16,5 +16,6 @@ export const Route = createFileRoute("/")({
 });
 
 function HomeRoute() {
-	return <Home products={Route.useLoaderData().products} />;
+	const { products, currencyCode } = Route.useLoaderData();
+	return <Home products={products} currencyCode={currencyCode} />;
 }

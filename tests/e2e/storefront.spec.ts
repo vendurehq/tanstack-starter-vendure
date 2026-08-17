@@ -59,6 +59,13 @@ test('catalog search, empty cart, and missing products have stable behavior', as
     await expect(page.getByRole('heading', {name: /Page Not Found/i})).toBeVisible();
 });
 
+test('product pages render when the product has no collection', async ({page}) => {
+    const response = await page.goto('/en/product/fixture-without-collection');
+
+    expect(response?.status()).toBe(200);
+    await expect(page.getByRole('heading', {level: 1, name: 'Fixture Without Collection'})).toBeVisible();
+});
+
 test('client navigation settles after loading route server functions', async ({page}) => {
     await page.goto('/en');
 
@@ -79,6 +86,39 @@ test('client navigation settles after loading route server functions', async ({p
 
     expect(serverFunctionRequests.length).toBe(settledRequestCount);
     expect(serverFunctionRequests.length).toBeLessThanOrEqual(2);
+});
+
+test('currency changes refresh product-grid prices', async ({page}) => {
+    await page.goto('/en/search?q=shoe');
+    await expect(page.getByRole('link', {name: /Fixture Shoe/})).toContainText('€12.34');
+
+    await page.waitForFunction(() =>
+        Object.keys(document.querySelector('button[aria-label="Switch currency"]') ?? {})
+            .some(key => key.startsWith('__react')),
+    );
+    await page.getByRole('button', {name: 'Switch currency'}).click();
+    await page.getByRole('menuitem', {name: 'USD'}).click();
+
+    await expect(page.getByRole('button', {name: 'Switch currency'})).toContainText('USD');
+    await expect(page.getByRole('link', {name: /Fixture Shoe/})).toContainText('$56.78');
+});
+
+test('currency changes refresh cart prices', async ({page}) => {
+    await page.context().addCookies([{
+        name: 'vendure-auth-token', value: 'cart-fixture', domain: '127.0.0.1', path: '/', httpOnly: true,
+    }]);
+    await page.goto('/en/cart');
+    await expect(page.locator('body')).toContainText('€12.34');
+
+    await page.waitForFunction(() =>
+        Object.keys(document.querySelector('button[aria-label="Switch currency"]') ?? {})
+            .some(key => key.startsWith('__react')),
+    );
+    await page.getByRole('button', {name: 'Switch currency'}).click();
+    await page.getByRole('menuitem', {name: 'USD'}).click();
+
+    await expect(page.getByRole('button', {name: 'Switch currency'})).toContainText('USD');
+    await expect(page.locator('body')).toContainText('$56.78');
 });
 
 test('account navigation is guarded and the API route is never localized', async ({page, request}) => {

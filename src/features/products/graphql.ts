@@ -1,4 +1,4 @@
-import {graphql} from '@/platform/vendure/graphql';
+import { graphql } from "@/platform/vendure/graphql";
 
 export const ProductCardFragment = graphql(`
     fragment ProductCard on SearchResult {
@@ -19,7 +19,6 @@ export const ProductCardFragment = graphql(`
                 value
             }
         }
-        currencyCode
     }
 `);
 

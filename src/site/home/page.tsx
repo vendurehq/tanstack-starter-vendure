@@ -13,15 +13,17 @@ const featureKeys = [
 
 export default function Home({
 	products,
+	currencyCode,
 }: {
 	products: Array<FragmentOf<typeof ProductCardFragment>>;
+	currencyCode: string;
 }) {
 	const t = useTranslations("Home");
 
 	return (
 		<div className="min-h-screen">
 			<HeroSection />
-			<FeaturedProducts products={products} />
+			<FeaturedProducts products={products} currencyCode={currencyCode} />
 
 			<section className="py-16 md:py-24 bg-muted/30">
 				<div className="container mx-auto px-4">

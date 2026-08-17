@@ -18,5 +18,5 @@ export const getSearchPageData = createServerFn({ method: "GET" })
 			{ languageCode: locale, currencyCode },
 		);
 		// Only expose the query data; the raw result may carry a session token
-		return { data: result.data };
+		return { data: result.data, currencyCode };
 	});
