@@ -134,7 +134,13 @@ export function Footer({collections}: {collections: Array<{id: string; name: str
                             rel="noopener noreferrer"
                             className="hover:text-foreground transition-colors"
                         >
-                            <span className="font-semibold">TanStack Start</span>
+                            <Image
+                                src="/tanstack-stacked-black.svg"
+                                alt="TanStack Start"
+                                width={101}
+                                height={40}
+                                className="h-5 w-auto dark:invert"
+                            />
                         </a>
                     </div>
                 </div>
