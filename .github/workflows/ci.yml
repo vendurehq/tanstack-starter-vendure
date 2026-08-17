@@ -17,6 +17,8 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
+      - if: github.event_name == 'pull_request'
+        run: npm run commitlint -- --from origin/${{ github.base_ref }} --to HEAD
       - run: npm run generate
       - if: github.event_name == 'pull_request'
         run: npm run upgrade:validate -- --base origin/${{ github.base_ref }}

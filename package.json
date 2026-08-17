@@ -17,6 +17,7 @@
     "lint": "biome lint",
     "check": "biome check",
     "check-types": "npm run generate && tsc --noEmit",
+    "commitlint": "commitlint --verbose",
     "test": "node --test \"tests/**/*.test.mjs\"",
     "test:e2e": "npm run generate:i18n && playwright test",
     "upgrade:init": "node scripts/storefront-upgrade.mjs init",
@@ -63,6 +64,8 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.4.5",
+    "@commitlint/cli": "^21.2.2",
+    "@commitlint/config-conventional": "^21.2.2",
     "@playwright/test": "^1.62.1",
     "@tanstack/devtools-vite": "^0.8.3",
     "@tanstack/router-cli": "^1.132.0",
