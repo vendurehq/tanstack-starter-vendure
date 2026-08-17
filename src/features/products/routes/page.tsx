@@ -141,7 +141,12 @@ export default function ProductDetailPage({
 			</section>
 
 			<Await promise={relatedProducts} fallback={null}>
-				{(products) => <RelatedProducts products={products} />}
+				{({ products, currencyCode: relatedCurrencyCode }) => (
+					<RelatedProducts
+						products={products}
+						currencyCode={relatedCurrencyCode}
+					/>
+				)}
 			</Await>
 		</>
 	);

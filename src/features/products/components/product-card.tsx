@@ -7,9 +7,13 @@ import { type FragmentOf, readFragment } from "@/platform/vendure/graphql";
 
 interface ProductCardProps {
 	product: FragmentOf<typeof ProductCardFragment>;
+	currencyCode: string;
 }
 
-export function ProductCard({ product: productProp }: ProductCardProps) {
+export function ProductCard({
+	product: productProp,
+	currencyCode,
+}: ProductCardProps) {
 	const t = useTranslations("Product");
 	const product = readFragment(ProductCardFragment, productProp);
 
@@ -46,19 +50,19 @@ export function ProductCard({ product: productProp }: ProductCardProps) {
 								</span>
 								<Price
 									value={product.priceWithTax.min}
-									currencyCode={product.currencyCode}
+									currencyCode={currencyCode}
 								/>
 							</>
 						) : (
 							<Price
 								value={product.priceWithTax.min}
-								currencyCode={product.currencyCode}
+								currencyCode={currencyCode}
 							/>
 						)
 					) : product.priceWithTax.__typename === "SinglePrice" ? (
 						<Price
 							value={product.priceWithTax.value}
-							currencyCode={product.currencyCode}
+							currencyCode={currencyCode}
 						/>
 					) : null}
 				</p>

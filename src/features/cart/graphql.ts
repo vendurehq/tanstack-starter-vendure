@@ -1,4 +1,4 @@
-import {graphql} from '@/platform/vendure/graphql';
+import { graphql } from "@/platform/vendure/graphql";
 
 export const GetActiveOrderQuery = graphql(`
     query GetActiveOrder {
@@ -38,6 +38,22 @@ export const GetActiveOrderQuery = graphql(`
                 unitPriceWithTax
                 quantity
                 linePriceWithTax
+            }
+        }
+    }
+`);
+
+export const SetCurrencyCodeForOrderMutation = graphql(`
+    mutation SetCurrencyCodeForOrder($currencyCode: CurrencyCode!) {
+        setCurrencyCodeForOrder(currencyCode: $currencyCode) {
+            __typename
+            ... on Order {
+                id
+                currencyCode
+            }
+            ... on ErrorResult {
+                errorCode
+                message
             }
         }
     }

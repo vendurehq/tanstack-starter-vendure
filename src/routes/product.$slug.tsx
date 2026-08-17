@@ -13,7 +13,7 @@ export const Route = createFileRoute("/product/$slug")({
 	loader: async ({ params }) => {
 		const data = await getProductPageData({ data: { slug: params.slug } });
 		if (!data) throw notFound();
-		const { product, primaryCollection } = data.data;
+		const { product, primaryCollection, currencyCode } = data.data;
 		const relatedProducts = primaryCollection
 			? getRelatedProducts({
 					data: {
@@ -21,7 +21,7 @@ export const Route = createFileRoute("/product/$slug")({
 						currentProductId: product.id,
 					},
 				})
-			: Promise.resolve([]);
+			: Promise.resolve({ products: [], currencyCode });
 		return { ...data, relatedProducts };
 	},
 	staleTime: 30_000,

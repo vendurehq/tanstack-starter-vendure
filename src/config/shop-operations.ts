@@ -10,7 +10,7 @@ import {
 	UpdateCustomerEmailAddressMutation,
 	UpdateCustomerMutation,
 	UpdateCustomerPasswordMutation,
-} from '@/features/account/graphql';
+} from "@/features/account/graphql";
 import {
 	LoginMutation,
 	LogoutMutation,
@@ -18,7 +18,7 @@ import {
 	RequestPasswordResetMutation,
 	ResetPasswordMutation,
 	VerifyCustomerAccountMutation,
-} from '@/features/authentication/graphql';
+} from "@/features/authentication/graphql";
 import {
 	AddToCartMutation,
 	AdjustCartItemMutation,
@@ -26,7 +26,8 @@ import {
 	GetActiveOrderQuery,
 	RemoveFromCartMutation,
 	RemovePromotionCodeMutation,
-} from '@/features/cart/graphql';
+	SetCurrencyCodeForOrderMutation,
+} from "@/features/cart/graphql";
 import {
 	AddPaymentToOrderMutation,
 	GetActiveOrderForCheckoutQuery,
@@ -38,17 +39,17 @@ import {
 	SetOrderShippingAddressMutation,
 	SetOrderShippingMethodMutation,
 	TransitionOrderToStateMutation,
-} from '@/features/checkout/graphql';
+} from "@/features/checkout/graphql";
 import {
 	GetCollectionPageQuery,
 	GetCollectionProductsQuery,
 	GetTopCollectionsQuery,
-} from '@/features/collections/graphql';
-import {GetProductDetailQuery} from '@/features/products/graphql';
-import {SearchProductsQuery} from '@/features/search/graphql';
-import {GetOrderByCodeQuery} from '@/features/orders/graphql';
-import {registerShopOperations} from '@/platform/vendure/api.server';
-import {GetActiveChannelQuery} from '@/platform/vendure/channel-graphql';
+} from "@/features/collections/graphql";
+import { GetOrderByCodeQuery } from "@/features/orders/graphql";
+import { GetProductDetailQuery } from "@/features/products/graphql";
+import { SearchProductsQuery } from "@/features/search/graphql";
+import { registerShopOperations } from "@/platform/vendure/api.server";
+import { GetActiveChannelQuery } from "@/platform/vendure/channel-graphql";
 
 // Every GraphQL operation the storefront may send to the Vendure Shop API.
 // The transport rejects any request whose document does not exactly match
@@ -77,6 +78,7 @@ registerShopOperations([
 	GetActiveOrderQuery,
 	RemoveFromCartMutation,
 	RemovePromotionCodeMutation,
+	SetCurrencyCodeForOrderMutation,
 	AddPaymentToOrderMutation,
 	GetActiveOrderForCheckoutQuery,
 	GetAvailableCountriesQuery,

@@ -46,6 +46,7 @@ export function ProductGrid({
 					<ProductCard
 						key={readFragment(ProductCardFragment, product).productId}
 						product={product}
+						currencyCode={productData.currencyCode}
 					/>
 				))}
 			</div>

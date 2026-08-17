@@ -39,6 +39,6 @@ export const getCollectionPageData = createServerFn({ method: "GET" })
 				image: collection.featuredAsset?.preview ?? null,
 			},
 			// Only expose the query data; the raw result may carry a session token
-			productData: { data: productData.data },
+			productData: { data: productData.data, currencyCode },
 		};
 	});
