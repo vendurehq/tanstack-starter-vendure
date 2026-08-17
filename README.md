@@ -10,9 +10,10 @@
   A TanStack Start storefront starter for Vendure headless commerce
 </h3>
 <p align="center">
-  Use as a foundation to build upon, take inspiration from, or learn the ergonomics of the Vendure Shop API.
+  A source-owned, customizable storefront with a managed path for adopting upstream releases.
 </p>
 <h4 align="center">
+  <a href="https://tanstack-starter-vendure.vercel.app">Demo</a> |
   <a href="https://docs.vendure.io">Documentation</a> |
   <a href="https://vendure.io">Website</a>
 </h4>
@@ -64,9 +65,16 @@
 - Multi-currency support with persistent currency selection
 - Locale-aware price formatting
 
+**Built to Customize and Upgrade**
+
+- Developer-owned source with no locked or generated application layer
+- Feature-oriented modules with enforced dependency boundaries
+- Colocated GraphQL operations and translations
+- Structured release manifests for reconciling upstream changes with local customizations
+
 ## Getting Started
 
-First, configure the storefront and run the development server:
+You need a running Vendure server with its Shop API available. Copy the example environment, point `VENDURE_SHOP_API_URL` at that API, install dependencies, generate derived files, and start the storefront:
 
 ```bash
 cp .env.example .env
@@ -75,9 +83,64 @@ npm run generate
 npm run dev
 ```
 
-Set `VENDURE_SHOP_API_URL` in `.env` to a Vendure Shop API. Open [http://localhost:3000](http://localhost:3000) in your browser; the storefront is available at `/en` and `/de`, and `/` redirects to the preferred supported locale.
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result. The storefront is available at `/en` and `/de`, and `/` redirects to the preferred supported locale.
 
-Customize the storefront from `src/features`, `src/site`, and `src/storefront.css`. See [Architecture](docs/architecture.md) for ownership and server-boundary conventions and [Contributing](CONTRIBUTING.md) for the upstream upgrade workflow.
+The environment template also documents optional channel, metadata, authentication header, and cache revalidation settings.
+
+## Architecture
+
+Every human-authored storefront file is yours to change. The source is organized to keep those changes local and make future upgrades easier to reconcile:
+
+```text
+src/
+  routes/        TanStack Router route definitions and data orchestration
+  config/        Store-wide configuration
+  features/      Vertical commerce capabilities
+  platform/      TanStack Start, localization, caching, and Vendure integrations
+  site/          Store-specific composition, navigation, and branding
+  components/ui  Generic design primitives
+```
+
+Keep `src/routes` files thin and put substantial behavior in the module that owns it. A feature exposes other modules through top-level files; its `components/` and `routes/` directories are private implementation details.
+
+Read the [architecture guide](./docs/architecture.md) before adding a capability.
+
+## Upgrading
+
+Tagged releases include structured integration intent so a human or coding agent can adopt upstream changes without silently overwriting storefront customizations.
+
+After creating a storefront from an immutable release tag, record its exact upstream provenance once:
+
+```bash
+npm run upgrade:init
+git add .vendure/storefront.json
+git commit -m "chore: initialize storefront provenance"
+```
+
+To prepare a later upgrade on a clean, dedicated branch:
+
+```bash
+npm run upgrade:prepare -- 1.1.0
+```
+
+The command creates a gitignored integration workspace containing the old and new upstream snapshots, release guidance, and a report template. Reconcile the changes, then follow the generated brief to verify and finalize the upgrade.
+
+See the [upgrade guide](./docs/upgrades.md) for the complete managed upgrade, legacy onboarding, and release-authoring workflows.
+
+## Development
+
+Run the same checks used by CI before submitting a change:
+
+```bash
+npm run upgrade:validate
+npm test
+npm run test:e2e
+npm run lint
+npm run check-types
+npm run build
+```
+
+Downstream-impacting pull requests require an upgrade note or an explicit exemption. See [CONTRIBUTING.md](./CONTRIBUTING.md) for the contribution workflow.
 
 ## Commands
 
@@ -85,6 +148,7 @@ Customize the storefront from `src/features`, `src/site`, and `src/storefront.cs
 npm run generate       # Generate Paraglide messages and the TanStack route tree
 npm run check-types    # Run generation and TypeScript checks
 npm test               # Run architecture, i18n, cache, and upgrade tests
+npm run test:e2e       # Run Playwright end-to-end tests
 npm run lint           # Run Biome lint
 npm run build          # Create a production Nitro build
 ```
