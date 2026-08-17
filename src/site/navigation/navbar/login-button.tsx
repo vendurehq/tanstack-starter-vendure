@@ -1,5 +1,5 @@
 import {type ComponentProps, useTransition} from "react";
-import {logoutAction} from '@/features/authentication/logout';
+import {logoutAction} from '@/features/authentication/logout.functions';
 import {useRouter} from '@/platform/tanstack/navigation';
 import {useTranslations} from '@/platform/i18n/paraglide';
 import {useServerFn} from '@tanstack/react-start';

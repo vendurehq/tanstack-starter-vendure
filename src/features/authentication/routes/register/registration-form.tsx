@@ -1,7 +1,8 @@
 import { useState, useTransition } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
+import type { z } from 'zod';
+import { createRegistrationFormSchema } from '@/features/authentication/schemas';
 import { registerAction } from './actions';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -19,22 +20,6 @@ import { Link } from '@tanstack/react-router';
 import {useTranslations} from '@/platform/i18n/paraglide';
 import {useServerFn} from '@tanstack/react-start';
 
-function createRegistrationSchema(t: ReturnType<typeof useTranslations<'Auth'>>) {
-    return z.object({
-        emailAddress: z.string().email(t('emailValidation')),
-        firstName: z.string().optional(),
-        lastName: z.string().optional(),
-        phoneNumber: z.string().optional(),
-        password: z.string().min(8, t('passwordMinLength')),
-        confirmPassword: z.string(),
-    }).refine((data) => data.password === data.confirmPassword, {
-        message: t('passwordsMismatch'),
-        path: ["confirmPassword"],
-    });
-}
-
-type RegistrationFormData = z.infer<ReturnType<typeof createRegistrationSchema>>;
-
 interface RegistrationFormProps {
     redirectTo?: string;
 }
@@ -45,7 +30,13 @@ export function RegistrationForm({ redirectTo }: RegistrationFormProps) {
     const [serverError, setServerError] = useState<string | null>(null);
     const register = useServerFn(registerAction);
 
-    const registrationSchema = createRegistrationSchema(t);
+    const registrationSchema = createRegistrationFormSchema({
+        emailValidation: t('emailValidation'),
+        passwordMinLength: t('passwordMinLength'),
+        passwordsMismatch: t('passwordsMismatch'),
+    });
+    type RegistrationFormData = z.infer<typeof registrationSchema>;
+
     const form = useForm<RegistrationFormData>({
         resolver: zodResolver(registrationSchema),
         defaultValues: {

@@ -17,8 +17,8 @@ export default defineConfig({
             reuseExistingServer: !process.env.CI,
             env: {
                 VENDURE_SHOP_API_URL: 'http://127.0.0.1:3900/shop-api',
-                SITE_URL: 'http://127.0.0.1:3000',
-                SITE_NAME: 'Fixture Store',
+                VITE_SITE_URL: 'http://127.0.0.1:3000',
+                VITE_SITE_NAME: 'Fixture Store',
             },
         },
     ],

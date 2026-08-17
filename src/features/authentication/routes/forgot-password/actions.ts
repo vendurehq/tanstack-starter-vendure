@@ -1,13 +1,13 @@
 import { RequestPasswordResetMutation } from '@/features/authentication/graphql'
 import { passwordResetRequestInputSchema } from '@/features/authentication/schemas'
-import { disableAuthResponseCaching } from '@/platform/vendure/auth-token.server'
+import { authRateLimitMiddleware, noStoreMiddleware } from '@/platform/middleware'
 import { mutateOnServer } from '@/platform/vendure/api.server'
 import { createServerFn } from '@tanstack/react-start'
 
 export const requestPasswordResetAction = createServerFn({ method: 'POST' })
+  .middleware([noStoreMiddleware, authRateLimitMiddleware])
   .validator(passwordResetRequestInputSchema)
   .handler(async ({ data }) => {
-    disableAuthResponseCaching()
     try {
       await mutateOnServer(RequestPasswordResetMutation, { emailAddress: data.emailAddress })
     } catch {

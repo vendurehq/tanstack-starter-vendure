@@ -6,18 +6,18 @@ import {
 	GetOrderDetailQuery,
 } from "@/features/account/graphql";
 import { GetOrderByCodeQuery } from "@/features/orders/graphql";
-import { queryOnServer } from "@/platform/vendure/api.server";
 import {
-	disableAuthResponseCaching,
-	getAuthToken,
-} from "@/platform/vendure/auth-token.server";
+	authRequiredMiddleware,
+	noStoreMiddleware,
+} from "@/platform/middleware";
+import { queryOnServer } from "@/platform/vendure/api.server";
 
 export const ORDERS_PER_PAGE = 10;
 
 export const getOrderConfirmation = createServerFn({ method: "GET" })
+	.middleware([noStoreMiddleware])
 	.validator(z.object({ code: z.string().trim().min(1).max(128) }))
 	.handler(async ({ data }) => {
-		disableAuthResponseCaching();
 		const result = await queryOnServer(
 			GetOrderByCodeQuery,
 			{ code: data.code },
@@ -29,10 +29,9 @@ export const getOrderConfirmation = createServerFn({ method: "GET" })
 	});
 
 export const getCustomerOrders = createServerFn({ method: "GET" })
+	.middleware([noStoreMiddleware, authRequiredMiddleware])
 	.validator(z.object({ page: z.number().int().positive() }))
 	.handler(async ({ data }) => {
-		disableAuthResponseCaching();
-		if (!getAuthToken()) throw redirect({ to: "/sign-in" });
 		const result = await queryOnServer(
 			GetCustomerOrdersQuery,
 			{
@@ -49,10 +48,9 @@ export const getCustomerOrders = createServerFn({ method: "GET" })
 	});
 
 export const getOrderDetail = createServerFn({ method: "GET" })
+	.middleware([noStoreMiddleware, authRequiredMiddleware])
 	.validator(z.object({ code: z.string().trim().min(1).max(128) }))
 	.handler(async ({ data }) => {
-		disableAuthResponseCaching();
-		if (!getAuthToken()) throw redirect({ to: "/sign-in" });
 		const result = await queryOnServer(
 			GetOrderDetailQuery,
 			{ code: data.code },

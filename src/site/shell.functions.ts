@@ -1,37 +1,64 @@
-import {GetActiveCustomerQuery, ActiveCustomerFragment} from '@/features/account/graphql';
-import {GetActiveOrderQuery} from '@/features/cart/graphql';
-import {GetTopCollectionsQuery} from '@/features/collections/graphql';
-import {getActiveCurrencyCodeOnServer} from '@/features/currency/active-currency.server';
-import {cachedPublicData} from '@/platform/cache/public-cache';
-import {getLocale} from '@/paraglide/runtime';
-import {queryOnServer} from '@/platform/vendure/api.server';
-import {GetActiveChannelQuery} from '@/platform/vendure/channel-graphql';
-import {readFragment} from '@/platform/vendure/graphql';
-import {disableAuthResponseCaching} from '@/platform/vendure/auth-token.server';
-import {createServerFn} from '@tanstack/react-start';
+import { createServerFn } from "@tanstack/react-start";
+import {
+	ActiveCustomerFragment,
+	GetActiveCustomerQuery,
+} from "@/features/account/graphql";
+import { GetActiveOrderQuery } from "@/features/cart/graphql";
+import { GetTopCollectionsQuery } from "@/features/collections/graphql";
+import { getCurrencyCookie } from "@/features/currency/currency.server";
+import { getLocale } from "@/paraglide/runtime";
+import { cachedPublicData } from "@/platform/cache/public-cache";
+import { noStoreMiddleware } from "@/platform/middleware";
+import { queryOnServer } from "@/platform/vendure/api.server";
+import { GetActiveChannelQuery } from "@/platform/vendure/channel-graphql";
+import { readFragment } from "@/platform/vendure/graphql";
 
-export const getShellData = createServerFn({method: 'GET'}).handler(async () => {
-    // Contains customer name and cart count, so shared caches must not store it
-    disableAuthResponseCaching();
-    const locale = getLocale();
-    const [channelResult, collections, customerResult, orderResult, activeCurrencyCode] = await Promise.all([
-        queryOnServer(GetActiveChannelQuery, {}),
-        cachedPublicData({
-            key: `collections:top:${locale}`,
-            tags: [`collections-${locale}`],
-            ttlMs: 5 * 60 * 1000,
-            load: async () => (await queryOnServer(GetTopCollectionsQuery, {}, {languageCode: locale})).data.collections.items,
-        }),
-        queryOnServer(GetActiveCustomerQuery, {}, {useAuthToken: true}),
-        queryOnServer(GetActiveOrderQuery, {}, {useAuthToken: true}),
-        getActiveCurrencyCodeOnServer(),
-    ]);
-    const customer = readFragment(ActiveCustomerFragment, customerResult.data.activeCustomer);
-    return {
-        collections,
-        availableCurrencyCodes: channelResult.data.activeChannel.availableCurrencyCodes,
-        activeCurrencyCode,
-        cartItemCount: orderResult.data.activeOrder?.totalQuantity ?? 0,
-        customerFirstName: customer?.firstName ?? null,
-    };
-});
+/** Public shell — cacheable; no auth cookies / no-store. */
+export const getPublicShellData = createServerFn({ method: "GET" }).handler(
+	async () => {
+		const locale = getLocale();
+		const currencyCookie = getCurrencyCookie();
+		const [channelResult, collections] = await Promise.all([
+			queryOnServer(GetActiveChannelQuery, {}),
+			cachedPublicData({
+				key: `collections:top:${locale}`,
+				tags: [`collections-${locale}`],
+				ttlMs: 5 * 60 * 1000,
+				load: async () =>
+					(
+						await queryOnServer(
+							GetTopCollectionsQuery,
+							{},
+							{ languageCode: locale },
+						)
+					).data.collections.items,
+			}),
+		]);
+		return {
+			collections,
+			availableCurrencyCodes:
+				channelResult.data.activeChannel.availableCurrencyCodes,
+			// Reuse channel result on cookie miss — avoids a second GetActiveChannelQuery.
+			activeCurrencyCode:
+				currencyCookie ?? channelResult.data.activeChannel.defaultCurrencyCode,
+		};
+	},
+);
+
+/** Personalized shell — cart count + customer name; must not be cached. */
+export const getPersonalizedShellData = createServerFn({ method: "GET" })
+	.middleware([noStoreMiddleware])
+	.handler(async () => {
+		const [customerResult, orderResult] = await Promise.all([
+			queryOnServer(GetActiveCustomerQuery, {}, { useAuthToken: true }),
+			queryOnServer(GetActiveOrderQuery, {}, { useAuthToken: true }),
+		]);
+		const customer = readFragment(
+			ActiveCustomerFragment,
+			customerResult.data.activeCustomer,
+		);
+		return {
+			cartItemCount: orderResult.data.activeOrder?.totalQuantity ?? 0,
+			customerFirstName: customer?.firstName ?? null,
+		};
+	});

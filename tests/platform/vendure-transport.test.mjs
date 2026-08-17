@@ -35,7 +35,10 @@ test('Vendure transport reads request-time configuration and sends channel/langu
 test('Vendure transport rejects missing configuration, GraphQL errors, and unknown operations', async () => {
     const originalUrl = process.env.VENDURE_SHOP_API_URL;
     delete process.env.VENDURE_SHOP_API_URL;
-    await assert.rejects(() => executeVendureRequest({query: channelQuery, variables: {}}), /VENDURE_SHOP_API_URL/);
+    await assert.rejects(
+        () => executeVendureRequest({query: channelQuery, variables: {}}),
+        /Unable to complete the request/,
+    );
     process.env.VENDURE_SHOP_API_URL = 'https://shop.example.test/shop-api';
     await assert.rejects(
         () => executeVendureRequest({query: 'query ArbitraryOperation { activeChannel { id } }', variables: {}}),
@@ -48,7 +51,15 @@ test('Vendure transport rejects missing configuration, GraphQL errors, and unkno
     const originalFetch = globalThis.fetch;
     globalThis.fetch = async () => Response.json({errors: [{message: 'Shop API failure'}]});
     try {
-        await assert.rejects(() => executeVendureRequest({query: channelQuery, variables: {}}), /Shop API failure/);
+        // GraphQL details stay server-side; clients only see a sanitized message.
+        await assert.rejects(
+            () => executeVendureRequest({query: channelQuery, variables: {}}),
+            (error) => {
+                assert.match(error.message, /Unable to complete the request/);
+                assert.doesNotMatch(error.message, /Shop API failure/);
+                return true;
+            },
+        );
     } finally {
         globalThis.fetch = originalFetch;
         if (originalUrl === undefined) delete process.env.VENDURE_SHOP_API_URL;
@@ -60,8 +71,9 @@ test('authentication and currency cookies retain required security attributes', 
     const authSource = await readFile(new URL('../../src/platform/vendure/auth-token.server.ts', import.meta.url), 'utf8');
     const currencySource = await readFile(new URL('../../src/features/currency/currency.server.ts', import.meta.url), 'utf8');
     assert.match(authSource, /httpOnly:\s*true/);
-    assert.match(authSource, /sameSite:\s*'lax'/);
-    assert.match(authSource, /path:\s*'\/'/);
-    assert.match(authSource, /secure:\s*process\.env\.NODE_ENV === 'production'/);
+    assert.match(authSource, /sameSite:\s*['"]lax['"]/);
+    assert.match(authSource, /path:\s*['"]\/['"]/);
+    assert.match(authSource, /secure:\s*env\.NODE_ENV === ['"]production['"]/);
+    assert.match(authSource, /maxAge:\s*60 \* 60 \* 24 \* 365/);
     assert.match(currencySource, /maxAge:\s*60 \* 60 \* 24 \* 365/);
 });

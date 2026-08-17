@@ -2,15 +2,15 @@ import { RegisterCustomerAccountMutation } from '@/features/authentication/graph
 import { registrationInputSchema } from '@/features/authentication/schemas'
 import { m } from '@/paraglide/messages.js'
 import { mutateOnServer } from '@/platform/vendure/api.server'
-import { disableAuthResponseCaching } from '@/platform/vendure/auth-token.server'
+import { authRateLimitMiddleware, noStoreMiddleware } from '@/platform/middleware'
 import { safeInternalRedirect } from '@/platform/tanstack/redirect'
 import { isRedirect, redirect } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
 
 export const registerAction = createServerFn({ method: 'POST' })
+  .middleware([noStoreMiddleware, authRateLimitMiddleware])
   .validator(registrationInputSchema)
   .handler(async ({ data }) => {
-    disableAuthResponseCaching()
     try {
       const result = await mutateOnServer(RegisterCustomerAccountMutation, { input: {
         emailAddress: data.emailAddress, firstName: data.firstName,

@@ -1,16 +1,16 @@
 import {GetActiveOrderQuery} from '@/features/cart/graphql';
-import {getActiveCurrencyCodeOnServer} from '@/features/currency/active-currency.server';
-import {getLocale} from '@/paraglide/runtime';
+import {storefrontContextMiddleware} from '@/features/currency/storefront-context.middleware';
+import {noStoreMiddleware} from '@/platform/middleware';
 import {queryOnServer} from '@/platform/vendure/api.server';
-import {disableAuthResponseCaching} from '@/platform/vendure/auth-token.server';
 import {createServerFn} from '@tanstack/react-start';
 
-export const getCartRouteData = createServerFn({method: 'GET'}).handler(async () => {
-    disableAuthResponseCaching();
-    const result = await queryOnServer(GetActiveOrderQuery, {}, {
-        useAuthToken: true,
-        languageCode: getLocale(),
-        currencyCode: await getActiveCurrencyCodeOnServer(),
+export const getCartRouteData = createServerFn({method: 'GET'})
+    .middleware([noStoreMiddleware, storefrontContextMiddleware])
+    .handler(async ({context}) => {
+        const result = await queryOnServer(GetActiveOrderQuery, {}, {
+            useAuthToken: true,
+            languageCode: context.locale,
+            currencyCode: context.currencyCode,
+        });
+        return result.data.activeOrder;
     });
-    return result.data.activeOrder;
-});
