@@ -11,8 +11,14 @@ import { nitro } from 'nitro/vite'
 
 const config = defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '')
-  if (mode === 'production' && !env.VITE_SITE_URL) {
-    throw new Error('VITE_SITE_URL is required for production builds')
+  if (
+    mode === 'production' &&
+    !env.VITE_SITE_URL &&
+    !env.VITE_VERCEL_PROJECT_PRODUCTION_URL
+  ) {
+    throw new Error(
+      'VITE_SITE_URL is required for production builds outside Vercel',
+    )
   }
 
   return {

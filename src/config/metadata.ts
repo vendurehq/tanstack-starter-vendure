@@ -1,8 +1,13 @@
 export const SITE_NAME = import.meta.env.VITE_SITE_NAME || "Vendure Store";
 
-const configuredSiteUrl = import.meta.env.VITE_SITE_URL;
+const vercelProductionUrl = import.meta.env.VITE_VERCEL_PROJECT_PRODUCTION_URL;
+const configuredSiteUrl =
+	import.meta.env.VITE_SITE_URL ||
+	(vercelProductionUrl ? `https://${vercelProductionUrl}` : undefined);
 if (import.meta.env.PROD && !configuredSiteUrl) {
-	throw new Error("VITE_SITE_URL is required for production builds");
+	throw new Error(
+		"VITE_SITE_URL is required for production builds outside Vercel",
+	);
 }
 
 export const SITE_URL = configuredSiteUrl || "http://localhost:3000";
