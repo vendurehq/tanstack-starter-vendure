@@ -1,4 +1,8 @@
-import { createFileRoute, notFound } from "@tanstack/react-router";
+import {
+	createFileRoute,
+	notFound,
+	stripSearchParams,
+} from "@tanstack/react-router";
 import { getCollectionPageData } from "@/features/collections/catalog.functions";
 import Loading from "@/features/collections/routes/loading";
 import Page from "@/features/collections/routes/page";
@@ -7,6 +11,9 @@ import { catalogSearchSchema } from "@/platform/tanstack/search";
 
 export const Route = createFileRoute("/collection/$slug")({
 	validateSearch: catalogSearchSchema,
+	search: {
+		middlewares: [stripSearchParams({ page: 1, sort: "name-asc" })],
+	},
 	loaderDeps: ({ search: { q, page, sort, facets } }) => ({
 		q,
 		page,

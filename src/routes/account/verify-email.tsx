@@ -6,9 +6,11 @@ import { verifyEmailUpdateAction } from "@/features/account/routes/verify-email/
 import Page, {
 	type VerificationResult,
 } from "@/features/account/routes/verify-email/page";
+import { m } from "@/paraglide/messages.js";
 import { tokenSearchSchema } from "@/platform/tanstack/search";
 
 export const Route = createFileRoute("/account/verify-email")({
+	head: () => ({ meta: [{ title: m.Account_verifyEmailPageTitle() }] }),
 	validateSearch: tokenSearchSchema,
 	component: VerifyEmailRoute,
 });

@@ -1,5 +1,17 @@
 export const SITE_NAME = import.meta.env.VITE_SITE_NAME || "Vendure Store";
-export const SITE_URL = import.meta.env.VITE_SITE_URL || "https://example.com";
+
+const vercelProductionUrl = import.meta.env.VITE_VERCEL_PROJECT_PRODUCTION_URL;
+const configuredSiteUrl =
+	import.meta.env.VITE_SITE_URL ||
+	(vercelProductionUrl ? `https://${vercelProductionUrl}` : undefined);
+if (import.meta.env.PROD && !configuredSiteUrl) {
+	throw new Error(
+		"VITE_SITE_URL is required for production builds outside Vercel",
+	);
+}
+
+export const SITE_URL = configuredSiteUrl || "http://localhost:3000";
+export const DEFAULT_OG_IMAGE = new URL("/og-image.jpg", SITE_URL).href;
 
 /**
  * Truncate text to a maximum length while preserving word boundaries.

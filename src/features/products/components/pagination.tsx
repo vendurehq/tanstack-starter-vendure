@@ -1,5 +1,4 @@
-import {useSearchParams} from '@/platform/tanstack/navigation';
-import {usePathname, Link} from '@/platform/tanstack/navigation';
+import {Link} from '@tanstack/react-router';
 import {ChevronLeft, ChevronRight} from 'lucide-react';
 import {Button} from '@/components/ui/button';
 
@@ -7,17 +6,7 @@ interface PaginationProps {
     currentPage: number;
     totalPages: number;
 }
-
 export function Pagination({currentPage, totalPages}: PaginationProps) {
-    const pathname = usePathname();
-    const searchParams = useSearchParams();
-
-    const createPageUrl = (page: number) => {
-        const params = new URLSearchParams(searchParams);
-        params.set('page', page.toString());
-        return `${pathname}?${params.toString()}`;
-    };
-
     const getPageNumbers = () => {
         const delta = 2;
         const range = [];
@@ -53,7 +42,7 @@ export function Pagination({currentPage, totalPages}: PaginationProps) {
                 variant="outline"
                 size="icon"
                 className="rounded-full"
-                render={currentPage !== 1 ? <Link href={createPageUrl(currentPage - 1)} /> : undefined}
+                render={currentPage !== 1 ? <Link to="." search={(previous) => ({...previous, page: currentPage - 1})} /> : undefined}
                 nativeButton={currentPage !== 1 ? false : undefined}
                 disabled={currentPage === 1}
             >
@@ -78,7 +67,7 @@ export function Pagination({currentPage, totalPages}: PaginationProps) {
                         variant={isActive ? 'default' : 'outline'}
                         size="icon"
                         className="rounded-full"
-                        render={!isActive ? <Link href={createPageUrl(pageNum)} /> : undefined}
+                        render={!isActive ? <Link to="." search={(previous) => ({...previous, page: pageNum})} /> : undefined}
                         nativeButton={!isActive ? false : undefined}
                         disabled={isActive}
                     >
@@ -91,7 +80,7 @@ export function Pagination({currentPage, totalPages}: PaginationProps) {
                 variant="outline"
                 size="icon"
                 className="rounded-full"
-                render={currentPage !== totalPages ? <Link href={createPageUrl(currentPage + 1)} /> : undefined}
+                render={currentPage !== totalPages ? <Link to="." search={(previous) => ({...previous, page: currentPage + 1})} /> : undefined}
                 nativeButton={currentPage !== totalPages ? false : undefined}
                 disabled={currentPage === totalPages}
             >

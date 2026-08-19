@@ -114,10 +114,10 @@ export default function OrdersPage({ordersData, currentPage}: {ordersData: Order
                                 <PaginationContent>
                                     <PaginationItem>
                                         <PaginationPrevious
-                                            href={
+                                            render={
                                                 currentPage > 1
-                                                    ? `/account/orders?page=${currentPage - 1}`
-                                                    : '#'
+                                                    ? <Link to="/account/orders" search={{page: currentPage - 1}} />
+                                                    : undefined
                                             }
                                             className={
                                                 currentPage === 1
@@ -138,7 +138,7 @@ export default function OrdersPage({ordersData, currentPage}: {ordersData: Order
                                                 return (
                                                     <PaginationItem key={page}>
                                                         <PaginationLink
-                                                            href={`/account/orders?page=${page}`}
+                                                            render={<Link to="/account/orders" search={{page}} />}
                                                             isActive={page === currentPage}
                                                         >
                                                             {page}
@@ -161,10 +161,10 @@ export default function OrdersPage({ordersData, currentPage}: {ordersData: Order
 
                                     <PaginationItem>
                                         <PaginationNext
-                                            href={
+                                            render={
                                                 currentPage < totalPages
-                                                    ? `/account/orders?page=${currentPage + 1}`
-                                                    : '#'
+                                                    ? <Link to="/account/orders" search={{page: currentPage + 1}} />
+                                                    : undefined
                                             }
                                             className={
                                                 currentPage === totalPages

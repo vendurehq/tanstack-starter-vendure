@@ -27,10 +27,7 @@ test.beforeEach(async ({page}) => {
 });
 
 test.afterEach(async ({page}) => {
-    const unexpected = (browserErrors.get(page) ?? []).filter(
-        message => message !== 'Failed to load resource: the server responded with a status of 404 ()',
-    );
-    expect(unexpected).toEqual([]);
+    expect(browserErrors.get(page) ?? []).toEqual([]);
 });
 
 test('selects English at the root and renders both locales', async ({page}) => {
@@ -57,13 +54,31 @@ test('catalog search, empty cart, and missing products have stable behavior', as
     const response = await page.goto('/en/product/not-in-fixture');
     expect(response?.status()).toBe(404);
     await expect(page.getByRole('heading', {name: /Page Not Found/i})).toBeVisible();
+    expect(browserErrors.get(page)).toContain('Failed to load resource: the server responded with a status of 404 ()');
+    browserErrors.set(page, []);
 });
 
-test('product pages render when the product has no collection', async ({page}) => {
-    const response = await page.goto('/en/product/fixture-without-collection');
+test('product pages render when the product has no collection or numeric option search', async ({page}) => {
+    const response = await page.goto('/en/product/fixture-without-collection?size=42');
 
     expect(response?.status()).toBe(200);
     await expect(page.getByRole('heading', {level: 1, name: 'Fixture Without Collection'})).toBeVisible();
+});
+
+test('launch SEO endpoints and assets are available', async ({request}) => {
+    const [robots, sitemap, favicon, ogImage] = await Promise.all([
+        request.get('/robots.txt'),
+        request.get('/sitemap.xml'),
+        request.get('/favicon.ico'),
+        request.get('/og-image.jpg'),
+    ]);
+
+    expect(robots.status()).toBe(200);
+    expect(await robots.text()).toContain('Sitemap:');
+    expect(sitemap.status()).toBe(200);
+    expect(await sitemap.text()).toContain('<urlset');
+    expect(favicon.status()).toBe(200);
+    expect(ogImage.status()).toBe(200);
 });
 
 test('client navigation settles after loading route server functions', async ({page}) => {

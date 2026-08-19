@@ -145,13 +145,17 @@ Downstream-impacting pull requests require an upgrade note or an explicit exempt
 ## Commands
 
 ```bash
-npm run generate       # Generate Paraglide messages and the TanStack route tree
+npm run generate       # Generate Paraglide messages
 npm run check-types    # Run generation and TypeScript checks
 npm test               # Run architecture, i18n, cache, and upgrade tests
 npm run test:e2e       # Run Playwright end-to-end tests
 npm run lint           # Run Biome lint
 npm run build          # Create a production Nitro build
 ```
+
+TanStack Start generates `src/routeTree.gen.ts` through its Vite plugin during
+development and production builds. The committed file lets type checks run
+without a second route generator that can drift from TanStack Start.
 
 Run the production server with `node .output/server/index.mjs`.
 

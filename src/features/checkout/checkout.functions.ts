@@ -23,28 +23,21 @@ export const getCheckoutRouteData = createServerFn({ method: "GET" })
 	.middleware([noStoreMiddleware, storefrontContextMiddleware])
 	.handler(async ({ context }) => {
 		const { locale, currencyCode } = context;
-		const customerResult = await queryOnServer(
-			GetActiveCustomerQuery,
-			{},
-			{ useAuthToken: true },
-		);
-		const isGuest = !customerResult.data.activeCustomer;
-
 		const [
+			customerResult,
 			orderResult,
 			addressesResult,
 			countries,
 			shippingMethodsResult,
 			paymentMethodsResult,
 		] = await Promise.all([
+			queryOnServer(GetActiveCustomerQuery, {}, { useAuthToken: true }),
 			queryOnServer(
 				GetActiveOrderForCheckoutQuery,
 				{},
 				{ useAuthToken: true, currencyCode },
 			),
-			isGuest
-				? Promise.resolve({ data: { activeCustomer: null } })
-				: queryOnServer(GetCustomerAddressesQuery, {}, { useAuthToken: true }),
+			queryOnServer(GetCustomerAddressesQuery, {}, { useAuthToken: true }),
 			getAvailableCountriesCached(locale),
 			queryOnServer(
 				GetEligibleShippingMethodsQuery,
@@ -57,6 +50,7 @@ export const getCheckoutRouteData = createServerFn({ method: "GET" })
 				{ useAuthToken: true, currencyCode },
 			),
 		]);
+		const isGuest = !customerResult.data.activeCustomer;
 
 		const activeOrder = orderResult.data.activeOrder;
 		if (!activeOrder || activeOrder.lines.length === 0) {

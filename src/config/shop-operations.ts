@@ -50,6 +50,7 @@ import { GetProductDetailQuery } from "@/features/products/graphql";
 import { SearchProductsQuery } from "@/features/search/graphql";
 import { registerShopOperations } from "@/platform/vendure/api.server";
 import { GetActiveChannelQuery } from "@/platform/vendure/channel-graphql";
+import { SitemapEntriesQuery } from "@/platform/seo/graphql";
 
 // Every GraphQL operation the storefront may send to the Vendure Shop API.
 // The transport rejects any request whose document does not exactly match
@@ -96,4 +97,5 @@ registerShopOperations([
 	SearchProductsQuery,
 	GetOrderByCodeQuery,
 	GetActiveChannelQuery,
+	SitemapEntriesQuery,
 ]);

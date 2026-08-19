@@ -26,7 +26,10 @@ import appCss from "../storefront.css?url";
 export const Route = createRootRoute({
 	loader: async () => {
 		// Defer personalized cart/user so public shell can stream without waiting.
-		const personalized = getPersonalizedShellData();
+		const personalized = getPersonalizedShellData().catch(() => ({
+			cartItemCount: 0,
+			customerFirstName: null,
+		}));
 		const pub = await getPublicShellData();
 		return { ...pub, personalized };
 	},
@@ -48,6 +51,10 @@ export const Route = createRootRoute({
 			},
 		],
 		links: [
+			{
+				rel: "icon",
+				href: "/favicon.ico",
+			},
 			{
 				rel: "stylesheet",
 				href: appCss,

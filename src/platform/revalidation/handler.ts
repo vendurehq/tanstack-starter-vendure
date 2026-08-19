@@ -3,16 +3,13 @@ import { invalidatePublicTag } from "../cache/public-cache.ts";
 import { env } from "../env.server.ts";
 import { routing } from "../i18n/routing.ts";
 
-type TagKind = "locale-only" | "currency-dependent";
+type TagKind = "global" | "locale-only" | "currency-dependent";
 const TAG_RULES: ReadonlyArray<{ match: string | RegExp; kind: TagKind }> = [
+	{ match: "channel", kind: "global" },
 	{ match: "collections", kind: "locale-only" },
 	{ match: "countries", kind: "locale-only" },
 	{ match: "featured", kind: "currency-dependent" },
-	{ match: /^footer$/, kind: "locale-only" },
-	{ match: /^navbar-collections$/, kind: "locale-only" },
-	{ match: /^mobile-nav$/, kind: "locale-only" },
 	{ match: /^product-.+$/, kind: "currency-dependent" },
-	{ match: /^collection-.+$/, kind: "currency-dependent" },
 	{ match: /^related-products-.+$/, kind: "currency-dependent" },
 ];
 const MAX_TAGS_PER_REQUEST = 100;
@@ -84,13 +81,16 @@ export async function handleRevalidation(request: Request) {
 					.availableCurrencyCodes as string[];
 			}
 			const currencyCodes = currencies ?? [];
-			for (const locale of routing.locales) {
+			const locales = kind === "global" ? [null] : routing.locales;
+			for (const locale of locales) {
 				const expanded =
-					kind === "locale-only"
-						? [`${rawTag}-${locale}`]
-						: currencyCodes.map(
-								(currency) => `${rawTag}-${locale}-${currency}`,
-							);
+					kind === "global"
+						? [rawTag]
+						: kind === "locale-only"
+							? [`${rawTag}-${locale}`]
+							: currencyCodes.map(
+									(currency) => `${rawTag}-${locale}-${currency}`,
+								);
 				for (const tag of expanded) {
 					invalidatePublicTag(tag);
 					results.push({ tag, success: true });

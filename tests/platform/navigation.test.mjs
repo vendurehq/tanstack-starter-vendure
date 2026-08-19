@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import {safeInternalRedirect} from '../../src/platform/tanstack/redirect.ts';
-import {catalogSearchSchema, redirectSearchSchema, tokenSearchSchema} from '../../src/platform/tanstack/search.ts';
+import {catalogSearchSchema, productSearchSchema, redirectSearchSchema, tokenSearchSchema} from '../../src/platform/tanstack/search.ts';
 
 test('safe redirects allow only local paths', () => {
     assert.equal(safeInternalRedirect('/checkout?step=payment'), '/checkout?step=payment');
@@ -22,4 +22,8 @@ test('route search schemas coerce pagination and preserve repeatable facets', ()
     assert.equal(redirectSearchSchema.parse({redirectTo: '//evil.example'}).redirectTo, undefined);
     assert.equal(tokenSearchSchema.parse({token: 'abc'}).token, 'abc');
     assert.equal(tokenSearchSchema.parse({redirectTo: '//evil.example'}).redirectTo, undefined);
+	assert.deepEqual(productSearchSchema.parse({size: 42, color: 'blue'}), {
+		size: '42',
+		color: 'blue',
+	});
 });
