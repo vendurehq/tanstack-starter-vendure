@@ -8,14 +8,24 @@ import { type FragmentOf, readFragment } from "@/platform/vendure/graphql";
 interface ProductCardProps {
 	product: FragmentOf<typeof ProductCardFragment>;
 	currencyCode: string;
+	priority?: boolean;
+}
+
+const productImageWidths = [320, 480, 640, 800];
+
+function productImageUrl(preview: string, width: number) {
+	const separator = preview.includes("?") ? "&" : "?";
+	return `${preview}${separator}w=${width}&h=${width}&mode=crop&format=webp&q=75`;
 }
 
 export function ProductCard({
 	product: productProp,
 	currencyCode,
+	priority,
 }: ProductCardProps) {
 	const t = useTranslations("Product");
 	const product = readFragment(ProductCardFragment, productProp);
+	const productImage = product.productAsset?.preview;
 
 	return (
 		<Link
@@ -23,13 +33,20 @@ export function ProductCard({
 			className="group block bg-card rounded-xl overflow-hidden border border-border hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
 		>
 			<div className="aspect-square relative bg-muted overflow-hidden">
-				{product.productAsset ? (
+				{productImage ? (
 					<Image
-						src={product.productAsset.preview}
+						src={productImageUrl(productImage, 800)}
+						srcSet={productImageWidths
+							.map(
+								(width) =>
+									`${productImageUrl(productImage, width)} ${width}w`,
+							)
+							.join(", ")}
 						alt={product.productName}
 						fill
+						priority={priority}
 						className="object-cover group-hover:scale-105 group-hover:opacity-90 transition-all duration-500"
-						sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+						sizes="(max-width: 640px) calc(100vw - 2rem), (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw"
 					/>
 				) : (
 					<div className="w-full h-full flex items-center justify-center text-muted-foreground">

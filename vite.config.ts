@@ -26,7 +26,12 @@ const config = defineConfig(({ mode }) => {
     plugins: [
       devtools(),
       paraglideVitePlugin(paraglideOptions),
-      nitro(),
+      nitro({
+        compressPublicAssets: {
+          brotli: true,
+          gzip: true,
+        },
+      }),
       tailwindcss(),
       tanstackStart(),
       viteReact(),
