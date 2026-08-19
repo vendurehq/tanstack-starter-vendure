@@ -56,5 +56,6 @@ export const getOrderDetail = createServerFn({ method: "GET" })
 			{ code: data.code },
 			{ useAuthToken: true },
 		);
+		if (!result.data.orderByCode) throw notFound();
 		return { data: result.data };
 	});

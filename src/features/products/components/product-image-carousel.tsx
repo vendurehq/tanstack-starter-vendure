@@ -7,8 +7,13 @@ interface ProductImageCarouselProps {
     images: Array<{
         id: string;
         preview: string;
-        source: string;
     }>;
+}
+const HERO_WIDTHS = [480, 768, 1024, 1440];
+
+function resizedAssetUrl(url: string, width: number) {
+    const separator = url.includes('?') ? '&' : '?';
+    return `${url}${separator}w=${width}&h=${width}&mode=crop`;
 }
 
 export function ProductImageCarousel({ images }: ProductImageCarouselProps) {
@@ -35,7 +40,8 @@ export function ProductImageCarousel({ images }: ProductImageCarouselProps) {
             {/* Main Image */}
             <div className="relative aspect-square bg-muted rounded-xl overflow-hidden group cursor-crosshair">
                 <Image
-                    src={images[currentIndex].source}
+                    src={resizedAssetUrl(images[currentIndex].preview, 1024)}
+                    srcSet={HERO_WIDTHS.map((width) => `${resizedAssetUrl(images[currentIndex].preview, width)} ${width}w`).join(', ')}
                     alt={`Product image ${currentIndex + 1}`}
                     fill
                     className="object-cover hover:scale-105 transition-transform duration-500"
@@ -88,7 +94,7 @@ export function ProductImageCarousel({ images }: ProductImageCarouselProps) {
                             }`}
                         >
                             <Image
-                                src={image.preview}
+                                src={resizedAssetUrl(image.preview, 320)}
                                 alt={`Thumbnail ${index + 1}`}
                                 fill
                                 className="object-cover"

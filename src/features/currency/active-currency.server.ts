@@ -1,14 +1,12 @@
 import { getRequest } from "@tanstack/react-start/server";
-import { queryOnServer } from "@/platform/vendure/api.server";
-import { GetActiveChannelQuery } from "@/platform/vendure/channel-graphql";
+import { getActiveChannel } from "@/platform/vendure/channel";
 import { getCurrencyCookie } from "./currency.server";
 
 /** Request-scoped memo for the channel default currency (cookie-miss path). */
 const channelCurrencyByRequest = new WeakMap<Request, Promise<string>>();
 
 async function resolveChannelDefaultCurrency(): Promise<string> {
-	const result = await queryOnServer(GetActiveChannelQuery, {});
-	return result.data.activeChannel.defaultCurrencyCode;
+	return (await getActiveChannel()).defaultCurrencyCode;
 }
 
 /**

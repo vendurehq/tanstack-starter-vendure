@@ -1,5 +1,5 @@
 import { z } from "zod";
-import {safeInternalRedirect} from './redirect.ts';
+import { safeInternalRedirect } from "./redirect.ts";
 
 const optionalString = z.preprocess(
 	(value) => (Array.isArray(value) ? value[0] : value),
@@ -8,7 +8,7 @@ const optionalString = z.preprocess(
 
 const optionalRedirect = optionalString.transform((value) => {
 	if (!value) return undefined;
-	return safeInternalRedirect(value, '') || undefined;
+	return safeInternalRedirect(value, "") || undefined;
 });
 
 export const redirectSearchSchema = z.object({ redirectTo: optionalRedirect });
@@ -50,4 +50,13 @@ export const catalogSearchSchema = z.object({
 export type CatalogSearch = z.infer<typeof catalogSearchSchema>;
 export type CatalogSort = z.infer<typeof catalogSortSchema>;
 
-export const productSearchSchema = z.record(z.string(), z.string().optional());
+export const productSearchSchema = z.record(
+	z.string(),
+	z.preprocess(
+		(value) =>
+			typeof value === "string" || typeof value === "number"
+				? String(value)
+				: undefined,
+		z.string().optional(),
+	),
+);

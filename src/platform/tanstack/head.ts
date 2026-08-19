@@ -1,4 +1,4 @@
-import {SITE_NAME, SITE_URL} from '@/config/metadata';
+import {DEFAULT_OG_IMAGE, SITE_NAME, SITE_URL} from '@/config/metadata';
 import {getLocale} from '@/paraglide/runtime';
 import {toOgLocale} from '@/platform/i18n/locale-utils';
 
@@ -9,7 +9,6 @@ interface StorefrontHeadOptions {
     image?: string | null;
     noIndex?: boolean;
 }
-
 export function storefrontHead({title, description, path = '/', image, noIndex}: StorefrontHeadOptions) {
     const locale = getLocale();
     const localizedPath = `/${locale}${path === '/' ? '' : path}`;
@@ -26,7 +25,7 @@ export function storefrontHead({title, description, path = '/', image, noIndex}:
             {property: 'og:type', content: 'website'},
             {property: 'og:locale', content: toOgLocale(locale)},
             {property: 'og:url', content: canonical},
-            ...(image ? [{property: 'og:image', content: image}] : []),
+            {property: 'og:image', content: image ?? DEFAULT_OG_IMAGE},
             ...(noIndex ? [{name: 'robots', content: 'noindex, nofollow'}] : []),
         ],
         links: [

@@ -1,5 +1,12 @@
 export const SITE_NAME = import.meta.env.VITE_SITE_NAME || "Vendure Store";
-export const SITE_URL = import.meta.env.VITE_SITE_URL || "https://example.com";
+
+const configuredSiteUrl = import.meta.env.VITE_SITE_URL;
+if (import.meta.env.PROD && !configuredSiteUrl) {
+	throw new Error("VITE_SITE_URL is required for production builds");
+}
+
+export const SITE_URL = configuredSiteUrl || "http://localhost:3000";
+export const DEFAULT_OG_IMAGE = new URL("/og-image.jpg", SITE_URL).href;
 
 /**
  * Truncate text to a maximum length while preserving word boundaries.

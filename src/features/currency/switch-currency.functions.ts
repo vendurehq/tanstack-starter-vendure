@@ -7,19 +7,18 @@ import {
 import { setCurrencyCookie } from "@/features/currency/currency.server";
 import { mutateOnServer, queryOnServer } from "@/platform/vendure/api.server";
 import { setAuthToken } from "@/platform/vendure/auth-token.server";
-import { GetActiveChannelQuery } from "@/platform/vendure/channel-graphql";
+import { getActiveChannel } from "@/platform/vendure/channel";
 
 export const switchCurrency = createServerFn({ method: "POST" })
 	.validator(z.object({ currencyCode: z.string().length(3) }))
 	.handler(async ({ data }) => {
-		const [channelResult, orderResult] = await Promise.all([
-			queryOnServer(GetActiveChannelQuery, {}),
+		const [channel, orderResult] = await Promise.all([
+			getActiveChannel(),
 			queryOnServer(GetActiveOrderQuery, {}, { useAuthToken: true }),
 		]);
-		const currencyCode =
-			channelResult.data.activeChannel.availableCurrencyCodes.find(
-				(code) => code === data.currencyCode,
-			);
+		const currencyCode = channel.availableCurrencyCodes.find(
+			(code) => code === data.currencyCode,
+		);
 		if (!currencyCode) {
 			throw new Error("Invalid currency code");
 		}

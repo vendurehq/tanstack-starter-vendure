@@ -55,6 +55,10 @@ const responses = {
         }],
     } : null}),
     GetCollectionProducts: {collection: null, search: {totalItems: 0, items: []}},
+    SitemapEntries: {
+        collections: {totalItems: 0, items: []},
+        search: {totalItems: 0, items: []},
+    },
 };
 
 createServer(async (request, response) => {

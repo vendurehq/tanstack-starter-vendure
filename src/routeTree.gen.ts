@@ -16,8 +16,10 @@ import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as RegisterRouteImport } from './routes/register'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
+import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
 import { Route as SearchRouteImport } from './routes/search'
 import { Route as SignInRouteImport } from './routes/sign-in'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as VerifyRouteImport } from './routes/verify'
 import { Route as VerifyPendingRouteImport } from './routes/verify-pending'
 import { Route as AccountAddressesRouteImport } from './routes/account/addresses'
@@ -28,6 +30,7 @@ import { Route as ApiRevalidateRouteImport } from './routes/api.revalidate'
 import { Route as CollectionSlugRouteImport } from './routes/collection.$slug'
 import { Route as OrderConfirmationCodeRouteImport } from './routes/order-confirmation.$code'
 import { Route as ProductSlugRouteImport } from './routes/product.$slug'
+import { Route as AccountOrdersIndexRouteImport } from './routes/account/orders.index'
 import { Route as AccountOrdersCodeRouteImport } from './routes/account/orders/$code'
 
 const IndexRoute = IndexRouteImport.update({
@@ -65,6 +68,11 @@ const ResetPasswordRoute = ResetPasswordRouteImport.update({
   path: '/reset-password',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RobotsDottxtRoute = RobotsDottxtRouteImport.update({
+  id: '/robots.txt',
+  path: '/robots.txt',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SearchRoute = SearchRouteImport.update({
   id: '/search',
   path: '/search',
@@ -73,6 +81,11 @@ const SearchRoute = SearchRouteImport.update({
 const SignInRoute = SignInRouteImport.update({
   id: '/sign-in',
   path: '/sign-in',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const VerifyRoute = VerifyRouteImport.update({
@@ -125,6 +138,11 @@ const ProductSlugRoute = ProductSlugRouteImport.update({
   path: '/product/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AccountOrdersIndexRoute = AccountOrdersIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AccountOrdersRoute,
+} as any)
 const AccountOrdersCodeRoute = AccountOrdersCodeRouteImport.update({
   id: '/$code',
   path: '/$code',
@@ -139,8 +157,10 @@ export interface FileRoutesByFullPath {
   '/forgot-password': typeof ForgotPasswordRoute
   '/register': typeof RegisterRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/robots.txt': typeof RobotsDottxtRoute
   '/search': typeof SearchRoute
   '/sign-in': typeof SignInRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/verify': typeof VerifyRoute
   '/verify-pending': typeof VerifyPendingRoute
   '/account/addresses': typeof AccountAddressesRoute
@@ -152,6 +172,7 @@ export interface FileRoutesByFullPath {
   '/order-confirmation/$code': typeof OrderConfirmationCodeRoute
   '/product/$slug': typeof ProductSlugRoute
   '/account/orders/$code': typeof AccountOrdersCodeRoute
+  '/account/orders/': typeof AccountOrdersIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -161,12 +182,13 @@ export interface FileRoutesByTo {
   '/forgot-password': typeof ForgotPasswordRoute
   '/register': typeof RegisterRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/robots.txt': typeof RobotsDottxtRoute
   '/search': typeof SearchRoute
   '/sign-in': typeof SignInRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/verify': typeof VerifyRoute
   '/verify-pending': typeof VerifyPendingRoute
   '/account/addresses': typeof AccountAddressesRoute
-  '/account/orders': typeof AccountOrdersRouteWithChildren
   '/account/profile': typeof AccountProfileRoute
   '/account/verify-email': typeof AccountVerifyEmailRoute
   '/api/revalidate': typeof ApiRevalidateRoute
@@ -174,6 +196,7 @@ export interface FileRoutesByTo {
   '/order-confirmation/$code': typeof OrderConfirmationCodeRoute
   '/product/$slug': typeof ProductSlugRoute
   '/account/orders/$code': typeof AccountOrdersCodeRoute
+  '/account/orders': typeof AccountOrdersIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -184,8 +207,10 @@ export interface FileRoutesById {
   '/forgot-password': typeof ForgotPasswordRoute
   '/register': typeof RegisterRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/robots.txt': typeof RobotsDottxtRoute
   '/search': typeof SearchRoute
   '/sign-in': typeof SignInRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/verify': typeof VerifyRoute
   '/verify-pending': typeof VerifyPendingRoute
   '/account/addresses': typeof AccountAddressesRoute
@@ -197,6 +222,7 @@ export interface FileRoutesById {
   '/order-confirmation/$code': typeof OrderConfirmationCodeRoute
   '/product/$slug': typeof ProductSlugRoute
   '/account/orders/$code': typeof AccountOrdersCodeRoute
+  '/account/orders/': typeof AccountOrdersIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -208,8 +234,10 @@ export interface FileRouteTypes {
     | '/forgot-password'
     | '/register'
     | '/reset-password'
+    | '/robots.txt'
     | '/search'
     | '/sign-in'
+    | '/sitemap.xml'
     | '/verify'
     | '/verify-pending'
     | '/account/addresses'
@@ -221,6 +249,7 @@ export interface FileRouteTypes {
     | '/order-confirmation/$code'
     | '/product/$slug'
     | '/account/orders/$code'
+    | '/account/orders/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -230,12 +259,13 @@ export interface FileRouteTypes {
     | '/forgot-password'
     | '/register'
     | '/reset-password'
+    | '/robots.txt'
     | '/search'
     | '/sign-in'
+    | '/sitemap.xml'
     | '/verify'
     | '/verify-pending'
     | '/account/addresses'
-    | '/account/orders'
     | '/account/profile'
     | '/account/verify-email'
     | '/api/revalidate'
@@ -243,6 +273,7 @@ export interface FileRouteTypes {
     | '/order-confirmation/$code'
     | '/product/$slug'
     | '/account/orders/$code'
+    | '/account/orders'
   id:
     | '__root__'
     | '/'
@@ -252,8 +283,10 @@ export interface FileRouteTypes {
     | '/forgot-password'
     | '/register'
     | '/reset-password'
+    | '/robots.txt'
     | '/search'
     | '/sign-in'
+    | '/sitemap.xml'
     | '/verify'
     | '/verify-pending'
     | '/account/addresses'
@@ -265,6 +298,7 @@ export interface FileRouteTypes {
     | '/order-confirmation/$code'
     | '/product/$slug'
     | '/account/orders/$code'
+    | '/account/orders/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -275,8 +309,10 @@ export interface RootRouteChildren {
   ForgotPasswordRoute: typeof ForgotPasswordRoute
   RegisterRoute: typeof RegisterRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
+  RobotsDottxtRoute: typeof RobotsDottxtRoute
   SearchRoute: typeof SearchRoute
   SignInRoute: typeof SignInRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   VerifyRoute: typeof VerifyRoute
   VerifyPendingRoute: typeof VerifyPendingRoute
   ApiRevalidateRoute: typeof ApiRevalidateRoute
@@ -336,6 +372,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ResetPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/robots.txt': {
+      id: '/robots.txt'
+      path: '/robots.txt'
+      fullPath: '/robots.txt'
+      preLoaderRoute: typeof RobotsDottxtRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/search': {
       id: '/search'
       path: '/search'
@@ -348,6 +391,13 @@ declare module '@tanstack/react-router' {
       path: '/sign-in'
       fullPath: '/sign-in'
       preLoaderRoute: typeof SignInRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/verify': {
@@ -420,6 +470,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProductSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/account/orders/': {
+      id: '/account/orders/'
+      path: '/'
+      fullPath: '/account/orders/'
+      preLoaderRoute: typeof AccountOrdersIndexRouteImport
+      parentRoute: typeof AccountOrdersRoute
+    }
     '/account/orders/$code': {
       id: '/account/orders/$code'
       path: '/$code'
@@ -432,10 +489,12 @@ declare module '@tanstack/react-router' {
 
 interface AccountOrdersRouteChildren {
   AccountOrdersCodeRoute: typeof AccountOrdersCodeRoute
+  AccountOrdersIndexRoute: typeof AccountOrdersIndexRoute
 }
 
 const AccountOrdersRouteChildren: AccountOrdersRouteChildren = {
   AccountOrdersCodeRoute: AccountOrdersCodeRoute,
+  AccountOrdersIndexRoute: AccountOrdersIndexRoute,
 }
 
 const AccountOrdersRouteWithChildren = AccountOrdersRoute._addFileChildren(
@@ -467,8 +526,10 @@ const rootRouteChildren: RootRouteChildren = {
   ForgotPasswordRoute: ForgotPasswordRoute,
   RegisterRoute: RegisterRoute,
   ResetPasswordRoute: ResetPasswordRoute,
+  RobotsDottxtRoute: RobotsDottxtRoute,
   SearchRoute: SearchRoute,
   SignInRoute: SignInRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
   VerifyRoute: VerifyRoute,
   VerifyPendingRoute: VerifyPendingRoute,
   ApiRevalidateRoute: ApiRevalidateRoute,

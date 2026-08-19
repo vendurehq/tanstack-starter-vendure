@@ -5,7 +5,10 @@ import { redirect } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
 
 export const logoutAction = createServerFn({ method: 'POST' }).handler(async () => {
-  await mutateOnServer(LogoutMutation, {})
-  removeAuthToken()
+  try {
+    await mutateOnServer(LogoutMutation, {}, { useAuthToken: true })
+  } finally {
+    removeAuthToken()
+  }
   throw redirect({ href: '/' })
 })

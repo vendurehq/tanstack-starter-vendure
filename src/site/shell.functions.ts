@@ -10,16 +10,16 @@ import { getLocale } from "@/paraglide/runtime";
 import { cachedPublicData } from "@/platform/cache/public-cache";
 import { noStoreMiddleware } from "@/platform/middleware";
 import { queryOnServer } from "@/platform/vendure/api.server";
-import { GetActiveChannelQuery } from "@/platform/vendure/channel-graphql";
+import { getActiveChannel } from "@/platform/vendure/channel";
 import { readFragment } from "@/platform/vendure/graphql";
 
-/** Public shell — cacheable; no auth cookies / no-store. */
+/** Public shell with internally cached catalog/channel data and request currency. */
 export const getPublicShellData = createServerFn({ method: "GET" }).handler(
 	async () => {
 		const locale = getLocale();
 		const currencyCookie = getCurrencyCookie();
-		const [channelResult, collections] = await Promise.all([
-			queryOnServer(GetActiveChannelQuery, {}),
+		const [channel, collections] = await Promise.all([
+			getActiveChannel(),
 			cachedPublicData({
 				key: `collections:top:${locale}`,
 				tags: [`collections-${locale}`],
@@ -36,11 +36,8 @@ export const getPublicShellData = createServerFn({ method: "GET" }).handler(
 		]);
 		return {
 			collections,
-			availableCurrencyCodes:
-				channelResult.data.activeChannel.availableCurrencyCodes,
-			// Reuse channel result on cookie miss — avoids a second GetActiveChannelQuery.
-			activeCurrencyCode:
-				currencyCookie ?? channelResult.data.activeChannel.defaultCurrencyCode,
+			availableCurrencyCodes: channel.availableCurrencyCodes,
+			activeCurrencyCode: currencyCookie ?? channel.defaultCurrencyCode,
 		};
 	},
 );

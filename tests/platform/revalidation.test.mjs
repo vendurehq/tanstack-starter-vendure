@@ -18,6 +18,9 @@ test('revalidation authenticates and expands locale-only tags', async () => {
     assert.equal(response.status, 200);
     const payload = await response.json();
     assert.deepEqual(payload.results.map(result => result.tag), ['collections-en', 'collections-de']);
+	const channelResponse = await handleRevalidation(request({tags: ['channel']}));
+	const channelPayload = await channelResponse.json();
+	assert.deepEqual(channelPayload.results.map(result => result.tag), ['channel']);
 });
 
 test('revalidation reports invalid input and partial success', async () => {

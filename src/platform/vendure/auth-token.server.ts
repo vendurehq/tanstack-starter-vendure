@@ -2,16 +2,11 @@ import {
 	deleteCookie,
 	getCookie,
 	setCookie,
-	setResponseHeader,
 } from "@tanstack/react-start/server";
 import { env } from "../env.server.ts";
 
 function authTokenCookie() {
 	return env.VENDURE_AUTH_TOKEN_COOKIE;
-}
-
-export function disableAuthResponseCaching() {
-	setResponseHeader("Cache-Control", "no-store");
 }
 
 export function setAuthToken(token: string) {
