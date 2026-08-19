@@ -33,3 +33,4 @@ jobs:
       - run: npm run build
         env:
           VENDURE_SHOP_API_URL: https://readonlydemo.vendure.io/shop-api
+          VITE_SITE_URL: https://example.com
