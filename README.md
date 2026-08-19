@@ -13,7 +13,7 @@
   A source-owned, customizable storefront with a managed path for adopting upstream releases.
 </p>
 <h4 align="center">
-  <a href="https://tanstack-starter-vendure.vercel.app">Demo</a> |
+  <a href="https://tanstack.vendure.io">Demo</a> |
   <a href="https://docs.vendure.io">Documentation</a> |
   <a href="https://vendure.io">Website</a>
 </h4>
