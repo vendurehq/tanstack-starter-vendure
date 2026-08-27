@@ -37,7 +37,9 @@ export default function ProductDetailPage({
 	const { product, primaryCollection, productForDisplay, currencyCode } = data;
 
 	return (
-		<>
+		// Below lg the purchase bar is pinned to the viewport bottom, so the page
+		// reserves its height plus the browser safe area.
+		<div className="pb-[calc(5.5rem+env(safe-area-inset-bottom))] lg:pb-0">
 			<div className="container mx-auto px-4 py-8 mt-16">
 				{/* Breadcrumb Navigation */}
 				<Breadcrumb className="mb-6">
@@ -148,6 +150,6 @@ export default function ProductDetailPage({
 					/>
 				)}
 			</Await>
-		</>
+		</div>
 	);
 }
