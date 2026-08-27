@@ -125,7 +125,7 @@ export function Footer({collections}: {collections: Array<{id: string; name: str
                             rel="noopener noreferrer"
                             className="hover:text-foreground transition-colors"
                         >
-                            <Image src="/vendure.svg" alt="Vendure" width={40} height={27} className="h-4 w-auto dark:invert" />
+                            <Image src="/vendure.svg" alt="Vendure.io" width={40} height={27} className="h-4 w-auto dark:invert" />
                         </a>
                         <span>&</span>
                         <a
