@@ -1,4 +1,4 @@
-import {useState, useMemo, useTransition} from 'react';
+import {useState, useMemo, useRef, useTransition} from 'react';
 import {useSearchParams} from '@/platform/tanstack/navigation';
 import {usePathname, useRouter} from '@/platform/tanstack/navigation';
 import {Button} from '@/components/ui/button';
@@ -7,6 +7,7 @@ import {RadioGroup, RadioGroupItem} from '@/components/ui/radio-group';
 import {Separator} from '@/components/ui/separator';
 import {ShoppingCart, CheckCircle2} from 'lucide-react';
 import {addToCart} from '@/features/products/add-to-cart.functions';
+import {getLowestVariantPrice, getSelectedOptionNames} from '@/features/products/product-options';
 import {toast} from 'sonner';
 import {Price} from '@/features/pricing/price';
 import {useTranslations} from '@/platform/i18n/paraglide';
@@ -57,6 +58,7 @@ export function ProductInfo({product, searchParams, currencyCode}: ProductInfoPr
     const currentSearchParams = useSearchParams();
     const [isPending, startTransition] = useTransition();
     const [isAdded, setIsAdded] = useState(false);
+    const isSubmitting = useRef(false);
     const addProductToCart = useServerFn(addToCart);
 
     // Initialize selected options from URL
@@ -116,31 +118,55 @@ export function ProductInfo({product, searchParams, currencyCode}: ProductInfoPr
     };
 
     const handleAddToCart = async () => {
-        if (!selectedVariant) return;
+        // The inline desktop action and the mobile purchase bar share this handler,
+        // so an in-flight request must reject further taps before isPending updates.
+        if (!selectedVariant || isSubmitting.current) return;
+        isSubmitting.current = true;
 
         startTransition(async () => {
-            const result = await addProductToCart({data: {variantId: selectedVariant.id, quantity: 1}});
+            try {
+                const result = await addProductToCart({data: {variantId: selectedVariant.id, quantity: 1}});
 
-            if (result.success) {
-                // Re-run route loaders so the navbar cart count picks up the new order state
-                await router.refresh();
-                setIsAdded(true);
-                toast.success(t('addedToCartMessage'), {
-                    description: t('addedToCartDescription', {name: product.name}),
-                });
+                if (result.success) {
+                    // Re-run route loaders so the navbar cart count picks up the new order state
+                    await router.refresh();
+                    setIsAdded(true);
+                    toast.success(t('addedToCartMessage'), {
+                        description: t('addedToCartDescription', {name: product.name}),
+                    });
 
-                // Reset the added state after 2 seconds
-                setTimeout(() => setIsAdded(false), 2000);
-            } else {
-                toast.error(t('errorTitle'), {
-                    description: result.error || t('errorAddToCart'),
-                });
+                    // Reset the added state after 2 seconds
+                    setTimeout(() => setIsAdded(false), 2000);
+                } else {
+                    toast.error(t('errorTitle'), {
+                        description: result.error || t('errorAddToCart'),
+                    });
+                }
+            } finally {
+                isSubmitting.current = false;
             }
         });
     };
 
     const isInStock = selectedVariant && selectedVariant.stockLevel !== 'OUT_OF_STOCK';
     const canAddToCart = selectedVariant && isInStock;
+
+    const selectedOptionNames = getSelectedOptionNames(product.optionGroups, selectedOptions);
+    const lowestVariantPrice = getLowestVariantPrice(product.variants);
+
+    // One label and icon for both purchase actions, so they never disagree.
+    const purchaseIcon = isAdded
+        ? <CheckCircle2 className="mr-2 h-5 w-5"/>
+        : <ShoppingCart className="mr-2 h-5 w-5"/>;
+    const purchaseLabel = isAdded
+        ? t('addedToCart')
+        : isPending
+            ? t('adding')
+            : !selectedVariant && product.optionGroups.length > 0
+                ? t('selectOptions')
+                : !isInStock
+                    ? t('outOfStock')
+                    : t('addToCart');
 
     return (
         <div className="space-y-6">
@@ -214,31 +240,16 @@ export function ProductInfo({product, searchParams, currencyCode}: ProductInfoPr
                 </div>
             )}
 
-            {/* Add to Cart Button */}
-            <div className="pt-2 space-y-3">
+            {/* Add to Cart Button. Hidden below lg, where the mobile purchase bar takes over. */}
+            <div className="hidden lg:block pt-2 space-y-3">
                 <Button
                     size="lg"
                     className="w-full h-12 text-base font-semibold rounded-lg"
                     disabled={!canAddToCart || isPending}
                     onClick={handleAddToCart}
                 >
-                    {isAdded ? (
-                        <>
-                            <CheckCircle2 className="mr-2 h-5 w-5"/>
-                            {t('addedToCart')}
-                        </>
-                    ) : (
-                        <>
-                            <ShoppingCart className="mr-2 h-5 w-5"/>
-                            {isPending
-                                ? t('adding')
-                                : !selectedVariant && product.optionGroups.length > 0
-                                    ? t('selectOptions')
-                                    : !isInStock
-                                        ? t('outOfStock')
-                                        : t('addToCart')}
-                        </>
-                    )}
+                    {purchaseIcon}
+                    {purchaseLabel}
                 </Button>
             </div>
 
@@ -248,6 +259,45 @@ export function ProductInfo({product, searchParams, currencyCode}: ProductInfoPr
                     {t('sku', {sku: selectedVariant.sku})}
                 </div>
             )}
+
+            {/* Mobile Purchase Bar. The product page reserves matching bottom padding. */}
+            <section
+                aria-label={t('purchaseBarLabel')}
+                className="lg:hidden fixed inset-x-0 bottom-0 z-40 border-t border-border bg-background/95 backdrop-blur-sm pb-[env(safe-area-inset-bottom)]"
+            >
+                <div className="flex items-center gap-3 px-4 py-3">
+                    <div className="min-w-0 flex-1">
+                        <p className="truncate text-base font-semibold">
+                            {selectedVariant ? (
+                                <Price value={selectedVariant.priceWithTax} currencyCode={currencyCode}/>
+                            ) : lowestVariantPrice !== null ? (
+                                <>
+                                    {t('from')}{' '}
+                                    <Price value={lowestVariantPrice} currencyCode={currencyCode}/>
+                                </>
+                            ) : null}
+                        </p>
+                        {product.optionGroups.length > 0 && (
+                            <p className="truncate text-xs text-muted-foreground">
+                                {selectedOptionNames.length > 0
+                                    ? selectedOptionNames.join(' · ')
+                                    : t('chooseOptions', {
+                                        options: product.optionGroups.map((group) => group.name).join(', '),
+                                    })}
+                            </p>
+                        )}
+                    </div>
+                    <Button
+                        size="lg"
+                        className="h-12 shrink-0 text-base font-semibold rounded-lg"
+                        disabled={!canAddToCart || isPending}
+                        onClick={handleAddToCart}
+                    >
+                        {purchaseIcon}
+                        {purchaseLabel}
+                    </Button>
+                </div>
+            </section>
         </div>
     );
 }

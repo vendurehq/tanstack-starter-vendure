@@ -5,6 +5,8 @@
   "Product_addedToCart": "Added to Cart",
   "Product_adding": "Adding...",
   "Product_selectOptions": "Select Options",
+  "Product_chooseOptions": "Choose {options}",
+  "Product_purchaseBarLabel": "Purchase options",
   "Product_addedToCartMessage": "Added to cart",
   "Product_addedToCartDescription": "{name} has been added to your cart",
   "Product_errorTitle": "Error",

@@ -5,6 +5,8 @@
   "Product_addedToCart": "Hinzugefügt",
   "Product_adding": "Wird hinzugefügt...",
   "Product_selectOptions": "Optionen wählen",
+  "Product_chooseOptions": "{options} wählen",
+  "Product_purchaseBarLabel": "Kaufoptionen",
   "Product_addedToCartMessage": "In den Warenkorb gelegt",
   "Product_addedToCartDescription": "{name} wurde Ihrem Warenkorb hinzugefügt",
   "Product_errorTitle": "Fehler",

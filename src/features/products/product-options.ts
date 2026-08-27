@@ -25,3 +25,28 @@ export function getDisplayOptionGroups(product: ProductDetail): ProductDetail['o
         }))
         .filter((group) => group.options.length > 0);
 }
+
+/**
+ * Names of the options the customer has already chosen, in option group order.
+ * The mobile purchase bar shows these so the pinned action states which
+ * configuration it adds to the cart.
+ */
+export function getSelectedOptionNames(
+    optionGroups: ReadonlyArray<{id: string; options: ReadonlyArray<{id: string; name: string}>}>,
+    selectedOptions: Record<string, string>,
+): string[] {
+    return optionGroups.flatMap((group) => {
+        const selectedId = selectedOptions[group.id];
+        const option = group.options.find((candidate) => candidate.id === selectedId);
+        return option ? [option.name] : [];
+    });
+}
+
+/**
+ * Lowest variant price, or null when the product has no variants. The mobile
+ * purchase bar shows it as a "from" price until the customer picks a variant.
+ */
+export function getLowestVariantPrice(variants: ReadonlyArray<{priceWithTax: number}>): number | null {
+    if (variants.length === 0) return null;
+    return variants.reduce((lowest, variant) => Math.min(lowest, variant.priceWithTax), Number.POSITIVE_INFINITY);
+}
