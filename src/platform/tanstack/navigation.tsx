@@ -30,7 +30,8 @@ export function useRouter() {
 	const navigate = useNavigate();
 	const router = useTanStackRouter();
 	return {
-		push: (href: string, _options?: { scroll?: boolean }) => navigate({ href }),
+		push: (href: string, options?: { scroll?: boolean }) =>
+			navigate({ href, resetScroll: options?.scroll }),
 		replace: (
 			href: string,
 			options?: { locale?: string; scroll?: boolean },
