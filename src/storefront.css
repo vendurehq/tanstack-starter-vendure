@@ -1,6 +1,234 @@
 @import "tailwindcss";
-@import "tw-animate-css";
-@import "shadcn/tailwind.css";
+
+@property --tw-animation-duration {
+	syntax: "*";
+	inherits: false;
+}
+@property --tw-enter-opacity {
+	syntax: "*";
+	inherits: false;
+	initial-value: 1;
+}
+@property --tw-enter-scale {
+	syntax: "*";
+	inherits: false;
+	initial-value: 1;
+}
+@property --tw-enter-translate-x {
+	syntax: "*";
+	inherits: false;
+	initial-value: 0;
+}
+@property --tw-enter-translate-y {
+	syntax: "*";
+	inherits: false;
+	initial-value: 0;
+}
+@property --tw-exit-opacity {
+	syntax: "*";
+	inherits: false;
+	initial-value: 1;
+}
+@property --tw-exit-scale {
+	syntax: "*";
+	inherits: false;
+	initial-value: 1;
+}
+@property --tw-exit-translate-x {
+	syntax: "*";
+	inherits: false;
+	initial-value: 0;
+}
+@property --tw-exit-translate-y {
+	syntax: "*";
+	inherits: false;
+	initial-value: 0;
+}
+
+@theme inline {
+	--animate-in: enter var(--tw-animation-duration, var(--tw-duration, 0.15s))
+		var(--tw-ease, ease);
+	--animate-out: exit var(--tw-animation-duration, var(--tw-duration, 0.15s))
+		var(--tw-ease, ease);
+	--animate-accordion-down: accordion-down
+		var(--tw-animation-duration, var(--tw-duration, 0.2s))
+		var(--tw-ease, ease-out);
+	--animate-accordion-up: accordion-up
+		var(--tw-animation-duration, var(--tw-duration, 0.2s))
+		var(--tw-ease, ease-out);
+	--animate-caret-blink: caret-blink 1.25s ease-out infinite;
+
+	@keyframes enter {
+		from {
+			opacity: var(--tw-enter-opacity, 1);
+			transform: translate3d(
+					var(--tw-enter-translate-x, 0),
+					var(--tw-enter-translate-y, 0),
+					0
+				)
+				scale3d(
+					var(--tw-enter-scale, 1),
+					var(--tw-enter-scale, 1),
+					var(--tw-enter-scale, 1)
+				);
+		}
+	}
+
+	@keyframes exit {
+		to {
+			opacity: var(--tw-exit-opacity, 1);
+			transform: translate3d(
+					var(--tw-exit-translate-x, 0),
+					var(--tw-exit-translate-y, 0),
+					0
+				)
+				scale3d(
+					var(--tw-exit-scale, 1),
+					var(--tw-exit-scale, 1),
+					var(--tw-exit-scale, 1)
+				);
+		}
+	}
+
+	@keyframes caret-blink {
+		0%,
+		70%,
+		100% {
+			opacity: 1;
+		}
+		20%,
+		50% {
+			opacity: 0;
+		}
+	}
+
+	@keyframes accordion-down {
+		from {
+			height: 0;
+		}
+		to {
+			height: var(
+				--radix-accordion-content-height,
+				var(--accordion-panel-height, auto)
+			);
+		}
+	}
+
+	@keyframes accordion-up {
+		from {
+			height: var(
+				--radix-accordion-content-height,
+				var(--accordion-panel-height, auto)
+			);
+		}
+		to {
+			height: 0;
+		}
+	}
+}
+
+@utility fade-in {
+	--tw-enter-opacity: 0;
+}
+@utility fade-in-0 {
+	--tw-enter-opacity: 0;
+}
+@utility fade-out {
+	--tw-exit-opacity: 0;
+}
+@utility fade-out-0 {
+	--tw-exit-opacity: 0;
+}
+@utility zoom-in-95 {
+	--tw-enter-scale: 0.95;
+}
+@utility zoom-out-95 {
+	--tw-exit-scale: 0.95;
+}
+@utility slide-in-from-top-2 {
+	--tw-enter-translate-y: calc(var(--spacing) * -2);
+}
+@utility slide-in-from-bottom-2 {
+	--tw-enter-translate-y: calc(var(--spacing) * 2);
+}
+@utility slide-in-from-left-2 {
+	--tw-enter-translate-x: calc(var(--spacing) * -2);
+}
+@utility slide-in-from-right-2 {
+	--tw-enter-translate-x: calc(var(--spacing) * 2);
+}
+@utility slide-in-from-left-52 {
+	--tw-enter-translate-x: calc(var(--spacing) * -52);
+}
+@utility slide-in-from-right-52 {
+	--tw-enter-translate-x: calc(var(--spacing) * 52);
+}
+@utility slide-out-to-left-52 {
+	--tw-exit-translate-x: calc(var(--spacing) * -52);
+}
+@utility slide-out-to-right-52 {
+	--tw-exit-translate-x: calc(var(--spacing) * 52);
+}
+@utility no-scrollbar {
+	-ms-overflow-style: none;
+	scrollbar-width: none;
+
+	&::-webkit-scrollbar {
+		display: none;
+	}
+}
+
+@custom-variant data-open {
+	&:where([data-state="open"]),
+	&:where([data-open]:not([data-open="false"])) {
+		@slot;
+	}
+}
+@custom-variant data-closed {
+	&:where([data-state="closed"]),
+	&:where([data-closed]:not([data-closed="false"])) {
+		@slot;
+	}
+}
+@custom-variant data-checked {
+	&:where([data-state="checked"]),
+	&:where([data-checked]:not([data-checked="false"])) {
+		@slot;
+	}
+}
+@custom-variant data-unchecked {
+	&:where([data-state="unchecked"]),
+	&:where([data-unchecked]:not([data-unchecked="false"])) {
+		@slot;
+	}
+}
+@custom-variant data-selected {
+	&:where([data-selected="true"]) {
+		@slot;
+	}
+}
+@custom-variant data-disabled {
+	&:where([data-disabled="true"]),
+	&:where([data-disabled]:not([data-disabled="false"])) {
+		@slot;
+	}
+}
+@custom-variant data-active {
+	&:where([data-state="active"]),
+	&:where([data-active]:not([data-active="false"])) {
+		@slot;
+	}
+}
+@custom-variant data-horizontal {
+	&:where([data-orientation="horizontal"]) {
+		@slot;
+	}
+}
+@custom-variant data-vertical {
+	&:where([data-orientation="vertical"]) {
+		@slot;
+	}
+}
 
 @custom-variant dark (&:is(.dark *));
 
