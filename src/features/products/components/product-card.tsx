@@ -1,6 +1,12 @@
 import Image from "@/components/storefront-image";
 import { Price } from "@/features/pricing/price";
 import { ProductCardFragment } from "@/features/products/graphql";
+import {
+	PRODUCT_CAROUSEL_CARD_SIZES,
+	PRODUCT_GRID_CARD_SIZES,
+	productCardImageUrl,
+	productCardSrcSet,
+} from "@/features/products/product-image";
 import { useTranslations } from "@/platform/i18n/paraglide";
 import { Link } from "@/platform/tanstack/navigation";
 import { type FragmentOf, readFragment } from "@/platform/vendure/graphql";
@@ -9,19 +15,15 @@ interface ProductCardProps {
 	product: FragmentOf<typeof ProductCardFragment>;
 	currencyCode: string;
 	priority?: boolean;
-}
-
-const productImageWidths = [320, 480, 640, 800];
-
-function productImageUrl(preview: string, width: number) {
-	const separator = preview.includes("?") ? "&" : "?";
-	return `${preview}${separator}w=${width}&h=${width}&mode=crop&format=webp&q=75`;
+	/** Selects the `sizes` hint that matches the surrounding layout. */
+	layout?: "grid" | "carousel";
 }
 
 export function ProductCard({
 	product: productProp,
 	currencyCode,
 	priority,
+	layout = "grid",
 }: ProductCardProps) {
 	const t = useTranslations("Product");
 	const product = readFragment(ProductCardFragment, productProp);
@@ -35,18 +37,17 @@ export function ProductCard({
 			<div className="aspect-square relative bg-muted overflow-hidden">
 				{productImage ? (
 					<Image
-						src={productImageUrl(productImage, 800)}
-						srcSet={productImageWidths
-							.map(
-								(width) =>
-									`${productImageUrl(productImage, width)} ${width}w`,
-							)
-							.join(", ")}
+						src={productCardImageUrl(productImage, 800)}
+						srcSet={productCardSrcSet(productImage)}
 						alt={product.productName}
 						fill
 						priority={priority}
 						className="object-cover group-hover:scale-105 group-hover:opacity-90 transition-all duration-500"
-						sizes="(max-width: 640px) calc(100vw - 2rem), (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw"
+						sizes={
+							layout === "carousel"
+								? PRODUCT_CAROUSEL_CARD_SIZES
+								: PRODUCT_GRID_CARD_SIZES
+						}
 					/>
 				) : (
 					<div className="w-full h-full flex items-center justify-center text-muted-foreground">
