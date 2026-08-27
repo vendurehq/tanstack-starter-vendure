@@ -2,6 +2,7 @@
 type: minor
 areas:
   - products
+  - tooling
 ---
 
 ## Intent
