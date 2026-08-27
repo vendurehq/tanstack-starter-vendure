@@ -1,8 +1,10 @@
 import {useState} from 'react';
+import {Await} from '@tanstack/react-router';
 import { Link, useRouter } from '@/platform/tanstack/navigation';
 import {Menu, Search, ShoppingBag, User, Package, MapPin} from 'lucide-react';
 import {Button} from '@/components/ui/button';
 import {Input} from '@/components/ui/input';
+import {Skeleton} from '@/components/ui/skeleton';
 import {
     Sheet,
     SheetTrigger,
@@ -12,6 +14,9 @@ import {
     SheetClose,
 } from '@/components/ui/sheet';
 import {useTranslations} from '@/platform/i18n/paraglide';
+import {LoginButton} from '@/site/navigation/navbar/login-button';
+import {MobilePreferences} from '@/site/navigation/navbar/mobile-preferences';
+import type {getPersonalizedShellData} from '@/site/shell.functions';
 
 interface Collection {
     id: string;
@@ -21,9 +26,20 @@ interface Collection {
 
 interface MobileNavProps {
     collections: Collection[];
+    availableCurrencyCodes: string[];
+    activeCurrencyCode: string;
+    personalized: Promise<Awaited<ReturnType<typeof getPersonalizedShellData>>>;
 }
 
-export function MobileNav({collections}: MobileNavProps) {
+const rowClassName =
+    'flex min-h-11 items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-md hover:bg-accent transition-colors';
+
+export function MobileNav({
+    collections,
+    availableCurrencyCodes,
+    activeCurrencyCode,
+    personalized,
+}: MobileNavProps) {
     const t = useTranslations('Navigation');
     const [open, setOpen] = useState(false);
     const [searchValue, setSearchValue] = useState('');
@@ -42,7 +58,7 @@ export function MobileNav({collections}: MobileNavProps) {
 
     return (
         <Sheet open={open} onOpenChange={setOpen}>
-            <SheetTrigger render={<Button variant="ghost" size="icon" className="md:hidden" />}>
+            <SheetTrigger render={<Button variant="ghost" size="icon" className="size-11 md:hidden" />}>
                 <Menu className="size-5" />
                 <span className="sr-only">{t('openMenu')}</span>
             </SheetTrigger>
@@ -58,7 +74,7 @@ export function MobileNav({collections}: MobileNavProps) {
                         <Input
                             type="search"
                             placeholder={t('searchProducts')}
-                            className="pl-9 w-full"
+                            className="pl-9 w-full h-11"
                             value={searchValue}
                             onChange={(e) => setSearchValue(e.target.value)}
                         />
@@ -70,7 +86,7 @@ export function MobileNav({collections}: MobileNavProps) {
                             render={
                                 <Link
                                     href="/search"
-                                    className="flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-md hover:bg-accent transition-colors"
+                                    className={rowClassName}
                                 />
                             }
                             nativeButton={false}
@@ -94,7 +110,7 @@ export function MobileNav({collections}: MobileNavProps) {
                                         render={
                                             <Link
                                                 href={`/collection/${collection.slug}`}
-                                                className="flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-md hover:bg-accent transition-colors"
+                                                className={rowClassName}
                                             />
                                         }
                                         nativeButton={false}
@@ -117,7 +133,7 @@ export function MobileNav({collections}: MobileNavProps) {
                                 render={
                                     <Link
                                         href="/account/profile"
-                                        className="flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-md hover:bg-accent transition-colors"
+                                        className={rowClassName}
                                     />
                                 }
                                 nativeButton={false}
@@ -130,7 +146,7 @@ export function MobileNav({collections}: MobileNavProps) {
                                 render={
                                     <Link
                                         href="/account/orders"
-                                        className="flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-md hover:bg-accent transition-colors"
+                                        className={rowClassName}
                                     />
                                 }
                                 nativeButton={false}
@@ -143,7 +159,7 @@ export function MobileNav({collections}: MobileNavProps) {
                                 render={
                                     <Link
                                         href="/account/addresses"
-                                        className="flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-md hover:bg-accent transition-colors"
+                                        className={rowClassName}
                                     />
                                 }
                                 nativeButton={false}
@@ -152,8 +168,31 @@ export function MobileNav({collections}: MobileNavProps) {
                                 <MapPin className="h-5 w-5" />
                                 {t('addresses')}
                             </SheetClose>
+                            {/* Sign in / sign out — the desktop header keeps this in the user
+                                menu, which is hidden at mobile widths. */}
+                            <Await
+                                promise={personalized}
+                                fallback={<Skeleton className="h-11 w-full rounded-md" />}
+                            >
+                                {(data) => (
+                                    <SheetClose
+                                        render={
+                                            <LoginButton
+                                                isLoggedIn={Boolean(data.customerFirstName)}
+                                                className={`${rowClassName} w-full text-left`}
+                                            />
+                                        }
+                                    />
+                                )}
+                            </Await>
                         </nav>
                     </div>
+
+                    {/* Language, currency and theme */}
+                    <MobilePreferences
+                        availableCurrencyCodes={availableCurrencyCodes}
+                        activeCurrencyCode={activeCurrencyCode}
+                    />
                 </div>
             </SheetContent>
         </Sheet>

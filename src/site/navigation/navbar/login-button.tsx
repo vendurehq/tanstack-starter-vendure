@@ -8,7 +8,7 @@ interface LoginButtonProps extends ComponentProps<'button'> {
     isLoggedIn: boolean;
 }
 
-export function LoginButton({isLoggedIn, ...props}: LoginButtonProps) {
+export function LoginButton({isLoggedIn, onClick, ...props}: LoginButtonProps) {
     const t = useTranslations('Navigation');
     const [isPending, startTransition] = useTransition();
     const router = useRouter();
@@ -16,7 +16,9 @@ export function LoginButton({isLoggedIn, ...props}: LoginButtonProps) {
 
     return (
         <button {...props} aria-disabled={isPending}
-                onClick={() => {
+                onClick={(event) => {
+                    // Keep the handler of the wrapper (menu item, sheet close) alive.
+                    onClick?.(event)
                     if (isLoggedIn) {
                         startTransition(async () => {
                             await logout()
