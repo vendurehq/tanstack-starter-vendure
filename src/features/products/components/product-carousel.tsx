@@ -41,6 +41,7 @@ export function ProductCarousel({
 									product={product}
 									currencyCode={currencyCode}
 									priority={index === 0}
+									layout="carousel"
 								/>
 							</CarouselItem>
 						))}

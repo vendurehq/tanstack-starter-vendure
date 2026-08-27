@@ -2,18 +2,19 @@ import { useState } from 'react';
 import Image from '@/components/storefront-image';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import {
+    PRODUCT_HERO_SIZES,
+    PRODUCT_THUMBNAIL_SIZES,
+    productDetailImageUrl,
+    productHeroSrcSet,
+    productThumbnailSrcSet,
+} from '@/features/products/product-image';
 
 interface ProductImageCarouselProps {
     images: Array<{
         id: string;
         preview: string;
     }>;
-}
-const HERO_WIDTHS = [480, 768, 1024, 1440];
-
-function resizedAssetUrl(url: string, width: number) {
-    const separator = url.includes('?') ? '&' : '?';
-    return `${url}${separator}w=${width}&h=${width}&mode=crop`;
 }
 
 export function ProductImageCarousel({ images }: ProductImageCarouselProps) {
@@ -40,12 +41,12 @@ export function ProductImageCarousel({ images }: ProductImageCarouselProps) {
             {/* Main Image */}
             <div className="relative aspect-square bg-muted rounded-xl overflow-hidden group cursor-crosshair">
                 <Image
-                    src={resizedAssetUrl(images[currentIndex].preview, 1024)}
-                    srcSet={HERO_WIDTHS.map((width) => `${resizedAssetUrl(images[currentIndex].preview, width)} ${width}w`).join(', ')}
+                    src={productDetailImageUrl(images[currentIndex].preview, 1024)}
+                    srcSet={productHeroSrcSet(images[currentIndex].preview)}
                     alt={`Product image ${currentIndex + 1}`}
                     fill
                     className="object-cover hover:scale-105 transition-transform duration-500"
-                    sizes="(max-width: 1024px) 100vw, 50vw"
+                    sizes={PRODUCT_HERO_SIZES}
                     priority={currentIndex === 0}
                 />
 
@@ -94,11 +95,12 @@ export function ProductImageCarousel({ images }: ProductImageCarouselProps) {
                             }`}
                         >
                             <Image
-                                src={resizedAssetUrl(image.preview, 320)}
+                                src={productDetailImageUrl(image.preview, 176)}
+                                srcSet={productThumbnailSrcSet(image.preview)}
                                 alt={`Thumbnail ${index + 1}`}
                                 fill
                                 className="object-cover"
-                                sizes="25vw"
+                                sizes={PRODUCT_THUMBNAIL_SIZES}
                             />
                         </button>
                     ))}
