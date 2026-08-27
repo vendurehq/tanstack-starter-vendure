@@ -13,5 +13,12 @@
   "Navigation_greeting": "Hi, {name}",
   "Navigation_shoppingCart": "Shopping Cart",
   "Navigation_switchLanguage": "Switch language",
-  "Navigation_switchCurrency": "Switch currency"
+  "Navigation_switchCurrency": "Switch currency",
+  "Navigation_language": "Language",
+  "Navigation_currency": "Currency",
+  "Navigation_theme": "Theme",
+  "Navigation_themeLight": "Light",
+  "Navigation_themeDark": "Dark",
+  "Navigation_themeSystem": "System",
+  "Navigation_switchTheme": "Switch theme"
 }

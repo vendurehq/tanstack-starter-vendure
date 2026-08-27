@@ -32,9 +32,14 @@ export function Navbar({
 		<header className="fixed top-0 left-0 right-0 z-50 border-b backdrop-blur-md bg-background/80">
 			<div className="container mx-auto px-4">
 				<div className="flex items-center justify-between h-16">
-					<div className="flex items-center gap-8">
+					<div className="flex items-center gap-3 md:gap-8">
 						<Suspense>
-							<MobileNav collections={collections} />
+							<MobileNav
+								collections={collections}
+								availableCurrencyCodes={availableCurrencyCodes}
+								activeCurrencyCode={activeCurrencyCode}
+								personalized={personalized}
+							/>
 						</Suspense>
 						<NavigationLink href="/" className="text-xl font-bold">
 							<Image
@@ -57,27 +62,33 @@ export function Navbar({
 								<SearchInput />
 							</Suspense>
 						</div>
-						<Suspense>
-							<LanguagePicker />
-						</Suspense>
-						<Suspense>
-							<CurrencyPicker
-								availableCurrencyCodes={availableCurrencyCodes}
-								activeCurrencyCode={activeCurrencyCode}
-							/>
-						</Suspense>
-						<Suspense>
-							<ThemeSwitcher />
-						</Suspense>
+						{/* Below md these controls live in the mobile drawer — a 320px
+							viewport cannot fit them next to the menu, logo and cart. */}
+						<div className="hidden md:flex items-center gap-4">
+							<Suspense>
+								<LanguagePicker />
+							</Suspense>
+							<Suspense>
+								<CurrencyPicker
+									availableCurrencyCodes={availableCurrencyCodes}
+									activeCurrencyCode={activeCurrencyCode}
+								/>
+							</Suspense>
+							<Suspense>
+								<ThemeSwitcher />
+							</Suspense>
+						</div>
 						<Await
 							promise={personalized}
-							fallback={<Skeleton className="h-9 w-9 rounded-md" />}
+							fallback={<Skeleton className="size-11 md:size-9 rounded-md" />}
 						>
 							{(data) => <CartIcon cartItemCount={data.cartItemCount} />}
 						</Await>
-						<Await promise={personalized} fallback={<NavbarUserSkeleton />}>
-							{(data) => <NavbarUser firstName={data.customerFirstName} />}
-						</Await>
+						<div className="hidden md:flex">
+							<Await promise={personalized} fallback={<NavbarUserSkeleton />}>
+								{(data) => <NavbarUser firstName={data.customerFirstName} />}
+							</Await>
+						</div>
 					</div>
 				</div>
 			</div>
