@@ -1,91 +1,82 @@
 import {Link} from '@tanstack/react-router';
-import {ChevronLeft, ChevronRight} from 'lucide-react';
-import {Button} from '@/components/ui/button';
+import {
+    Pagination as PaginationNav,
+    PaginationContent,
+    PaginationEllipsis,
+    PaginationItem,
+    PaginationLink,
+    PaginationNext,
+    PaginationPrevious,
+} from '@/components/ui/pagination';
+import {useTranslations} from '@/platform/i18n/paraglide';
+import {getPageItems} from './pagination-items';
 
 interface PaginationProps {
     currentPage: number;
     totalPages: number;
 }
 export function Pagination({currentPage, totalPages}: PaginationProps) {
-    const getPageNumbers = () => {
-        const delta = 2;
-        const range = [];
-        const rangeWithDots = [];
-
-        for (let i = 1; i <= totalPages; i++) {
-            if (
-                i === 1 ||
-                i === totalPages ||
-                (i >= currentPage - delta && i <= currentPage + delta)
-            ) {
-                range.push(i);
-            }
-        }
-
-        let prev = 0;
-        for (const i of range) {
-            if (prev && i - prev > 1) {
-                rangeWithDots.push('...');
-            }
-            rangeWithDots.push(i);
-            prev = i;
-        }
-
-        return rangeWithDots;
-    };
-
-    const pages = getPageNumbers();
+    const t = useTranslations('Product');
+    const pages = getPageItems(currentPage, totalPages);
 
     return (
-        <nav className="flex items-center justify-center gap-2">
-            <Button
-                variant="outline"
-                size="icon"
-                className="rounded-full"
-                render={currentPage !== 1 ? <Link to="." search={(previous) => ({...previous, page: currentPage - 1})} /> : undefined}
-                nativeButton={currentPage !== 1 ? false : undefined}
-                disabled={currentPage === 1}
-            >
-                <ChevronLeft className="h-4 w-4"/>
-            </Button>
+        <div className="space-y-3">
+            <p className="text-center text-sm text-muted-foreground">
+                {t('pageOf', {current: currentPage, total: totalPages})}
+            </p>
+            <PaginationNav>
+                <PaginationContent>
+                    <PaginationItem>
+                        <PaginationPrevious
+                            text={t('previousPage')}
+                            render={
+                                currentPage > 1
+                                    ? <Link to="." search={(previous) => ({...previous, page: currentPage - 1})} />
+                                    : undefined
+                            }
+                            aria-disabled={currentPage === 1}
+                            className={currentPage === 1 ? 'pointer-events-none opacity-50' : ''}
+                        />
+                    </PaginationItem>
 
-            {pages.map((page, index) => {
-                if (page === '...') {
-                    return (
-                        <span key={`dots-${index}`} className="px-2 text-muted-foreground">
-                            ...
-                        </span>
-                    );
-                }
+                    {pages.map((page, index) => {
+                        if (page === 'ellipsis') {
+                            return (
+                                <PaginationItem key={`ellipsis-${index}`} className="hidden sm:list-item">
+                                    <PaginationEllipsis />
+                                </PaginationItem>
+                            );
+                        }
 
-                const pageNum = page as number;
-                const isActive = pageNum === currentPage;
+                        return (
+                            <PaginationItem
+                                key={page}
+                                className={page === currentPage ? undefined : 'hidden sm:list-item'}
+                            >
+                                <PaginationLink
+                                    render={<Link to="." search={(previous) => ({...previous, page})} />}
+                                    isActive={page === currentPage}
+                                >
+                                    {page}
+                                </PaginationLink>
+                            </PaginationItem>
+                        );
+                    })}
 
-                return (
-                    <Button
-                        key={pageNum}
-                        variant={isActive ? 'default' : 'outline'}
-                        size="icon"
-                        className="rounded-full"
-                        render={!isActive ? <Link to="." search={(previous) => ({...previous, page: pageNum})} /> : undefined}
-                        nativeButton={!isActive ? false : undefined}
-                        disabled={isActive}
-                    >
-                        {pageNum}
-                    </Button>
-                );
-            })}
-
-            <Button
-                variant="outline"
-                size="icon"
-                className="rounded-full"
-                render={currentPage !== totalPages ? <Link to="." search={(previous) => ({...previous, page: currentPage + 1})} /> : undefined}
-                nativeButton={currentPage !== totalPages ? false : undefined}
-                disabled={currentPage === totalPages}
-            >
-                <ChevronRight className="h-4 w-4"/>
-            </Button>
-        </nav>
+                    <PaginationItem>
+                        <PaginationNext
+                            text={t('nextPage')}
+                            render={
+                                currentPage < totalPages
+                                    ? <Link to="." search={(previous) => ({...previous, page: currentPage + 1})} />
+                                    : undefined
+                            }
+                            aria-disabled={currentPage === totalPages}
+                            className={currentPage === totalPages ? 'pointer-events-none opacity-50' : ''}
+                        />
+                    </PaginationItem>
+                </PaginationContent>
+            </PaginationNav>
+        </div>
     );
 }
