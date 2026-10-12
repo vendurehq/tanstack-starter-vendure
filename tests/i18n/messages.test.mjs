@@ -38,6 +38,14 @@ test('every message file is covered by the Paraglide project configuration', asy
     assert.ok(discovered.length > 0, 'At least one source catalog must exist.');
 });
 
+test('Paraglide plugin modules do not depend on the node_modules layout', async () => {
+    const settings = JSON.parse(await readFile(path.join(root, 'project.inlang/settings.json'), 'utf8'));
+    // The storefront is also scaffolded into npm workspaces, where dependencies are hoisted.
+    for (const module of settings.modules) {
+        assert.ok(module.startsWith('https://'), `${module} must be a URL, not a local path.`);
+    }
+});
+
 function messageKeys(value, prefix = '') {
     return Object.entries(value).flatMap(([key, child]) => {
         const qualified = prefix ? `${prefix}.${key}` : key;
