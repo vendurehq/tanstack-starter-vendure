@@ -1,6 +1,7 @@
 import { TanStackDevtools } from "@tanstack/react-devtools";
 import {
 	createRootRoute,
+	type ErrorComponentProps,
 	HeadContent,
 	ScriptOnce,
 	Scripts,
@@ -78,7 +79,7 @@ function StorefrontNotFound() {
 	);
 }
 
-function StorefrontError({ error }: { error: Error }) {
+function StorefrontError({ error }: ErrorComponentProps) {
 	const router = useRouter();
 	console.error(error);
 
