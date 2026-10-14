@@ -1,5 +1,5 @@
 import { Await } from "@tanstack/react-router";
-import { Suspense } from "react";
+import { Suspense, useDeferredValue } from "react";
 import Image from "@/components/storefront-image";
 import { Skeleton } from "@/components/ui/skeleton";
 import { CartIcon } from "@/site/navigation/navbar/cart-icon";
@@ -26,8 +26,12 @@ export function Navbar({
 	collections,
 	availableCurrencyCodes,
 	activeCurrencyCode,
-	personalized,
+	personalized: latestPersonalized,
 }: NavbarProps) {
+	// A cart or account change re-runs the root loader, which hands over a new pending promise.
+	// Deferring it keeps the resolved cart badge and user menu on screen until the new data
+	// arrives, instead of flashing their skeletons.
+	const personalized = useDeferredValue(latestPersonalized);
 	return (
 		<header className="fixed top-0 left-0 right-0 z-50 border-b backdrop-blur-md bg-background/80">
 			<div className="container mx-auto px-4">
