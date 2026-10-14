@@ -1,5 +1,6 @@
 import { Await } from "@tanstack/react-router";
 import { Clock, RotateCcw, ShieldCheck, Truck } from "lucide-react";
+import { Suspense, useDeferredValue } from "react";
 import {
 	Accordion,
 	AccordionContent,
@@ -26,7 +27,7 @@ import { Link } from "@/platform/tanstack/navigation";
 
 export default function ProductDetailPage({
 	data,
-	relatedProducts,
+	relatedProducts: latestRelatedProducts,
 	searchParams,
 }: {
 	data: NonNullable<Awaited<ReturnType<typeof getProductPageData>>>["data"];
@@ -35,6 +36,9 @@ export default function ProductDetailPage({
 }) {
 	const t = useTranslations("Product");
 	const { product, primaryCollection, productForDisplay, currencyCode } = data;
+	// A cart change re-runs this route's loader, which hands over a new pending promise.
+	// Deferring it keeps the current related products on screen until the new ones arrive.
+	const relatedProducts = useDeferredValue(latestRelatedProducts);
 
 	return (
 		// Below lg the purchase bar is pinned to the viewport bottom, so the page
@@ -142,14 +146,18 @@ export default function ProductDetailPage({
 				</div>
 			</section>
 
-			<Await promise={relatedProducts} fallback={null}>
-				{({ products, currencyCode: relatedCurrencyCode }) => (
-					<RelatedProducts
-						products={products}
-						currencyCode={relatedCurrencyCode}
-					/>
-				)}
-			</Await>
+			{/* Await only adds its own Suspense boundary for a truthy fallback. Without this one,
+			    the pending promise suspends the whole route into its loading skeleton. */}
+			<Suspense fallback={null}>
+				<Await promise={relatedProducts}>
+					{({ products, currencyCode: relatedCurrencyCode }) => (
+						<RelatedProducts
+							products={products}
+							currencyCode={relatedCurrencyCode}
+						/>
+					)}
+				</Await>
+			</Suspense>
 		</div>
 	);
 }
