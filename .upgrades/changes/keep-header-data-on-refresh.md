@@ -2,6 +2,7 @@
 type: patch
 areas:
   - site
+  - tooling
 ---
 
 ## Intent
